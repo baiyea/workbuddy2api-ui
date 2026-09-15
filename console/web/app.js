@@ -4,8 +4,10 @@ let page = 'overview', sessionGeneration = 0;
 function newConversation() { return `web-${Date.now()}-${Math.random().toString(36).slice(2)}`; }
 function notice(text = '') { $('notice').textContent = text; $('notice').hidden = !text; }
 async function api(path, data, signal) {
+ const generation = sessionGeneration;
  const response = await fetch('/admin/' + path, {method:data === undefined ? 'GET' : 'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:data === undefined ? undefined : JSON.stringify(data),signal});
- if (response.status === 401 && path !== 'login') { signedOut(); throw new Error('管理会话已过期，请重新登录'); }
+ if (path !== 'logout' && generation !== sessionGeneration) throw new Error('管理会话已退出，请重新登录');
+ if (response.status === 401 && path !== 'login' && path !== 'logout') { signedOut(); throw new Error('管理会话已过期，请重新登录'); }
  return response;
 }
 async function jsonAPI(path, data) {
@@ -141,5 +143,5 @@ $('chat-form').addEventListener('submit',async event=>{
 $('base-url').value=location.origin+'/v1';
 $('api-example').textContent=`curl ${location.origin}/v1/chat/completions \\\n  -H "Authorization: Bearer <你的 API Key>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"model":"cn:glm-5.2","messages":[{"role":"user","content":"你好"}]}'`;
 $('reveal-key').addEventListener('click',async()=>{try{$('api-key').value=(await jsonAPI('access',{})).api_key;$('api-key').type='text';}catch(e){notice(e.message);}});
-$('copy-key').addEventListener('click',async()=>{try{if(!$('api-key').value)$('api-key').value=(await jsonAPI('access',{})).api_key;await navigator.clipboard.writeText($('api-key').value);notice('API Key 已复制');}catch{$('api-key').type='text';$('api-key').select();notice('浏览器不允许自动复制，请手动复制选中的密钥');}});
+$('copy-key').addEventListener('click',async()=>{const generation=sessionGeneration;try{if(!$('api-key').value)$('api-key').value=(await jsonAPI('access',{})).api_key;await navigator.clipboard.writeText($('api-key').value);if(generation===sessionGeneration)notice('API Key 已复制');}catch{if(generation!==sessionGeneration)return;$('api-key').type='text';$('api-key').select();notice('浏览器不允许自动复制，请手动复制选中的密钥');}});
 jsonAPI('session').then(signedIn).catch(()=>{});

@@ -91,3 +91,71 @@ test('an access response started before logout cannot restore the revealed key',
   assert.equal(get('api-key').value,'','late access response repopulated logged-out browser');
   assert.equal(get('login-view').hidden,false);
 });
+
+test('stale 401 responses cannot revoke a newly logged-in session', async () => {
+  for (const path of ['status','logout']) {
+    let finishOld;
+    const {get,ctx} = logoutFixture(url => {
+      if(url==='/admin/session')return new Promise(()=>{});
+      if(url==='/admin/'+path)return new Promise(resolve=>{finishOld=resolve;});
+      assert.equal(url,'/admin/logout');
+      return Promise.resolve({ok:true,status:200,json:async()=>({ok:true})});
+    });
+    const old=path==='logout'?get('logout').handlers.click():vm.runInContext("jsonAPI('status')",ctx).catch(error=>error);
+    if(path!=='logout')await get('logout').handlers.click();
+    vm.runInContext("csrf='new-session-csrf';",ctx);
+    get('login-view').hidden=true;get('console-view').hidden=false;get('api-key').value='new-session-key';
+    finishOld({ok:false,status:401,json:async()=>({error:'old session expired'})});
+    await old;
+    assert.equal(vm.runInContext('csrf',ctx),'new-session-csrf',path+' 401 revoked new session');
+    assert.equal(get('console-view').hidden,false);
+    assert.equal(get('login-view').hidden,true);
+    assert.equal(get('api-key').value,'new-session-key');
+  }
+});
+
+test('stale copy responses never unmask a future key or trigger clipboard fallback', async () => {
+  for (const failureStage of ['access','clipboard','clipboard-success']) {
+    let finishOld;
+    const {get,ctx} = logoutFixture(url => {
+      if(url==='/admin/session')return new Promise(()=>{});
+      if(url==='/admin/access')return new Promise(resolve=>{finishOld=resolve;});
+      assert.equal(url,'/admin/logout');
+      return Promise.resolve({ok:true,status:200,json:async()=>({ok:true})});
+    });
+    ctx.navigator={clipboard:{writeText:()=>new Promise((resolve,reject)=>{finishOld=failureStage==='clipboard-success'?resolve:reject;})}};
+    let selected=false;get('api-key').select=()=>{selected=true;};
+    if(failureStage==='access')get('api-key').value='';
+    const copy=get('copy-key').handlers.click();
+    await get('logout').handlers.click();
+    vm.runInContext("csrf='new-session-csrf';",ctx);
+    get('login-view').hidden=true;get('console-view').hidden=false;
+    get('api-key').value='future-private-key';get('api-key').type='password';
+    if(failureStage==='access')finishOld({ok:true,status:200,json:async()=>({api_key:'old-private-key'})});
+    else finishOld(new Error('old clipboard permission denied'));
+    await copy;
+    assert.equal(get('api-key').type,'password',failureStage+' fallback unmasked future key');
+    assert.equal(get('api-key').value,'future-private-key');
+    assert.equal(selected,false);
+    assert.equal(get('notice').textContent,'');
+  }
+});
+
+test('current-session clipboard denial still offers manual copy', async () => {
+  const {get,ctx}=logoutFixture(()=>new Promise(()=>{}));
+  ctx.navigator={clipboard:{writeText:async()=>{throw new Error('permission denied');}}};
+  let selected=false;get('api-key').select=()=>{selected=true;};get('api-key').type='password';
+  await get('copy-key').handlers.click();
+  assert.equal(get('api-key').type,'text');
+  assert.equal(selected,true);
+  assert.match(get('notice').textContent,/手动复制/);
+});
+
+test('a current-session 401 still clears local authentication', async () => {
+  const {get,ctx}=logoutFixture(url=>url==='/admin/session'?new Promise(()=>{}):Promise.resolve({ok:false,status:401}));
+  await assert.rejects(vm.runInContext("jsonAPI('status')",ctx),/管理会话已过期/);
+  assert.equal(vm.runInContext('csrf',ctx),'');
+  assert.equal(get('api-key').value,'');
+  assert.equal(get('console-view').hidden,true);
+  assert.equal(get('login-view').hidden,false);
+});
