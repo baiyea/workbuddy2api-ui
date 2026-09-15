@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WorkBuddy · 控制台</title><link rel="stylesheet" href="/style.css"><script type="module" src="/app.js"></script></head>
+<body>
+<main id="login-view" class="login-wrap">
+ <section class="login-card">
+  <div class="brand"><span class="brand-icon">W</span> WorkBuddy <span class="subtle">/ API</span></div>
+  <p class="eyebrow">YOUR MODELS. ONE PLACE.</p><h1>连接账号，<br>开始你的下一次对话。</h1>
+  <p class="muted">一个轻量的模型网关。管理账号、观察运行状态，并直接测试模型回答。</p>
+  <form id="login-form"><label for="admin-key">管理密钥</label><input id="admin-key" type="password" autocomplete="current-password" required placeholder="输入此服务器的管理密钥"><button class="primary full" type="submit">进入控制台 <span>↗</span></button></form>
+  <p id="login-error" class="error" role="alert"></p>
+  <details><summary>第一次使用？</summary><p>在服务器上查看容器日志，找到「管理密钥」后输入。若部署时已设置密钥，使用预设值。</p><code>docker compose logs wb2api</code><p>这是控制台密钥，不是上游账号密码。</p></details>
+ </section><p class="login-footer">自托管 · 凭据保存在你的服务器</p>
+</main>
+<div id="console-view" class="shell" hidden>
+ <aside class="sidebar"><div class="brand"><span class="brand-icon">W</span> WorkBuddy</div><p class="sidebar-label">WORKSPACE CONSOLE</p>
+  <nav aria-label="主要导航"><button data-view="overview" class="nav active">◫ <span>运行概览</span></button><button data-view="accounts" class="nav">◎ <span>账号管理</span></button><button data-view="chat" class="nav">↗ <span>对话测试</span></button><button data-view="access" class="nav">⌘ <span>API 接入</span></button></nav>
+  <div class="sidebar-bottom"><span class="status-dot"></span> 自托管网关<button id="logout" class="quiet">退出登录</button></div>
+ </aside>
+ <main class="workspace"><header class="topbar"><span class="breadcrumb">控制台 <span>/</span> <span id="breadcrumb-name">运行概览</span></span><span class="badge" id="service-state">正在连接</span></header>
+  <div id="notice" class="notice" role="status" hidden></div>
+  <section class="page" data-page="overview"><div class="page-heading"><div><p class="eyebrow">OVERVIEW</p><h1>一切，从连接开始。</h1><p class="muted">账号和模型的运行状况，尽在这里。</p></div><button id="refresh" class="secondary">↻ 刷新状态</button></div>
+   <div class="metrics"><article><span>账号总数</span><strong id="count-total">—</strong><small>已连接到当前网关</small></article><article><span>可用账号</span><strong id="count-healthy">—</strong><small>按账号池最近状态</small></article><article><span>冷却 / 禁用</span><strong id="count-limited">—</strong><small>暂时不可用的账号</small></article><article><span>进行中的请求</span><strong id="count-flight">—</strong><small>当前并发占用</small></article></div>
+   <article class="welcome"><div class="welcome-mark">↗</div><div><p class="eyebrow">READY WHEN YOU ARE</p><h2 id="welcome-title">添加第一个账号</h2><p id="welcome-text">在浏览器中完成授权，网关会自动保存并加载账号。</p><button data-view="accounts" class="primary">管理账号 →</button><button data-view="chat" class="secondary">测试一个回答</button></div></article>
+   <div class="info-grid"><article class="panel"><h3>你的数据，在你的服务器</h3><p>账号凭据与网关状态保存在持久化数据卷中。普通容器重启与重建不会清除它们。</p></article><article class="panel"><h3>状态不是一次真实调用</h3><p>账号可用性、积分和模型列表来自最近观测。打开对话测试，确认模型当前是否能响应。</p></article></div>
+  </section>
+  <section class="page" data-page="accounts" hidden><div class="page-heading"><div><p class="eyebrow">ACCOUNTS</p><h1>连接你的模型账号</h1><p class="muted">授权成功后立即加载，无需重启网关。</p></div></div>
+   <article class="panel"><form id="add-account" class="inline-form"><label for="realm">账号版本</label><select id="realm"><option value="cn">国内版 CodeBuddy</option><option value="global">国际版 WorkBuddy</option></select><button class="primary" type="submit">＋ 浏览器授权</button></form><p class="muted small">登录、扫码或验证码由你在上游页面完成。当前页面会自动等待结果。</p>
+    <div id="flow" class="flow" hidden><span id="flow-label" class="badge"></span><p id="flow-message" role="status"></p><a id="auth-link" target="_blank" rel="noopener noreferrer">重新打开授权页面 ↗</a><form id="region-form" class="inline-form" hidden><label for="region">注册地区</label><select id="region"></select><button class="primary" type="submit">确认地区并继续</button></form><button id="flow-retry" class="secondary" hidden>重新检查</button></div>
+   </article>
+   <div class="section-title"><h2>已连接账号</h2><span class="muted small">每 15 秒刷新本地状态</span></div>
+   <div class="panel table-wrap"><table><thead><tr><th>账号 / 版本</th><th>状态</th><th>积分快照</th><th>成功 / 错误</th><th>在途</th><th>限制与说明</th></tr></thead><tbody id="accounts-body"></tbody></table><p id="accounts-empty" class="empty">还没有账号。点击上方「浏览器授权」开始。</p></div><p class="muted small">积分为最近观测值；未查询时显示「待确认」。同账号重新授权会更新凭据，保留现有限流记录。</p>
+  </section>
+  <section class="page" data-page="chat" hidden><div class="page-heading"><div><p class="eyebrow">PLAYGROUND</p><h1>让模型回答一个问题</h1><p class="muted">真实请求经过同一账号池。对话只保留在当前页面，刷新即清空。</p></div><button id="clear-chat" class="secondary">清空对话</button></div>
+   <div class="panel chat-panel"><div class="chat-settings"><label for="model">模型</label><select id="model"></select><label for="effort">推理档位</label><select id="effort"><option value="">默认</option></select></div><p id="model-hint" class="muted small"></p><div id="messages" class="messages" aria-live="polite"><div class="chat-empty">你好，想先问些什么？<small>选择模型后，在下方输入你的问题。</small></div></div>
+   <form id="chat-form"><label class="sr-only" for="prompt">你的问题</label><textarea id="prompt" rows="3" placeholder="输入一个问题…" required></textarea><div class="composer-footer"><span id="usage" class="muted small">用量将在上游返回后显示</span><button id="stop-chat" class="secondary" type="button" hidden>停止生成</button><button id="send-chat" class="primary" type="submit">发送 ↑</button></div></form></div>
+  </section>
+  <section class="page" data-page="access" hidden><div class="page-heading"><div><p class="eyebrow">INTEGRATION</p><h1>接入你喜欢的客户端</h1><p class="muted">使用兼容 Chat Completions 的客户端连接此网关。</p></div></div><article class="panel access-panel"><label for="base-url">Base URL</label><input id="base-url" readonly><label for="api-key">API Key</label><div class="inline-form"><input id="api-key" readonly type="password" placeholder="点击右侧按钮获取"><button id="reveal-key" class="secondary">显示密钥</button><button id="copy-key" class="secondary">复制</button></div><p class="muted small">API Key 用于模型调用，与控制台管理密钥不同。请勿公开分享。</p><h3>调用示例</h3><pre id="api-example"></pre><p class="muted small">公网访问请通过 HTTPS 反向代理，并设置 WB2A_PUBLIC_ORIGIN 为实际访问地址。</p></article></section>
+  <footer class="footer">WorkBuddy2API <span>本地控制台 · 7863</span></footer>
+ </main>
+</div>
+</body></html>
