@@ -253,7 +253,7 @@ func (s *Store) Put(run Run, now time.Time) error {
 	if len(data) > maxFile {
 		return errors.New("task history file limit reached")
 	}
-	if err := s.write(s.path, append(data, '\n')); err != nil {
+	if err := s.write(s.path, data); err != nil {
 		return err
 	}
 	s.runs = next

@@ -85,6 +85,39 @@ func TestStoreFailedWriteDoesNotPublishOrPrune(t *testing.T) {
 	}
 }
 
+func TestStoreWritesOnlySizeCheckedJSONAndReopens(t *testing.T) {
+	s := openTestStore(t)
+	now := time.Now().UTC()
+	run := completedRun("roundtrip", now)
+	originalWrite := s.write
+	s.write = func(path string, data []byte) error {
+		var document history
+		if err := json.Unmarshal(data, &document); err != nil {
+			t.Fatal(err)
+		}
+		checkedJSON, err := json.Marshal(document)
+		if err != nil {
+			t.Fatal(err)
+		}
+		// Any bytes added after Marshal escape the size check at maxFile.
+		if string(data) != string(checkedJSON) {
+			t.Fatalf("writer received %d bytes; checked JSON contains %d", len(data), len(checkedJSON))
+		}
+		return originalWrite(path, data)
+	}
+	if err := s.Put(run, now); err != nil {
+		t.Fatal(err)
+	}
+	reopened, err := OpenStore(s.path, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, ok := reopened.Get(run.ID)
+	if !ok || got.Status != "success" || got.RequestID != run.RequestID {
+		t.Fatalf("written history did not roundtrip: %+v", got)
+	}
+}
+
 func TestStoreDoesNotRetainNewExpiredTerminal(t *testing.T) {
 	s := openTestStore(t)
 	now := time.Now()
