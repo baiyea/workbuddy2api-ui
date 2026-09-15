@@ -1,0 +1,178 @@
+const core = require('@actions/core');
+const fs = require('fs');
+const path = require('path');
+
+const SUPPORTED_LANGUAGES = new Set(['en', 'zh-cn']);
+const SUPPORTED_AI_API_TYPES = new Set(['chat-completions', 'responses']);
+
+function normalizeLanguage(language) {
+  return language?.trim().toLowerCase() === 'zh-cn' ? 'zh-CN' : 'en';
+}
+
+function applyLocale(config, requestedLanguage) {
+  const language = normalizeLanguage(requestedLanguage);
+  const localePath = path.join(__dirname, '..', '..', 'locales', `${language}.json`);
+  const locale = JSON.parse(fs.readFileSync(localePath, 'utf8'));
+
+  config.responses = { ...config.responses, ...locale.responses };
+  config.locale = locale;
+  config.defaults.language = language;
+
+  return language;
+}
+
+/**
+ * 验证配置完整性
+ * @param {Object} config 配置对象
+ * @throws {Error} 配置不完整时抛出错误
+ */
+function validateConfig(config) {
+  const requiredSections = ['prompts', 'responses', 'logging', 'ai_settings', 'defaults'];
+  const requiredPrompts = ['spam_detection', 'readme_coverage_check', 'content_quality_check', 'pr_spam_detection'];
+  
+  // 检查主要配置段
+  for (const section of requiredSections) {
+    if (!config[section]) {
+      throw new Error(`配置文件缺少必需的段落: ${section}`);
+    }
+  }
+  
+  // 检查关键提示词
+  for (const prompt of requiredPrompts) {
+    if (!config.prompts[prompt]) {
+      throw new Error(`配置文件缺少必需的提示词: ${prompt}`);
+    }
+  }
+  
+  // 检查AI设置
+  if (typeof config.ai_settings.max_tokens !== 'number' || config.ai_settings.max_tokens <= 0) {
+    throw new Error('配置文件中的 max_tokens 必须是正整数');
+  }
+  
+  if (typeof config.ai_settings.temperature !== 'number' || config.ai_settings.temperature < 0 || config.ai_settings.temperature > 2) {
+    throw new Error('配置文件中的 temperature 必须是 0-2 之间的数字');
+  }
+  
+  core.info('✅ 配置文件验证通过');
+}
+
+/**
+ * 读取配置文件
+ * @returns {Object} 配置对象
+ */
+function loadConfig() {
+  try {
+    const configPath = path.join(__dirname, '..', '..', 'config.json');
+    const configContent = fs.readFileSync(configPath, 'utf8');
+    const config = JSON.parse(configContent);
+    
+    // 验证配置完整性
+    validateConfig(config);
+    
+    return config;
+  } catch (error) {
+    core.error('无法读取配置文件: ' + error.message);
+    throw error;
+  }
+}
+
+/**
+ * 解析用户输入参数
+ * @param {Object} config 基础配置对象
+ * @returns {Object} 解析后的配置对象
+ */
+function parseInputs(config) {
+  // 获取输入参数，使用配置文件中的默认值
+  const token = core.getInput('github-token') || process.env.INPUT_GITHUB_TOKEN || process.env.GITHUB_TOKEN;
+  const aiModel = core.getInput('ai-model') || process.env.INPUT_AI_MODEL || config.defaults.ai_model;
+  const labelsInput = core.getInput('labels') || process.env.INPUT_LABELS || config.defaults.labels;
+  const blacklistUsersInput = core.getInput('blacklist') || process.env.INPUT_BLACKLIST || '';
+  const requestedLanguage = core.getInput('language') || process.env.INPUT_LANGUAGE || config.defaults.language;
+  const language = applyLocale(config, requestedLanguage);
+
+  if (!SUPPORTED_LANGUAGES.has(requestedLanguage.trim().toLowerCase())) {
+    core.warning(`Unsupported language "${requestedLanguage}"; falling back to English.`);
+  }
+  
+  // 获取自定义AI配置参数
+  const customBaseUrl = core.getInput('ai-base-url') || process.env.INPUT_AI_BASE_URL || '';
+  const customApiKey = core.getInput('ai-api-key') || process.env.INPUT_AI_API_KEY || '';
+  const aiApiType = (core.getInput('ai-api-type') || process.env.INPUT_AI_API_TYPE || config.defaults.ai_api_type).trim().toLowerCase();
+
+  if (!SUPPORTED_AI_API_TYPES.has(aiApiType)) {
+    throw new Error(`Unsupported AI API type: ${aiApiType}`);
+  }
+  
+  // 解析黑名单用户列表
+  const blacklistUsers = blacklistUsersInput
+    ? blacklistUsersInput.split(',').map(user => user.trim().toLowerCase()).filter(user => user.length > 0)
+    : [];
+  
+  // 获取新的配置参数，用户设置则用用户设置的，未设置则使用config中的默认值
+  const analyzeFileChanges = core.getInput('analyze-file-changes') || process.env.INPUT_ANALYZE_FILE_CHANGES
+    ? (core.getInput('analyze-file-changes') || process.env.INPUT_ANALYZE_FILE_CHANGES).toLowerCase() === 'true'
+    : config.ai_settings.analyze_file_changes;
+
+  // 治理开关与参数（新增）
+  const canonicalLabel = core.getInput('canonical-label') || process.env.INPUT_CANONICAL_LABEL || config.defaults.canonical_label;
+  const duplicateLabel = core.getInput('duplicate-label') || process.env.INPUT_DUPLICATE_LABEL || config.defaults.duplicate_label;
+  const skipUsersInput = core.getInput('skip-users') || process.env.INPUT_SKIP_USERS || '';
+  const skipUsers = skipUsersInput
+    ? skipUsersInput.split(',').map(u => u.trim().toLowerCase()).filter(u => u.length > 0)
+    : [];
+
+  const dryRun = (core.getInput('dry-run') || process.env.INPUT_DRY_RUN || String(config.defaults.dry_run)).toLowerCase() === 'true';
+  const maintainerExempt = (core.getInput('maintainer-exempt') || process.env.INPUT_MAINTAINER_EXEMPT || String(config.defaults.maintainer_exempt)).toLowerCase() === 'true';
+  const enablePrGovernance = (core.getInput('enable-pr-governance') || process.env.INPUT_ENABLE_PR_GOVERNANCE || String(config.defaults.enable_pr_governance)).toLowerCase() === 'true';
+  const maxCanonicalIndex = parseInt(core.getInput('max-canonical-index') || process.env.INPUT_MAX_CANONICAL_INDEX || String(config.defaults.max_canonical_index), 10);
+  const canonicalBodyTruncate = parseInt(core.getInput('canonical-body-truncate') || process.env.INPUT_CANONICAL_BODY_TRUNCATE || String(config.defaults.canonical_body_truncate), 10);
+  
+  // 解析分析深度参数，使用配置文件中的设置
+  const analysisDepth = core.getInput('max-analysis-depth') || process.env.INPUT_MAX_ANALYSIS_DEPTH || config.defaults.analysis_depth;
+  
+  // 从配置文件获取分析深度设置
+  const depthConfig = config.analysis_depths[analysisDepth.toLowerCase()] || config.analysis_depths.normal;
+  const maxFilesToAnalyze = depthConfig.max_files;
+  const maxPatchLinesPerFile = depthConfig.max_lines;
+  
+  // 更新配置对象
+  config.ai_settings.analyze_file_changes = analyzeFileChanges;
+  config.ai_settings.max_files_to_analyze = maxFilesToAnalyze;
+  config.ai_settings.max_patch_lines_per_file = maxPatchLinesPerFile;
+  config.ai_settings.api_type = aiApiType;
+  
+  // 解析标签列表
+  const labelsList = labelsInput.split(',').map(label => label.trim()).filter(label => label.length > 0);
+
+  return {
+    token,
+    aiModel,
+    labelsList,
+    blacklistUsers,
+    language,
+    analyzeFileChanges,
+    analysisDepth,
+    maxFilesToAnalyze,
+    maxPatchLinesPerFile,
+    customBaseUrl,
+    customApiKey,
+    aiApiType,
+    canonicalLabel,
+    duplicateLabel,
+    skipUsers,
+    dryRun,
+    maintainerExempt,
+    enablePrGovernance,
+    maxCanonicalIndex,
+    canonicalBodyTruncate,
+    config
+  };
+}
+
+module.exports = {
+  loadConfig,
+  parseInputs,
+  validateConfig,
+  applyLocale,
+  normalizeLanguage
+};

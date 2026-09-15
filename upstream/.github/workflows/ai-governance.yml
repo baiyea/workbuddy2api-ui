@@ -1,0 +1,55 @@
+# AI 治理：垃圾检测 + 要点提炼 + canonical 归并（issue）+ PR 关联（PR）
+#
+# 触发：
+#   - issues.opened            → issue 治理（归并 / 规范化重开）
+#   - pull_request_target.opened → PR 治理（要点提炼 + canonical 关联，永不关闭合法 PR）
+#
+# 上线策略：先 dry-run: true 跑一段时间人工确认效果，再改为 false 进入治理。
+name: AI Governance
+
+on:
+  issues:
+    types: [opened]
+  # pull_request_target 让 action（含写操作）以目标仓库而不是 fork 身份运行 ——
+  # 这是 PR 治理改标题/正文/建 canonical 所必需的写权限来源（详见 DESIGN.md §12）。
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+  # PR 治理：改写标题 / 追加正文关联块需要 pull-requests: write。
+  pull-requests: write
+  # 走 GitHub Models 免费推理时才需要 models:read；改用自建 AI_BASE_URL/AI_API_KEY 后可移除。
+  models: read
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: AI governance
+        uses: ./.github/actions/ai-governance
+        with:
+          github-token: ${{ github.token }}
+          # AI 缺省走 GitHub Models（免费，靠 models:read）。
+          # 若要切换自建/第三方 OpenAI 兼容端点，在仓库 Secrets 里配置以下三项即可，无需改本文件：
+          #   AI_BASE_URL / AI_API_KEY / AI_MODEL
+          ai-base-url: ${{ secrets.AI_BASE_URL }}
+          ai-api-key: ${{ secrets.AI_API_KEY }}
+          ai-model: ${{ secrets.AI_MODEL }}
+          # 分类标签对齐仓库现有 label 体系（与 .github/ISSUE_TEMPLATE/*.yml 一致）
+          labels: 'bug,enhancement,question,documentation'
+          language: zh-CN
+          # ---- 治理参数 ----
+          canonical-label: 'canonical'
+          duplicate-label: 'duplicate'
+          # 治理正式生效（2026-09-13 重放验证通过后关闭 dry-run）
+          dry-run: 'false'
+          maintainer-exempt: 'true'
+          # PR 治理：垃圾检测 + 要点提炼 + canonical 关联（永不关闭合法 PR）
+          enable-pr-governance: 'true'
+          max-canonical-index: '50'
+          analyze-file-changes: 'false'

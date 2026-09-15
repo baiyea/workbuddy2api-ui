@@ -1,0 +1,120 @@
+name: 'AI Issue Governance'
+description: 'AI 驱动的 issue 治理：垃圾检测、要点提炼、canonical 归并、规范化重开（源自 NoMore Spam，MIT）'
+author: 'workbuddy2api contributors (基于 JohnsonRan/nomore-spam)'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  github-token:
+    description: 'GitHub token（issues:write 足够；PR 治理改写标题/正文需 pull-requests:write；走 GitHub Models 时还需 models:read）'
+    required: true
+    default: '${{ github.token }}'
+  ai-model:
+    description: 'AI 模型名'
+    required: false
+    default: 'openai/gpt-4o'
+  ai-base-url:
+    description: '自定义 OpenAI 兼容 API base URL；缺省回落 GitHub Models'
+    required: false
+    default: ''
+  ai-api-key:
+    description: '自定义 API key；缺省使用 GitHub token'
+    required: false
+    default: ''
+  ai-api-type:
+    description: 'OpenAI 兼容 API 类型：chat-completions 或 responses'
+    required: false
+    default: 'chat-completions'
+  labels:
+    description: '逗号分隔的分类标签（对齐仓库 label 体系）'
+    required: false
+    default: 'bug,enhancement,question,documentation'
+  language:
+    description: '机器人评论语言：en 或 zh-CN'
+    required: false
+    default: 'zh-CN'
+  analyze-file-changes:
+    description: '是否分析 PR 文件变更用于垃圾检测'
+    required: false
+    default: 'false'
+  max-analysis-depth:
+    description: '分析深度：light / normal / deep'
+    required: false
+    default: 'normal'
+  blacklist:
+    description: '逗号分隔的自动关闭黑名单用户名'
+    required: false
+    default: ''
+  # ---- 治理层参数 ----
+  canonical-label:
+    description: '归并目标标记标签（canonical issue 的发现机制）'
+    required: false
+    default: 'canonical'
+  duplicate-label:
+    description: '重复 issue 打上的标签'
+    required: false
+    default: 'duplicate'
+  skip-users:
+    description: '逗号分隔的额外跳过账号（默认已豁免 github-actions[bot]）'
+    required: false
+    default: ''
+  dry-run:
+    description: '演练模式：只评论不关闭/不创建/不打标签（上线前先用 true 验证）'
+    required: false
+    default: 'true'
+  maintainer-exempt:
+    description: '仓库协作者提交的 issue 跳过治理（只做垃圾检测与分类）'
+    required: false
+    default: 'true'
+  enable-pr-governance:
+    description: '是否启用 PR 治理（垃圾检测 + 要点提炼 + canonical 关联，永不关闭合法 PR）'
+    required: false
+    default: 'false'
+  max-canonical-index:
+    description: '归并匹配索取的 canonical issue 数量上限'
+    required: false
+    default: '50'
+  canonical-body-truncate:
+    description: '构造 canonical 索引时每条正文的截断长度'
+    required: false
+    default: '1500'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        npm ci --production
+
+    - name: Run AI Issue Governance
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        node src/index.js
+      env:
+        INPUT_GITHUB_TOKEN: ${{ inputs.github-token }}
+        INPUT_AI_MODEL: ${{ inputs.ai-model }}
+        INPUT_LABELS: ${{ inputs.labels }}
+        INPUT_LANGUAGE: ${{ inputs.language }}
+        INPUT_ANALYZE_FILE_CHANGES: ${{ inputs.analyze-file-changes }}
+        INPUT_MAX_ANALYSIS_DEPTH: ${{ inputs.max-analysis-depth }}
+        INPUT_BLACKLIST: ${{ inputs.blacklist }}
+        INPUT_AI_BASE_URL: ${{ inputs.ai-base-url }}
+        INPUT_AI_API_KEY: ${{ inputs.ai-api-key }}
+        INPUT_AI_API_TYPE: ${{ inputs.ai-api-type }}
+        INPUT_CANONICAL_LABEL: ${{ inputs.canonical-label }}
+        INPUT_DUPLICATE_LABEL: ${{ inputs.duplicate-label }}
+        INPUT_SKIP_USERS: ${{ inputs.skip-users }}
+        INPUT_DRY_RUN: ${{ inputs.dry-run }}
+        INPUT_MAINTAINER_EXEMPT: ${{ inputs.maintainer-exempt }}
+        INPUT_ENABLE_PR_GOVERNANCE: ${{ inputs.enable-pr-governance }}
+        INPUT_MAX_CANONICAL_INDEX: ${{ inputs.max-canonical-index }}
+        INPUT_CANONICAL_BODY_TRUNCATE: ${{ inputs.canonical-body-truncate }}
