@@ -105,6 +105,10 @@ func NewServer(cfg Config) (http.Handler, error) {
 		{"POST /admin/oauth", "POST", "/internal/v1/oauth"},
 		{"POST /admin/oauth/{id}/poll", "GET", "/internal/v1/oauth/{id}"},
 		{"POST /admin/oauth/{id}/region", "POST", "/internal/v1/oauth/{id}/region"},
+		{"GET /admin/tasks", "GET", "/internal/v1/tasks"},
+		{"POST /admin/tasks/{id}/runs", "POST", "/internal/v1/tasks/{id}/runs"},
+		{"GET /admin/task-runs", "GET", "/internal/v1/task-runs"},
+		{"GET /admin/task-runs/{id}", "GET", "/internal/v1/task-runs/{id}"},
 	} {
 		h.mux.HandleFunc(route.pattern, h.withAdmin(h.management(route.method, route.path)))
 	}

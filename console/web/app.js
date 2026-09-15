@@ -1,6 +1,8 @@
 const $ = (id) => document.getElementById(id);
 let csrf = '', modelList = [], accounts = [], history = [], conversation = newConversation(), activeRequest, flowID, flowTimer;
 let page = 'overview', sessionGeneration = 0;
+let taskState = {items:[],active_run:null,latest_runs:[]}, taskHistory = [], taskBefore = null, taskStarting = false, taskPollTimer;
+const taskIntents = new Map(), taskReads = new Set();
 function newConversation() { return `web-${Date.now()}-${Math.random().toString(36).slice(2)}`; }
 function notice(text = '') { $('notice').textContent = text; $('notice').hidden = !text; }
 async function api(path, data, signal) {
@@ -10,18 +12,18 @@ async function api(path, data, signal) {
  if (response.status === 401 && path !== 'login' && path !== 'logout') { signedOut(); throw new Error('管理会话已过期，请重新登录'); }
  return response;
 }
-async function jsonAPI(path, data) {
+async function jsonAPI(path, data, signal) {
  const generation = sessionGeneration;
- const response = await api(path, data); let result;
+ const response = await api(path, data, signal); let result;
  try { result = await response.json(); } catch { throw new Error(`服务返回了非 JSON 响应（${response.status}）`); }
  if (path !== 'logout' && generation !== sessionGeneration) throw new Error('管理会话已退出，请重新登录');
- if (!response.ok) throw new Error(typeof result.error === 'string' ? result.error : result.error?.message || `请求失败（${response.status}）`);
+ if (!response.ok) { const error=new Error(typeof result.error === 'string' ? result.error : result.error?.message || `请求失败（${response.status}）`);error.status=response.status;error.runID=result.run_id;throw error; }
  return result;
 }
 function signedOut() {
  sessionGeneration++;
- csrf = ''; activeRequest?.abort(); clearTimeout(flowTimer); flowID = undefined; history = []; conversation = newConversation();
- $('messages').replaceChildren(); $('api-key').value = ''; $('api-key').type = 'password'; $('admin-key').value = ''; $('console-view').hidden = true; $('login-view').hidden = false;
+ csrf = ''; activeRequest?.abort(); clearTimeout(flowTimer); flowID = undefined; history = []; conversation = newConversation(); stopTaskReads(); taskIntents.clear(); taskState={items:[],active_run:null,latest_runs:[]};taskHistory=[];taskBefore=null;taskStarting=false;
+ $('messages').replaceChildren();$('task-list').replaceChildren();$('task-history-body').replaceChildren();$('task-detail').hidden=true;$('task-accounts').textContent='';$('task-log').textContent=''; $('api-key').value = ''; $('api-key').type = 'password'; $('admin-key').value = ''; $('console-view').hidden = true; $('login-view').hidden = false;
 }
 async function signedIn(session) {
  csrf = session.csrf; $('admin-key').value = ''; $('login-view').hidden = true; $('console-view').hidden = false;
@@ -29,11 +31,13 @@ async function signedIn(session) {
  await refreshStatus(); await refreshModels();
 }
 document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
+ if (page === 'tasks' && button.dataset.view !== 'tasks') stopTaskReads();
  page = button.dataset.view;
  document.querySelectorAll('[data-page]').forEach(el => el.hidden = el.dataset.page !== page);
  document.querySelectorAll('.nav').forEach(el => el.classList.toggle('active', el.dataset.view === page));
- $('breadcrumb-name').textContent = {overview:'运行概览',accounts:'账号管理',chat:'对话测试',access:'API 接入'}[page];
+ $('breadcrumb-name').textContent = {overview:'运行概览',accounts:'账号管理',tasks:'自动任务',chat:'对话测试',access:'API 接入'}[page];
  if (page !== 'access') { $('api-key').value = ''; $('api-key').type = 'password'; }
+ if (page === 'tasks') loadTaskPage();
 }));
 $('login-form').addEventListener('submit', async event => {
  event.preventDefault(); const button = event.submitter; button.disabled = true; $('login-error').textContent = '';
@@ -73,6 +77,87 @@ function updateEfforts() { const model=modelList.find(m=>m.id===$('model').value
 $('model').addEventListener('change',updateEfforts);
 $('refresh').addEventListener('click',async()=>{await refreshStatus();await refreshModels();});
 setInterval(()=>{if(csrf&&!document.hidden)refreshStatus();},15000);
+
+const taskNames={checkin:'签到',travel:'猫猫旅行',activity:'活跃上报',keepalive:'Token 保活',school:'开学季',cat:'夜猫子'};
+const runStatuses={running:'运行中',success:'成功',partial_failure:'部分失败',failed:'失败',skipped:'已跳过',interrupted:'已中断（结果未确认）',unknown:'结果未确认'};
+function formatTaskReward(value){return value===null||value===undefined?'未确认':String(value);}
+function formatTaskAvailability(task){return task.enabled===false?'已禁用':task.next_at?'已启用':'暂不可用 / 未知';}
+function formatRunStatus(status){return runStatuses[status]||'结果未确认';}
+function formatTaskTime(value){if(!value)return '未知';const date=new Date(value);return Number.isNaN(date.getTime())?'未知':date.toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false});}
+function createTaskRequestID(){
+ if(typeof crypto.randomUUID==='function')return crypto.randomUUID();
+ const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);return Array.from(bytes,byte=>byte.toString(16).padStart(2,'0')).join('');
+}
+function stopTaskReads(){clearTimeout(taskPollTimer);taskPollTimer=undefined;for(const controller of taskReads)controller.abort();taskReads.clear();}
+async function taskJSON(path){
+ const controller=new AbortController();taskReads.add(controller);
+ try{return await jsonAPI(path,undefined,controller.signal);}finally{taskReads.delete(controller);}
+}
+function taskPageVisible(){return page==='tasks'&&csrf&&!document.hidden;}
+function scheduleTaskPoll(){
+ clearTimeout(taskPollTimer);taskPollTimer=undefined;
+ if(taskPageVisible()&&taskState.active_run)taskPollTimer=setTimeout(pollTaskRun,2000);
+}
+async function loadTaskState(){
+ if(!taskPageVisible())return;
+ try{taskState=await taskJSON('tasks');renderTasks();$('task-live').textContent=taskState.active_run?'后台任务正在运行，页面将自动刷新。':'任务状态已刷新。';scheduleTaskPoll();}
+ catch(error){if(error.name!=='AbortError'){$('task-live').textContent=error.message;notice(error.message);}}
+}
+async function loadTaskHistory(reset=false){
+ if(!taskPageVisible())return;
+ const path='task-runs?limit=20'+(!reset&&taskBefore?'&before='+encodeURIComponent(taskBefore):'');
+ try{const result=await taskJSON(path);taskHistory=reset?result.items:[...taskHistory,...result.items];taskBefore=result.next_before;renderTaskHistory();}
+ catch(error){if(error.name!=='AbortError')notice(error.message);}
+}
+async function loadTaskPage(){
+ stopTaskReads();taskHistory=[];taskBefore=null;renderTaskHistory();await Promise.all([loadTaskState(),loadTaskHistory(true)]);
+}
+function renderTasks(){
+ const list=$('task-list');list.replaceChildren();const active=taskState.active_run;
+ for(const task of taskState.items||[]){
+  const card=document.createElement('article');card.className='panel task-card';
+  const heading=document.createElement('div');heading.className='task-card-heading';const title=document.createElement('h3');title.textContent=taskNames[task.id]||task.id;const badge=document.createElement('span');badge.className='badge'+(task.enabled===false?' warn':'');badge.textContent=formatTaskAvailability(task);heading.append(title,badge);
+  const hours=document.createElement('p');hours.className='muted small';hours.textContent=`配置时间：${(task.hours||[]).map(hour=>String(hour).padStart(2,'0')+':00').join('、')||'未知'} · ${task.timezone==='Asia/Shanghai'?'北京时间':task.timezone||'时区未知'}`;
+  const next=document.createElement('p');next.className='small';next.textContent=task.enabled===false?'下次执行：已禁用':`下次执行：${task.next_at?formatTaskTime(task.next_at):'暂不可用 / 未知'}`;
+  const latest=(taskState.latest_runs||[]).find(run=>run.task_id===task.id);const summary=document.createElement('p');summary.className='muted small';summary.textContent=active?.task_id===task.id?`当前：${formatRunStatus(active.status)}`:latest?`最近：${formatRunStatus(latest.status)} · ${formatTaskTime(latest.started_at)}`:'最近：暂无记录';
+  const actions=document.createElement('div');actions.className='task-actions';const run=document.createElement('button');run.className='primary';run.textContent=active?.task_id===task.id?'运行中':taskIntents.has(task.id)?'重试同一操作':'立即执行';run.disabled=task.enabled===false||taskStarting||!!active;run.addEventListener('click',()=>triggerTask(task.id));actions.append(run);
+  if(latest){const detail=document.createElement('button');detail.className='secondary';detail.textContent='查看记录';detail.addEventListener('click',()=>loadTaskDetail(latest.id));actions.append(detail);}
+  card.append(heading,hours,next,summary,actions);list.append(card);
+ }
+}
+async function triggerTask(taskID){
+ const task=(taskState.items||[]).find(item=>item.id===taskID);if(taskStarting||taskState.active_run||!task||task.enabled===false)return;
+ const generation=sessionGeneration;taskStarting=true;const requestID=taskIntents.get(taskID)||createTaskRequestID();taskIntents.set(taskID,requestID);renderTasks();notice('');
+ try{
+  const run=await jsonAPI('tasks/'+taskID+'/runs',{request_id:requestID});if(generation!==sessionGeneration)return;taskIntents.delete(taskID);taskState.active_run=run;renderTaskDetail(run);await Promise.all([loadTaskState(),loadTaskHistory(true)]);
+ }catch(error){if(generation!==sessionGeneration)return;if(error.status===409&&error.runID){taskIntents.delete(taskID);await loadTaskDetail(error.runID);await loadTaskState();}else notice(error.message+'；再次点击会沿用同一请求标识。');}
+ finally{if(generation===sessionGeneration){taskStarting=false;renderTasks();}}
+}
+async function pollTaskRun(){
+ if(!taskPageVisible())return;
+ const activeID=taskState.active_run?.id;
+ if(activeID)await loadTaskDetail(activeID);
+ await loadTaskState();
+ if(!taskState.active_run)await loadTaskHistory(true);
+}
+function appendHistoryCell(row,text){const td=document.createElement('td');td.textContent=text;row.append(td);}
+function renderTaskHistory(){
+ const body=$('task-history-body');body.replaceChildren();$('task-history-empty').hidden=taskHistory.length>0;$('task-more').hidden=!taskBefore;
+ for(const run of taskHistory){const row=document.createElement('tr');appendHistoryCell(row,taskNames[run.task_id]||run.task_id);appendHistoryCell(row,formatRunStatus(run.status));appendHistoryCell(row,formatTaskTime(run.started_at));appendHistoryCell(row,run.source==='scheduled'?'计划':'手动');const action=document.createElement('td');const button=document.createElement('button');button.className='quiet';button.textContent='查看详情';button.addEventListener('click',()=>loadTaskDetail(run.id));action.append(button);row.append(action);body.append(row);}
+}
+function formatBalance(balance){return balance?`余额 ${balance.value}（观测于 ${formatTaskTime(balance.observed_at)}）`:'余额未观测';}
+function renderTaskDetail(run){
+ $('task-detail').hidden=false;$('task-detail-title').textContent=`${taskNames[run.task_id]||run.task_id} · ${formatRunStatus(run.status)}`;
+ const finish=run.status==='interrupted'?`观察时间：${formatTaskTime(run.finished_at)}（不代表真实业务结束）`:`结束时间：${formatTaskTime(run.finished_at)}`;
+ $('task-detail-meta').textContent=`开始时间：${formatTaskTime(run.started_at)} · ${finish} · 耗时：${run.duration_ms===null||run.duration_ms===undefined?'未知':run.duration_ms+' ms'}`;
+ $('task-accounts').textContent=(run.accounts||[]).map(account=>`${account.uid} · ${formatRunStatus(account.status)} · ${account.detail||'无补充说明'}\n${formatBalance(account.before)} → ${formatBalance(account.after)} · 已确认奖励：${formatTaskReward(account.reward)}`).join('\n\n')||'没有账号结果。';
+ $('task-log').textContent=run.log||'没有日志摘要。';$('task-log-truncated').hidden=!run.log_truncated;$('task-detail').scrollIntoView({block:'nearest'});
+}
+async function loadTaskDetail(id){try{renderTaskDetail(await taskJSON('task-runs/'+encodeURIComponent(id)));}catch(error){if(error.name!=='AbortError')notice(error.message);}}
+$('task-refresh').addEventListener('click',loadTaskPage);
+$('task-more').addEventListener('click',()=>loadTaskHistory(false));
+$('task-detail-close').addEventListener('click',()=>{$('task-detail').hidden=true;});
+document.addEventListener?.('visibilitychange',()=>{if(document.hidden)stopTaskReads();else if(page==='tasks')loadTaskPage();});
 
 $('add-account').addEventListener('submit',async event=>{
  event.preventDefault();clearTimeout(flowTimer);const button=event.submitter;button.disabled=true;notice('');

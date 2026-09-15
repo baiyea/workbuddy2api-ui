@@ -14,7 +14,7 @@
 </main>
 <div id="console-view" class="shell" hidden>
  <aside class="sidebar"><div class="brand"><span class="brand-icon">W</span> WorkBuddy</div><p class="sidebar-label">WORKSPACE CONSOLE</p>
-  <nav aria-label="主要导航"><button data-view="overview" class="nav active">◫ <span>运行概览</span></button><button data-view="accounts" class="nav">◎ <span>账号管理</span></button><button data-view="chat" class="nav">↗ <span>对话测试</span></button><button data-view="access" class="nav">⌘ <span>API 接入</span></button></nav>
+  <nav aria-label="主要导航"><button data-view="overview" class="nav active">◫ <span>运行概览</span></button><button data-view="accounts" class="nav">◎ <span>账号管理</span></button><button data-view="tasks" class="nav">◷ <span>自动任务</span></button><button data-view="chat" class="nav">↗ <span>对话测试</span></button><button data-view="access" class="nav">⌘ <span>API 接入</span></button></nav>
   <div class="sidebar-bottom"><span class="status-dot"></span> 自托管网关<button id="logout" class="quiet">退出登录</button></div>
  </aside>
  <main class="workspace"><header class="topbar"><span class="breadcrumb">控制台 <span>/</span> <span id="breadcrumb-name">运行概览</span></span><span class="badge" id="service-state">正在连接</span></header>
@@ -30,6 +30,12 @@
    </article>
    <div class="section-title"><h2>已连接账号</h2><span class="muted small">每 15 秒刷新本地状态</span></div>
    <div class="panel table-wrap"><table><thead><tr><th>账号 / 版本</th><th>状态</th><th>积分快照</th><th>成功 / 错误</th><th>在途</th><th>限制与说明</th></tr></thead><tbody id="accounts-body"></tbody></table><p id="accounts-empty" class="empty">还没有账号。点击上方「浏览器授权」开始。</p></div><p class="muted small">积分为最近观测值；未查询时显示「待确认」。同账号重新授权会更新凭据，保留现有限流记录。</p>
+  </section>
+  <section class="page" data-page="tasks" hidden><div class="page-heading"><div><p class="eyebrow">AUTOMATION</p><h1>自动任务</h1><p class="muted">配置与下次执行时间来自核心调度器；立即执行覆盖全部符合条件账号。</p></div><button id="task-refresh" class="secondary">↻ 刷新任务</button></div>
+   <p id="task-live" class="muted small" role="status" aria-live="polite">尚未读取任务状态</p><div id="task-list" class="task-grid"></div>
+   <div class="section-title"><h2>最近执行记录</h2><span class="muted small">结果来自模拟或实际 core 的结构化观察</span></div>
+   <div class="panel table-wrap"><table><thead><tr><th>任务</th><th>状态</th><th>开始时间</th><th>来源</th><th>操作</th></tr></thead><tbody id="task-history-body"></tbody></table><p id="task-history-empty" class="empty">还没有任务记录。</p></div><button id="task-more" class="secondary task-more" hidden>加载更早记录</button>
+   <article id="task-detail" class="panel task-detail" hidden><div class="section-title"><h2 id="task-detail-title">执行详情</h2><button id="task-detail-close" class="quiet">关闭</button></div><p id="task-detail-meta" class="muted small"></p><pre id="task-accounts" class="task-accounts"></pre><h3>脱敏日志摘要</h3><pre id="task-log" class="task-log"></pre><p id="task-log-truncated" class="muted small" hidden>日志已按服务端上限截断。</p></article>
   </section>
   <section class="page" data-page="chat" hidden><div class="page-heading"><div><p class="eyebrow">PLAYGROUND</p><h1>让模型回答一个问题</h1><p class="muted">真实请求经过同一账号池。对话只保留在当前页面，刷新即清空。</p></div><button id="clear-chat" class="secondary">清空对话</button></div>
    <div class="panel chat-panel"><div class="chat-settings"><label for="model">模型</label><select id="model"></select><label for="effort">推理档位</label><select id="effort"><option value="">默认</option></select></div><p id="model-hint" class="muted small"></p><div id="messages" class="messages" aria-live="polite"><div class="chat-empty">你好，想先问些什么？<small>选择模型后，在下方输入你的问题。</small></div></div>

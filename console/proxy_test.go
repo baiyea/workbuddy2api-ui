@@ -174,6 +174,51 @@ func TestManagementMappingsAndOwnerIsolation(t *testing.T) {
 		t.Error("logout did not cancel owner's flows")
 	}
 }
+
+func TestTaskManagementMappingsAndGuards(t *testing.T) {
+	type request struct{ method, path, query, body string }
+	seen := make(chan request, 4)
+	h, _ := testConsole(t, func(w http.ResponseWriter, r *http.Request) {
+		if mockInfo(w, r) {
+			return
+		}
+		body, _ := io.ReadAll(r.Body)
+		seen <- request{r.Method, r.URL.Path, r.URL.RawQuery, string(body)}
+		if r.Method == "POST" {
+			w.WriteHeader(202)
+		}
+		fmt.Fprint(w, `{}`)
+	})
+	if w := adminRequest(h, "GET", "/admin/tasks", "", nil, ""); w.Code != 401 {
+		t.Fatalf("unauthenticated tasks status=%d", w.Code)
+	}
+	cookie, csrf := login(t, h)
+	if w := adminRequest(h, "POST", "/admin/tasks/checkin/runs", `{"request_id":"rrrrrrrrrrrrrrrr"}`, cookie, ""); w.Code != 403 {
+		t.Fatalf("missing CSRF status=%d", w.Code)
+	}
+	for _, tc := range []struct{ method, path, body string }{
+		{"GET", "/admin/tasks", ""},
+		{"POST", "/admin/tasks/checkin/runs", `{"request_id":"rrrrrrrrrrrrrrrr"}`},
+		{"GET", "/admin/task-runs?before=run-one&limit=20", ""},
+		{"GET", "/admin/task-runs/run-one", ""},
+	} {
+		w := adminRequest(h, tc.method, tc.path, tc.body, cookie, csrf)
+		if (tc.method == "POST" && w.Code != 202) || (tc.method == "GET" && w.Code != 200) {
+			t.Fatalf("%s %s: %d %s", tc.method, tc.path, w.Code, w.Body)
+		}
+	}
+	want := []request{
+		{"GET", "/internal/v1/tasks", "", ""},
+		{"POST", "/internal/v1/tasks/checkin/runs", "", `{"request_id":"rrrrrrrrrrrrrrrr"}`},
+		{"GET", "/internal/v1/task-runs", "before=run-one&limit=20", ""},
+		{"GET", "/internal/v1/task-runs/run-one", "", ""},
+	}
+	for _, expected := range want {
+		if got := <-seen; got != expected {
+			t.Fatalf("mapping got=%+v want=%+v", got, expected)
+		}
+	}
+}
 func TestProtocolFailureOnlyDisablesManagement(t *testing.T) {
 	for _, info := range []string{`{"protocol":2}`, `{"protocol":1.5}`, `not-json`, `{"protocol":1} trailing`} {
 		t.Run(info, func(t *testing.T) {

@@ -51,6 +51,105 @@ function logoutFixture(fetch) {
   return {get,ctx,controller};
 }
 
+test('task reward distinguishes unknown from confirmed zero', () => {
+  const {ctx}=logoutFixture(()=>new Promise(()=>{}));
+  assert.equal(vm.runInContext('formatTaskReward(null)',ctx),'未确认');
+  assert.equal(vm.runInContext('formatTaskReward(undefined)',ctx),'未确认');
+  assert.equal(vm.runInContext('formatTaskReward(0)',ctx),'0');
+  assert.equal(vm.runInContext('formatTaskReward(5)',ctx),'5');
+});
+
+test('task request id uses secure random bytes when randomUUID is unavailable', () => {
+  const {ctx}=logoutFixture(()=>new Promise(()=>{}));
+  ctx.crypto={getRandomValues(bytes){for(let i=0;i<bytes.length;i++)bytes[i]=i;return bytes;}};
+  assert.equal(vm.runInContext('createTaskRequestID()',ctx),'000102030405060708090a0b0c0d0e0f');
+  ctx.crypto={randomUUID(){return '11111111-2222-4333-8444-555555555555';},getRandomValues(){throw new Error('fallback used');}};
+  assert.equal(vm.runInContext('createTaskRequestID()',ctx),'11111111-2222-4333-8444-555555555555');
+});
+
+test('task truth and all run statuses are formatted without guessing', () => {
+  const {ctx}=logoutFixture(()=>new Promise(()=>{}));
+  assert.equal(vm.runInContext("formatTaskAvailability({enabled:false,next_at:null})",ctx),'已禁用');
+  assert.equal(vm.runInContext("formatTaskAvailability({enabled:true,next_at:null})",ctx),'暂不可用 / 未知');
+  for(const [status,label] of Object.entries({running:'运行中',success:'成功',partial_failure:'部分失败',failed:'失败',skipped:'已跳过',interrupted:'已中断（结果未确认）',unknown:'结果未确认'})) {
+    ctx.testStatus=status;
+    assert.equal(vm.runInContext('formatRunStatus(testStatus)',ctx),label,status);
+  }
+});
+
+function taskFixture(fetch, cryptoImpl={randomUUID:()=> '11111111-2222-4333-8444-555555555555'}) {
+  const elements=new Map();
+  function element(tag='div') {
+    return {tagName:tag.toUpperCase(),value:'',type:'',hidden:false,disabled:false,textContent:'',className:'',children:[],dataset:{},handlers:{},
+      addEventListener(name,fn){this.handlers[name]=fn;},append(...children){this.children.push(...children);},appendChild(child){this.children.push(child);return child;},
+      replaceChildren(...children){this.children=children;},querySelector(){return null;},scrollIntoView(){},select(){}};
+  }
+  const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
+  const ctx=vm.createContext({document:{getElementById:get,querySelectorAll:()=>[],createElement:element,hidden:false,addEventListener(){}},
+    location:{origin:'http://console.test'},AbortController,TextDecoder,TextEncoder,Option:function(text,value){return {textContent:text,value};},
+    setInterval(){},clearTimeout(){},setTimeout(){},fetch,crypto:cryptoImpl,navigator:{clipboard:{writeText:async()=>{}}}});
+  vm.runInContext(readFileSync(__dirname+'/web/app.js','utf8'),ctx);
+  vm.runInContext("csrf='active-csrf';page='tasks';taskState={items:[{id:'checkin',enabled:true,hours:[9,21],timezone:'Asia/Shanghai',next_at:null}],active_run:null,latest_runs:[]};",ctx);
+  return {ctx,get};
+}
+
+test('rapid task activation sends once and an unknown response retries the same intent id', async () => {
+  let firstReject, postCount=0;
+  const bodies=[];
+  const response=(status,body)=>({ok:status<400,status,json:async()=>body});
+  const {ctx}=taskFixture((url,options={})=>{
+    if(url==='/admin/session')return new Promise(()=>{});
+    if(url==='/admin/tasks/checkin/runs') {
+      postCount++;bodies.push(options.body);
+      if(postCount===1)return new Promise((_,reject)=>{firstReject=reject;});
+      return response(202,{id:'run-one',task_id:'checkin',status:'running',accounts:[]});
+    }
+    if(url==='/admin/tasks')return response(200,{items:[{id:'checkin',enabled:true,hours:[9,21],timezone:'Asia/Shanghai',next_at:null}],active_run:null,latest_runs:[]});
+    if(url==='/admin/task-runs/run-one')return response(200,{id:'run-one',task_id:'checkin',status:'success',accounts:[],duration_ms:0,log:''});
+    if(url==='/admin/task-runs?limit=20')return response(200,{items:[],next_before:null});
+    throw new Error('unexpected '+url);
+  });
+  const first=vm.runInContext("triggerTask('checkin')",ctx);
+  await Promise.resolve();
+  await vm.runInContext("triggerTask('checkin')",ctx);
+  assert.equal(postCount,1,'rapid repeat issued a second POST');
+  firstReject(new TypeError('connection lost after request'));
+  await first;
+  await vm.runInContext("triggerTask('checkin')",ctx);
+  assert.equal(postCount,2);
+  assert.equal(JSON.parse(bodies[0]).request_id,JSON.parse(bodies[1]).request_id,'retry changed request intent id');
+});
+
+test('logout clears task UI state without aborting an accepted-start request', async () => {
+  let rejectStart, startSignal;
+  const {ctx}=taskFixture((url,options={})=>{
+    if(url==='/admin/session')return new Promise(()=>{});
+    if(url==='/admin/tasks/checkin/runs'){startSignal=options.signal;return new Promise((_,reject)=>{rejectStart=reject;});}
+    throw new Error('unexpected '+url);
+  });
+  const pending=vm.runInContext("triggerTask('checkin')",ctx);
+  await Promise.resolve();
+  ctx.document.getElementById('task-log').textContent='private task log';
+  vm.runInContext('signedOut()',ctx);
+  assert.equal(startSignal,undefined,'page cleanup attached cancellation to the accepted-start request');
+  assert.equal(vm.runInContext('taskStarting',ctx),false,'logout left task controls stuck busy');
+  assert.equal(ctx.document.getElementById('task-log').textContent,'','logout retained task detail');
+  rejectStart(new TypeError('browser logged out'));
+  await pending;
+});
+
+test('task detail keeps untrusted logs as text and preserves unknown duration', () => {
+  const {ctx,get}=taskFixture(()=>new Promise(()=>{}));
+  ctx.runFixture={id:'run-x',task_id:'activity',status:'interrupted',started_at:'2026-09-15T10:00:00Z',finished_at:'2026-09-15T10:01:00Z',duration_ms:null,accounts:[{uid:'u1',status:'unknown',detail:'result_unconfirmed',before:null,after:{value:0,observed_at:'2026-09-15T10:00:30Z'},reward:null}],log:'<img src=x onerror=alert(1)>',log_truncated:true};
+  vm.runInContext('renderTaskDetail(runFixture)',ctx);
+  assert.equal(get('task-log').textContent,'<img src=x onerror=alert(1)>');
+  assert.match(get('task-detail-meta').textContent,/耗时：未知/);
+  assert.match(get('task-detail-meta').textContent,/观察时间/);
+  assert.match(get('task-accounts').textContent,/已确认奖励：未确认/);
+  assert.match(get('task-accounts').textContent,/余额 0/);
+  assert.equal(get('task-log-truncated').hidden,false);
+});
+
 test('logout 503 immediately clears browser secrets and shows cleanup error on login', async () => {
   let finishLogout;
   const {get,ctx,controller} = logoutFixture((url,options) => {
