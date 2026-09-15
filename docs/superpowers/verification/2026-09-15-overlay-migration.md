@@ -169,7 +169,8 @@ acceptance 断言 core 只有 internal mock 网络，console 额外连接 entry 
   mock legacy API Key，但没有复制。
 - 对话页明确选择 `global:mock-model`，隔离 mock 返回 `mock-runtime-ok`，usage 为 1/1/2；
   没有访问真实模型。
-- 自动任务页显示来自 mock core 的六项配置：checkin 启用且四个时点，其余禁用；已有
+- 自动任务页显示来自 mock core 的六项配置：checkin 启用且唯一时点为北京时间 04:00，
+  其余禁用；已有
   checkin 记录为 skipped/global、奖励未确认、无余额。刷新后记录仍在。
 - 390x844 下五页 `scrollWidth=390`，导航和退出可见；键盘 Enter 退出返回登录页，随后恢复
   viewport。
