@@ -16,6 +16,6 @@ def emit(uid, status, detail, reward=None):
     if not isinstance(uid, str) or len(uid) > 256 or detail not in DETAILS:
         raise ValueError("invalid task classification")
     if reward is not None and (type(reward) is not int or reward < 0 or reward > 2**63 - 1):
-        raise ValueError("invalid task reward")
+        reward = None  # Unrepresentable telemetry must not interrupt the account loop.
     print("WB2A_TASK_EVENT " + json.dumps({"uid": uid, "status": status,
           "detail": detail, "reward": reward}, ensure_ascii=False), flush=True)

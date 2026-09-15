@@ -30,9 +30,43 @@ class TaskEventsTest(unittest.TestCase):
     def test_emit_rejects_untrusted_fields_and_preserves_null(self):
         task_events.emit(self.auth["uid"], "unknown", "result_unconfirmed")
         self.assertEqual(self.events(), [{"uid": "same1234-full-uid", "status": "unknown", "detail": "result_unconfirmed", "reward": None}])
-        for args in [("running", "query_failed", None), ("failed", "token=private-token", None), ("success", "reward_claimed", True), ("success", "reward_claimed", -1)]:
+        for args in [("running", "query_failed", None), ("failed", "token=private-token", None)]:
             with self.assertRaises(ValueError):
                 task_events.emit(self.auth["uid"], *args)
+
+    def test_emit_invalid_reward_is_null_without_changing_business_status(self):
+        for reward in [2**63, -1, 1.5, "7", True, False, {}, []]:
+            with self.subTest(reward=reward):
+                try:
+                    task_events.emit(self.auth["uid"], "success", "reward_claimed", reward)
+                except ValueError as error:
+                    self.fail(f"reward observation must not interrupt business execution: {error}")
+                self.assertEqual(self.events()[-1], {"uid": "same1234-full-uid", "status": "success", "detail": "reward_claimed", "reward": None})
+
+    def test_emit_preserves_legal_reward_boundaries(self):
+        for reward in [None, 0, 9223372036854775807]:
+            task_events.emit(self.auth["uid"], "success", "reward_claimed", reward)
+        self.assertEqual([event["reward"] for event in self.events()], [None, 0, 9223372036854775807])
+
+    def test_cat_all_continues_after_unrepresentable_reward(self):
+        # Numeric fixtures remain valid for upstream's own arithmetic; only telemetry degrades.
+        for reward in [2**63, 1.5, -1, True]:
+            with self.subTest(reward=reward), tempfile.TemporaryDirectory() as directory:
+                self.out.seek(0)
+                self.out.truncate()
+                for index, uid in enumerate(["first", "second"]):
+                    Path(directory, f"workbuddy-{index:08x}.json").write_text(json.dumps({"auth": {"accessToken": "private-token"}, "account": {"uid": uid}}))
+                def get(auth, base, path, **kwargs):
+                    return 200, {"code": 0, "data": {"tasks": [{"task_code": "black_cat", "accept_status": "completed", "progress": {"current": 3, "target": 3}}]}}
+                def post(auth, base, path, body, **kwargs):
+                    self.assertEqual(path, "/activity/growth/tasks/black_cat/claim")
+                    return 200, {"code": 0, "data": {"credit": reward if auth["uid"] == "first" else 7, "energy": 0}}
+                with patch.object(tc, "AUTHS", directory), patch.object(tc, "do_get", side_effect=get), patch.object(tc, "do_post", side_effect=post), patch.object(cat.time, "sleep"), patch("sys.argv", ["task_runner.py", "ALL", "--yes", "--only", "black_cat"]):
+                    try:
+                        cat.main()
+                    except ValueError as error:
+                        self.fail(f"ALL interrupted before the next account: {error}")
+                self.assertEqual([(e["uid"], e["status"], e["reward"]) for e in self.events()], [("first", "success", None), ("second", "success", 7)])
 
     def test_cat_window_and_claimed_remain_skips(self):
         with patch.object(cat, "within_night_window", return_value=False), patch.object(tc, "do_post", side_effect=AssertionError("unexpected write")):
