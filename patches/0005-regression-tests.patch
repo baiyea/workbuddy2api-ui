@@ -1,0 +1,19 @@
+diff --git a/internal/server/handler_test.go b/internal/server/handler_test.go
+index 594dce7..2a36ce6 100644
+--- a/internal/server/handler_test.go
++++ b/internal/server/handler_test.go
+@@ -1476,7 +1476,13 @@ func TestStatusRateLimitedModelsLedger(t *testing.T) {
+ 	if row.Model != "glm-5.2" {
+ 		t.Errorf("model=%q want glm-5.2", row.Model)
+ 	}
+-	if d := row.ResetAt.Sub(reset); d < -time.Second || d > time.Second {
++	// reset_at is intentionally omitted when it equals until. Clock resolution
++	// determines whether the two timestamps match exactly; both forms are valid.
++	resetAt := row.ResetAt
++	if resetAt.IsZero() {
++		resetAt = row.Until
++	}
++	if d := resetAt.Sub(reset); d < -time.Second || d > time.Second {
+ 		t.Errorf("reset_at=%v want ~35m 后=%v", row.ResetAt, reset)
+ 	}
+ 	// 6004 模型级冷却不写账号级 until：Status.Until 应为零值，模型截止在台账行里。

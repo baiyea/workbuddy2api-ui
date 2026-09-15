@@ -1,1 +1,5 @@
 # One repository-relative patch path per line, applied in order.
+0001-auth-pool-consistency.patch
+0002-upstream-credential-snapshots.patch
+0003-core-wiring.patch
+0005-regression-tests.patch
