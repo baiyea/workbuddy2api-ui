@@ -1,6 +1,6 @@
 const $ = (id) => document.getElementById(id);
 let csrf = '', modelList = [], accounts = [], history = [], conversation = newConversation(), activeRequest, flowID, flowTimer;
-let page = 'overview';
+let page = 'overview', sessionGeneration = 0;
 function newConversation() { return `web-${Date.now()}-${Math.random().toString(36).slice(2)}`; }
 function notice(text = '') { $('notice').textContent = text; $('notice').hidden = !text; }
 async function api(path, data, signal) {
@@ -9,14 +9,17 @@ async function api(path, data, signal) {
  return response;
 }
 async function jsonAPI(path, data) {
+ const generation = sessionGeneration;
  const response = await api(path, data); let result;
  try { result = await response.json(); } catch { throw new Error(`服务返回了非 JSON 响应（${response.status}）`); }
+ if (path !== 'logout' && generation !== sessionGeneration) throw new Error('管理会话已退出，请重新登录');
  if (!response.ok) throw new Error(typeof result.error === 'string' ? result.error : result.error?.message || `请求失败（${response.status}）`);
  return result;
 }
 function signedOut() {
+ sessionGeneration++;
  csrf = ''; activeRequest?.abort(); clearTimeout(flowTimer); flowID = undefined; history = []; conversation = newConversation();
- $('messages').replaceChildren(); $('api-key').value = ''; $('admin-key').value = ''; $('console-view').hidden = true; $('login-view').hidden = false;
+ $('messages').replaceChildren(); $('api-key').value = ''; $('api-key').type = 'password'; $('admin-key').value = ''; $('console-view').hidden = true; $('login-view').hidden = false;
 }
 async function signedIn(session) {
  csrf = session.csrf; $('admin-key').value = ''; $('login-view').hidden = true; $('console-view').hidden = false;
@@ -34,7 +37,7 @@ $('login-form').addEventListener('submit', async event => {
  event.preventDefault(); const button = event.submitter; button.disabled = true; $('login-error').textContent = '';
  try { const session = await jsonAPI('login', {key:$('admin-key').value}); await signedIn(session); } catch(error) { $('login-error').textContent = error.message; } finally { button.disabled = false; }
 });
-$('logout').addEventListener('click', async () => {try {await jsonAPI('logout', {});signedOut();} catch(e){notice(e.message);} });
+$('logout').addEventListener('click', async () => {$('login-error').textContent='';const pending=jsonAPI('logout', {});signedOut();try {await pending;} catch(e){$('login-error').textContent=e.message;} });
 function cell(text, small) { const td = document.createElement('td'); td.textContent = text; if (small) { const s=document.createElement('small');s.textContent=small;td.append(s); } return td; }
 function renderAccounts(data) {
  accounts = data.accounts || [];
