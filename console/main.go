@@ -52,6 +52,9 @@ func readDeploymentKeys(path string, timeout time.Duration, adminOverride, apiOv
 			if closeErr != nil {
 				return deploymentKeys{}, closeErr
 			}
+			if err := validateDeploymentKeys(keys); err != nil {
+				return deploymentKeys{}, err
+			}
 			if adminOverride != "" {
 				keys.AdminKey = adminOverride
 			}

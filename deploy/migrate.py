@@ -79,8 +79,56 @@ def _validated_mounts(manifest):
                 raise ValueError(f"invalid volume name for {destination}")
         else:
             raise ValueError(f"unsupported mount type for {destination}")
-        selected.append(mount)
+        selected.append(
+            {
+                "Name": str(mount.get("Name", "")),
+                "Source": str(mount.get("Source", "")),
+                "Destination": destination,
+                "Type": mount["Type"],
+            }
+        )
     return selected
+
+
+def _inspect_volume(name):
+    result = subprocess.run(
+        ["docker", "volume", "inspect", name],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode:
+        raise ValueError("named volume does not exist")
+    try:
+        rows = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        raise ValueError("docker volume inspect returned invalid JSON") from error
+    if (
+        len(rows) != 1
+        or not isinstance(rows[0], dict)
+        or rows[0].get("Name") != name
+        or not isinstance(rows[0].get("Mountpoint"), str)
+    ):
+        raise ValueError("docker volume inspect did not identify the expected volume")
+    return rows[0]
+
+
+def _refresh_backup_source(manifest, expected_mounts):
+    expected_id = manifest["container"].get("Id")
+    if not isinstance(expected_id, str) or not expected_id:
+        raise ValueError("migration manifest has no container identity")
+    current = inspect_container(expected_id)
+    if current["container"]["Id"] != expected_id:
+        raise ValueError("migration source container was replaced")
+    current_mounts = _validated_mounts(current)
+    if current_mounts != expected_mounts:
+        raise ValueError("migration source mounts changed")
+    for mount in current_mounts:
+        if mount["Type"] == "volume":
+            volume = _inspect_volume(mount["Name"])
+            if volume["Mountpoint"] != mount["Source"]:
+                raise ValueError("migration volume source changed")
+    return current
 
 
 def _archive_bind(source, archive):
@@ -135,6 +183,7 @@ def backup(manifest_path, output):
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise ValueError("invalid migration manifest") from error
     mounts = _validated_mounts(manifest)
+    before = _refresh_backup_source(manifest, mounts)
     output.mkdir(mode=0o700)
     output.chmod(0o700)
     archives = []
@@ -155,9 +204,10 @@ def backup(manifest_path, output):
                 "size": len(raw),
             }
         )
-    running = bool(manifest["container"].get("Running"))
+    after = _refresh_backup_source(manifest, mounts)
+    running = bool(before["container"]["Running"] or after["container"]["Running"])
     result = {
-        "container": manifest["container"],
+        "container": after["container"],
         "consistent": not running,
         "warning": "运行中备份不构成最终一致性备份；切换前停止旧实例后重新备份。" if running else "",
         "archives": archives,

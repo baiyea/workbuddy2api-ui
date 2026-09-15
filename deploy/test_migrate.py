@@ -81,7 +81,8 @@ class BackupTests(unittest.TestCase):
             manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
             output = root / "backup"
 
-            result = migrate.backup(manifest_path, output)
+            with mock.patch("migrate.inspect_container", return_value=manifest):
+                result = migrate.backup(manifest_path, output)
 
             self.assertFalse(result["consistent"])
             self.assertIn("最终一致性", result["warning"])
@@ -95,6 +96,100 @@ class BackupTests(unittest.TestCase):
                     self.assertIn(expected_member, bundle.getnames())
             saved = json.loads((output / "backup-manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(result, saved)
+
+    def test_backup_rejects_missing_volume_before_creating_archive_or_volume(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            manifest = {
+                "container": {"Id": "id", "Name": "legacy", "Image": "image", "Running": False},
+                "mounts": [
+                    {"Name": "legacy_auths", "Source": "/vol/auths", "Destination": "/app/auths", "Type": "volume"},
+                    {"Name": "legacy_data", "Source": "/vol/data", "Destination": "/app/data", "Type": "volume"},
+                ],
+            }
+            manifest_path = root / "inspect.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            output = root / "backup"
+            with (
+                mock.patch("migrate.inspect_container", return_value=manifest),
+                mock.patch("migrate._inspect_volume", side_effect=ValueError("volume does not exist")),
+                mock.patch("migrate._archive_volume") as archive,
+                self.assertRaises(ValueError),
+            ):
+                migrate.backup(manifest_path, output)
+            archive.assert_not_called()
+            self.assertFalse(output.exists())
+
+    def test_backup_rejects_volume_whose_live_source_changed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            manifest = {
+                "container": {"Id": "id", "Name": "legacy", "Image": "image", "Running": False},
+                "mounts": [
+                    {"Name": "legacy_auths", "Source": "/vol/auths", "Destination": "/app/auths", "Type": "volume"},
+                    {"Name": "legacy_data", "Source": "/vol/data", "Destination": "/app/data", "Type": "volume"},
+                ],
+            }
+            manifest_path = root / "inspect.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            output = root / "backup"
+            with (
+                mock.patch("migrate.inspect_container", return_value=manifest),
+                mock.patch("migrate._inspect_volume", return_value={"Name": "legacy_auths", "Mountpoint": "/vol/replaced"}),
+                mock.patch("migrate._archive_volume") as archive,
+                self.assertRaises(ValueError),
+            ):
+                migrate.backup(manifest_path, output)
+            archive.assert_not_called()
+            self.assertFalse(output.exists())
+
+    def test_backup_rejects_replaced_container_or_changed_mapping(self):
+        manifest = {
+            "container": {"Id": "original", "Name": "legacy", "Image": "image", "Running": False},
+            "mounts": [
+                {"Name": "legacy_auths", "Source": "/vol/auths", "Destination": "/app/auths", "Type": "volume"},
+                {"Name": "legacy_data", "Source": "/vol/data", "Destination": "/app/data", "Type": "volume"},
+            ],
+        }
+        replaced = {**manifest, "container": {**manifest["container"], "Id": "replacement"}}
+        remapped = {**manifest, "mounts": [dict(manifest["mounts"][0]), {**manifest["mounts"][1], "Name": "other", "Source": "/vol/other"}]}
+        for name, current in (("container", replaced), ("mapping", remapped)):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                manifest_path = root / "inspect.json"
+                manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                with mock.patch("migrate.inspect_container", return_value=current), self.assertRaises(ValueError):
+                    migrate.backup(manifest_path, root / "backup")
+                self.assertFalse((root / "backup").exists())
+
+    def test_backup_uses_pre_and_post_archive_running_state(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            auths, data = root / "auths", root / "data"
+            auths.mkdir()
+            data.mkdir()
+            stopped = {
+                "container": {"Id": "id", "Name": "legacy", "Image": "image", "Running": False},
+                "mounts": [
+                    {"Name": "", "Source": str(auths), "Destination": "/app/auths", "Type": "bind"},
+                    {"Name": "", "Source": str(data), "Destination": "/app/data", "Type": "bind"},
+                ],
+            }
+            saved = {**stopped, "container": {**stopped["container"], "Running": True}}
+            manifest_path = root / "inspect.json"
+            manifest_path.write_text(json.dumps(saved), encoding="utf-8")
+            with mock.patch("migrate.inspect_container", side_effect=[stopped, stopped]) as inspect:
+                result = migrate.backup(manifest_path, root / "backup")
+            self.assertEqual(2, inspect.call_count)
+            self.assertTrue(result["consistent"])
+            self.assertFalse(result["container"]["Running"])
+
+            running = {**stopped, "container": {**stopped["container"], "Running": True}}
+            with mock.patch("migrate.inspect_container", side_effect=[stopped, running]):
+                restarted = migrate.backup(manifest_path, root / "backup-restarted")
+            self.assertFalse(restarted["consistent"])
+            self.assertTrue(restarted["container"]["Running"])
+            self.assertIn("最终一致性", restarted["warning"])
 
     def test_cli_inspect_prints_json_without_environment(self):
         manifest = {"container": {"Id": "id", "Name": "legacy", "Image": "image", "Running": False}, "mounts": []}

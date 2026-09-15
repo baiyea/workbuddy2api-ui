@@ -27,6 +27,27 @@ func TestReadDeploymentKeysAppliesOverridesWithoutWritingKeyFile(t *testing.T) {
 	}
 }
 
+func TestReadDeploymentKeysRejectsInvalidBaseDespiteValidOverrides(t *testing.T) {
+	for name, original := range map[string][]byte{
+		"short admin": []byte(`{"admin_key":"short","api_key":"base-api","bridge_key":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}`),
+		"empty api":   []byte(`{"admin_key":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","api_key":"","bridge_key":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}`),
+		"duplicate":   []byte(`{"admin_key":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","api_key":"base-api","bridge_key":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}`),
+	} {
+		t.Run(name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "keys.json")
+			if err := os.WriteFile(path, original, 0600); err != nil {
+				t.Fatal(err)
+			}
+			if _, err := readDeploymentKeys(path, time.Second, strings.Repeat("c", 32), "valid-api"); err == nil {
+				t.Fatal("valid overrides concealed an invalid persisted base")
+			}
+			if after, err := os.ReadFile(path); err != nil || !bytes.Equal(after, original) {
+				t.Fatalf("rejected base was changed: %v", err)
+			}
+		})
+	}
+}
+
 func TestReadDeploymentKeysWaitIsBoundedAndRejectsCorruption(t *testing.T) {
 	start := time.Now()
 	if _, err := readDeploymentKeys(filepath.Join(t.TempDir(), "missing.json"), 40*time.Millisecond, "", ""); err == nil {

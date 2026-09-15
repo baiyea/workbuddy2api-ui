@@ -83,8 +83,8 @@ class SourceDigestTests(unittest.TestCase):
             with self.subTest(build=build), tempfile.TemporaryDirectory() as d:
                 root = Path(d)
                 build(root)
-            with self.assertRaises(ValueError):
-                source_digest(root)
+                with self.assertRaises(ValueError):
+                    source_digest(root)
 
 
 class OverlayIdentityTests(unittest.TestCase):
