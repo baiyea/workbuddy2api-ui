@@ -1,7 +1,7 @@
 const $ = (id) => document.getElementById(id);
 let csrf = '', modelList = [], accounts = [], history = [], conversation = newConversation(), activeRequest, flowID, flowTimer;
 let page = 'overview', sessionGeneration = 0;
-let taskState = {items:[],active_run:null,latest_runs:[]}, taskHistory = [], taskBefore = null, taskStarting = false, taskPollTimer;
+let taskState = {items:[],active_run:null,latest_runs:[]}, taskHistory = [], taskBefore = null, taskStarting = false, taskPollTimer, taskRenderKey, detailController, detailGeneration = 0;
 const taskIntents = new Map(), taskReads = new Set();
 function newConversation() { return `web-${Date.now()}-${Math.random().toString(36).slice(2)}`; }
 function notice(text = '') { $('notice').textContent = text; $('notice').hidden = !text; }
@@ -22,7 +22,7 @@ async function jsonAPI(path, data, signal) {
 }
 function signedOut() {
  sessionGeneration++;
- csrf = ''; activeRequest?.abort(); clearTimeout(flowTimer); flowID = undefined; history = []; conversation = newConversation(); stopTaskReads(); taskIntents.clear(); taskState={items:[],active_run:null,latest_runs:[]};taskHistory=[];taskBefore=null;taskStarting=false;
+ csrf = ''; activeRequest?.abort(); clearTimeout(flowTimer); flowID = undefined; history = []; conversation = newConversation(); stopTaskReads(); taskIntents.clear(); taskState={items:[],active_run:null,latest_runs:[]};taskHistory=[];taskBefore=null;taskStarting=false;taskRenderKey=undefined;
  $('messages').replaceChildren();$('task-list').replaceChildren();$('task-history-body').replaceChildren();$('task-detail').hidden=true;$('task-accounts').textContent='';$('task-log').textContent=''; $('api-key').value = ''; $('api-key').type = 'password'; $('admin-key').value = ''; $('console-view').hidden = true; $('login-view').hidden = false;
 }
 async function signedIn(session) {
@@ -31,7 +31,7 @@ async function signedIn(session) {
  await refreshStatus(); await refreshModels();
 }
 document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
- if (page === 'tasks' && button.dataset.view !== 'tasks') stopTaskReads();
+ if (page === 'tasks' && button.dataset.view !== 'tasks') stopTaskReads(true);
  page = button.dataset.view;
  document.querySelectorAll('[data-page]').forEach(el => el.hidden = el.dataset.page !== page);
  document.querySelectorAll('.nav').forEach(el => el.classList.toggle('active', el.dataset.view === page));
@@ -88,7 +88,8 @@ function createTaskRequestID(){
  if(typeof crypto.randomUUID==='function')return crypto.randomUUID();
  const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);return Array.from(bytes,byte=>byte.toString(16).padStart(2,'0')).join('');
 }
-function stopTaskReads(){clearTimeout(taskPollTimer);taskPollTimer=undefined;for(const controller of taskReads)controller.abort();taskReads.clear();}
+function cancelTaskDetail(hide=false){detailGeneration++;detailController?.abort();detailController=undefined;if(hide)$('task-detail').hidden=true;}
+function stopTaskReads(hideDetail=false){clearTimeout(taskPollTimer);taskPollTimer=undefined;for(const controller of taskReads)controller.abort();taskReads.clear();cancelTaskDetail(hideDetail);}
 async function taskJSON(path){
  const controller=new AbortController();taskReads.add(controller);
  try{return await jsonAPI(path,undefined,controller.signal);}finally{taskReads.delete(controller);}
@@ -98,10 +99,11 @@ function scheduleTaskPoll(){
  clearTimeout(taskPollTimer);taskPollTimer=undefined;
  if(taskPageVisible()&&taskState.active_run)taskPollTimer=setTimeout(pollTaskRun,2000);
 }
+function scheduleTaskRetry(){clearTimeout(taskPollTimer);taskPollTimer=taskPageVisible()?setTimeout(loadTaskState,2000):undefined;}
 async function loadTaskState(){
  if(!taskPageVisible())return;
  try{taskState=await taskJSON('tasks');renderTasks();$('task-live').textContent=taskState.active_run?'后台任务正在运行，页面将自动刷新。':'任务状态已刷新。';scheduleTaskPoll();}
- catch(error){if(error.name!=='AbortError'){$('task-live').textContent=error.message;notice(error.message);}}
+ catch(error){if(error.name!=='AbortError'){$('task-live').textContent=error.message;notice(error.message);scheduleTaskRetry();}}
 }
 async function loadTaskHistory(reset=false){
  if(!taskPageVisible())return;
@@ -113,6 +115,7 @@ async function loadTaskPage(){
  stopTaskReads();taskHistory=[];taskBefore=null;renderTaskHistory();await Promise.all([loadTaskState(),loadTaskHistory(true)]);
 }
 function renderTasks(){
+ const key=JSON.stringify([taskState,taskStarting,[...taskIntents.keys()]]);if(key===taskRenderKey)return;taskRenderKey=key;
  const list=$('task-list');list.replaceChildren();const active=taskState.active_run;
  for(const task of taskState.items||[]){
   const card=document.createElement('article');card.className='panel task-card';
@@ -136,8 +139,8 @@ async function triggerTask(taskID){
 async function pollTaskRun(){
  if(!taskPageVisible())return;
  const activeID=taskState.active_run?.id;
- if(activeID)await loadTaskDetail(activeID);
  await loadTaskState();
+ if(activeID)await loadTaskDetail(activeID);
  if(!taskState.active_run)await loadTaskHistory(true);
 }
 function appendHistoryCell(row,text){const td=document.createElement('td');td.textContent=text;row.append(td);}
@@ -153,10 +156,15 @@ function renderTaskDetail(run){
  $('task-accounts').textContent=(run.accounts||[]).map(account=>`${account.uid} · ${formatRunStatus(account.status)} · ${account.detail||'无补充说明'}\n${formatBalance(account.before)} → ${formatBalance(account.after)} · 已确认奖励：${formatTaskReward(account.reward)}`).join('\n\n')||'没有账号结果。';
  $('task-log').textContent=run.log||'没有日志摘要。';$('task-log-truncated').hidden=!run.log_truncated;$('task-detail').scrollIntoView({block:'nearest'});
 }
-async function loadTaskDetail(id){try{renderTaskDetail(await taskJSON('task-runs/'+encodeURIComponent(id)));}catch(error){if(error.name!=='AbortError')notice(error.message);}}
+async function loadTaskDetail(id){
+ cancelTaskDetail();const generation=detailGeneration;const controller=new AbortController();detailController=controller;taskReads.add(controller);
+ try{const run=await jsonAPI('task-runs/'+encodeURIComponent(id),undefined,controller.signal);if(generation===detailGeneration&&taskPageVisible())renderTaskDetail(run);}
+ catch(error){if(generation===detailGeneration&&error.name!=='AbortError')notice(error.message);}
+ finally{taskReads.delete(controller);if(detailController===controller)detailController=undefined;}
+}
 $('task-refresh').addEventListener('click',loadTaskPage);
 $('task-more').addEventListener('click',()=>loadTaskHistory(false));
-$('task-detail-close').addEventListener('click',()=>{$('task-detail').hidden=true;});
+$('task-detail-close').addEventListener('click',()=>cancelTaskDetail(true));
 document.addEventListener?.('visibilitychange',()=>{if(document.hidden)stopTaskReads();else if(page==='tasks')loadTaskPage();});
 
 $('add-account').addEventListener('submit',async event=>{

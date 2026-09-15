@@ -138,6 +138,67 @@ test('logout clears task UI state without aborting an accepted-start request', a
   await pending;
 });
 
+test('a transient active-task state failure schedules another visible-page poll', async () => {
+  let retry;
+  const {ctx}=taskFixture(url=>{
+    if(url==='/admin/session')return new Promise(()=>{});
+    if(url==='/admin/tasks')return Promise.reject(new TypeError('temporary network failure'));
+    throw new Error('unexpected '+url);
+  });
+  ctx.setTimeout=fn=>{retry=fn;return 1;};
+  vm.runInContext("taskState.active_run={id:'run-active',task_id:'checkin',status:'running'}",ctx);
+  await vm.runInContext('loadTaskState()',ctx);
+  assert.equal(typeof retry,'function','transient poll failure stopped automatic updates');
+});
+
+test('poll refreshes the former active run after catalog turns inactive', async () => {
+  let catalogRead=false;
+  const response=body=>({ok:true,status:200,json:async()=>body});
+  const {ctx,get}=taskFixture(url=>{
+    if(url==='/admin/session')return new Promise(()=>{});
+    if(url==='/admin/tasks'){catalogRead=true;return response({items:[{id:'checkin',enabled:true,hours:[9,21],timezone:'Asia/Shanghai',next_at:null}],active_run:null,latest_runs:[]});}
+    if(url==='/admin/task-runs/run-active')return response({id:'run-active',task_id:'checkin',status:catalogRead?'success':'running',accounts:[],duration_ms:1,log:''});
+    if(url==='/admin/task-runs?limit=20')return response({items:[],next_before:null});
+    throw new Error('unexpected '+url);
+  });
+  vm.runInContext("taskState.active_run={id:'run-active',task_id:'checkin',status:'running'}",ctx);
+  await vm.runInContext('pollTaskRun()',ctx);
+  assert.match(get('task-detail-title').textContent,/成功/,'final detail was left at running');
+});
+
+test('closing detail invalidates a pending response and newest detail wins', async () => {
+  const pending=new Map();
+  const response=body=>({ok:true,status:200,json:async()=>body});
+  const {ctx,get}=taskFixture(url=>{
+    if(url==='/admin/session')return new Promise(()=>{});
+    if(url.startsWith('/admin/task-runs/'))return new Promise(resolve=>pending.set(url,resolve));
+    throw new Error('unexpected '+url);
+  });
+  const closed=vm.runInContext("loadTaskDetail('run-close')",ctx);
+  await Promise.resolve();get('task-detail-close').handlers.click();
+  pending.get('/admin/task-runs/run-close')(response({id:'run-close',task_id:'checkin',status:'success',accounts:[],duration_ms:1,log:''}));
+  await closed;
+  assert.equal(get('task-detail').hidden,true,'closed detail reopened from a late response');
+
+  const older=vm.runInContext("loadTaskDetail('run-a')",ctx);await Promise.resolve();
+  const newer=vm.runInContext("loadTaskDetail('run-b')",ctx);await Promise.resolve();
+  pending.get('/admin/task-runs/run-b')(response({id:'run-b',task_id:'travel',status:'success',accounts:[],duration_ms:1,log:''}));await newer;
+  pending.get('/admin/task-runs/run-a')(response({id:'run-a',task_id:'checkin',status:'failed',accounts:[],duration_ms:1,log:''}));await older;
+  assert.match(get('task-detail-title').textContent,/猫猫旅行/,'older detail overwrote the latest selection');
+
+  const navigated=vm.runInContext("loadTaskDetail('run-nav')",ctx);await Promise.resolve();
+  vm.runInContext("page='overview';stopTaskReads(true)",ctx);
+  pending.get('/admin/task-runs/run-nav')(response({id:'run-nav',task_id:'checkin',status:'success',accounts:[],duration_ms:1,log:''}));await navigated;
+  assert.equal(get('task-detail').hidden,true,'navigation allowed a pending detail to reopen');
+});
+
+test('equivalent task refresh preserves card nodes for in-flight clicks', () => {
+  const {ctx,get}=taskFixture(()=>new Promise(()=>{}));
+  vm.runInContext('renderTasks()',ctx);const card=get('task-list').children[0];
+  vm.runInContext('taskState=JSON.parse(JSON.stringify(taskState));renderTasks()',ctx);
+  assert.equal(get('task-list').children[0],card,'equivalent refresh replaced the clickable card');
+});
+
 test('task detail keeps untrusted logs as text and preserves unknown duration', () => {
   const {ctx,get}=taskFixture(()=>new Promise(()=>{}));
   ctx.runFixture={id:'run-x',task_id:'activity',status:'interrupted',started_at:'2026-09-15T10:00:00Z',finished_at:'2026-09-15T10:01:00Z',duration_ms:null,accounts:[{uid:'u1',status:'unknown',detail:'result_unconfirmed',before:null,after:{value:0,observed_at:'2026-09-15T10:00:30Z'},reward:null}],log:'<img src=x onerror=alert(1)>',log_truncated:true};
