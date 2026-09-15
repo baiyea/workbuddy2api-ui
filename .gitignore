@@ -13,7 +13,7 @@ data/
 /wb2api
 /signin_bin
 
-# Config with secrets (use config.example.json)
+# Config with secrets (start from upstream/config.example.json)
 config.json
 
 # Build artifacts
