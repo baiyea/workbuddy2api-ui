@@ -20,6 +20,10 @@ config.json
 *.tmp
 __pycache__/
 .build/
+.upstream-update-backup/
+.upstream-update-new/
+.upstream-update-journal.json
+.upstream-update-journal.json.tmp
 
 # Backups (contains auth tokens)
 backups/

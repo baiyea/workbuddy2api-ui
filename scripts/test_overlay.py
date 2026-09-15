@@ -537,6 +537,77 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual(old_lock, (root / "upstream.lock").read_bytes())
             self.assertEqual("old\n", (root / "upstream" / "version.txt").read_text(encoding="utf-8"))
 
+    def test_edit_after_candidate_staging_is_restored_instead_of_overwritten(self):
+        with tempfile.TemporaryDirectory() as d:
+            temp = Path(d)
+            root = temp / "root"
+            root.mkdir()
+            make_update_root(root)
+            old_lock = (root / "upstream.lock").read_bytes()
+            calls = []
+            fake_fetch, fake_run = install_fake_fetch(root, calls)
+            work = temp / "candidate-work"
+            real_replace = os.replace
+            resolved_root = root.resolve()
+
+            def edit_as_snapshot_is_backed_up(source, dest):
+                if (
+                    Path(source) == resolved_root / "upstream"
+                    and Path(dest)
+                    == resolved_root / ".upstream-update-backup" / "upstream"
+                ):
+                    (Path(source) / "version.txt").write_text(
+                        "concurrent edit\n", encoding="utf-8"
+                    )
+                return real_replace(source, dest)
+
+            with mock.patch("overlay._fetch_candidate_snapshot", side_effect=fake_fetch), mock.patch(
+                "overlay.subprocess.run", side_effect=fake_run
+            ), mock.patch("overlay.tempfile.mkdtemp", side_effect=lambda **_: (work.mkdir(), str(work))[1]), mock.patch(
+                "overlay.os.replace", side_effect=edit_as_snapshot_is_backed_up
+            ):
+                with self.assertRaisesRegex(RuntimeError, "changed during publish"):
+                    update(root, "candidate-ref")
+
+            self.assertEqual(old_lock, (root / "upstream.lock").read_bytes())
+            self.assertEqual(
+                "concurrent edit\n",
+                (root / "upstream" / "version.txt").read_text(encoding="utf-8"),
+            )
+            self.assertFalse((root / ".upstream-update-journal.json").exists())
+
+    def test_changed_candidate_input_aborts_even_when_second_git_status_is_clean(self):
+        with tempfile.TemporaryDirectory() as d:
+            temp = Path(d)
+            root = temp / "root"
+            root.mkdir()
+            make_update_root(root)
+            old_lock = (root / "upstream.lock").read_bytes()
+            calls = []
+            fake_fetch, base_run = install_fake_fetch(root, calls)
+            status_calls = 0
+
+            def change_after_clean_status(args, **kwargs):
+                nonlocal status_calls
+                result = base_run(args, **kwargs)
+                command = [str(value) for value in args]
+                if command[:3] == ["git", "status", "--porcelain"]:
+                    status_calls += 1
+                    if status_calls == 2:
+                        (root / ".dockerignore").write_text("changed\n", encoding="utf-8")
+                return result
+
+            work = temp / "candidate-work"
+            with mock.patch("overlay._fetch_candidate_snapshot", side_effect=fake_fetch), mock.patch(
+                "overlay.subprocess.run", side_effect=change_after_clean_status
+            ), mock.patch("overlay.tempfile.mkdtemp", side_effect=lambda **_: (work.mkdir(), str(work))[1]):
+                with self.assertRaisesRegex(RuntimeError, "candidate inputs changed"):
+                    update(root, "candidate-ref")
+
+            self.assertEqual(old_lock, (root / "upstream.lock").read_bytes())
+            self.assertEqual("old\n", (root / "upstream" / "version.txt").read_text(encoding="utf-8"))
+            self.assertEqual("changed\n", (root / ".dockerignore").read_text(encoding="utf-8"))
+
     def test_initial_dirty_check_stops_before_fetching(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
@@ -552,7 +623,7 @@ class UpdateTests(unittest.TestCase):
                 [
                     "git", "status", "--porcelain", "--", "upstream",
                     "upstream.lock", "extensions", "patches", "deploy", "scripts",
-                    "console", "docker-compose.yml",
+                    "console", "docker-compose.yml", ".dockerignore",
                 ],
                 run.call_args.args[0],
             )
@@ -591,6 +662,7 @@ class UpdateTests(unittest.TestCase):
             root = temp / "root"
             root.mkdir()
             make_update_root(root)
+            old_lock = (root / "upstream.lock").read_bytes()
             custom_before = {
                 path: source_digest(root / path)
                 for path in ("extensions", "patches", "deploy", "scripts", "console")
@@ -613,7 +685,16 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual(compose_before, (root / "docker-compose.yml").read_bytes())
             self.assertEqual(dockerignore_before, (root / ".dockerignore").read_bytes())
             self.assertFalse((root / ".upstream-update-journal.json").exists())
-            self.assertFalse((root / ".upstream-update-backup").exists())
+            self.assertEqual(
+                "old\n",
+                (root / ".upstream-update-backup" / "upstream" / "version.txt").read_text(
+                    encoding="utf-8"
+                ),
+            )
+            self.assertEqual(
+                old_lock,
+                (root / ".upstream-update-backup" / "upstream.lock").read_bytes(),
+            )
             self.assertFalse((root / ".upstream-update-new").exists())
             bash = [command for command in calls if command and command[0] == "bash"]
             self.assertEqual(2, len(bash))
@@ -621,6 +702,50 @@ class UpdateTests(unittest.TestCase):
             self.assertTrue(bash[1][1].endswith("/candidate/scripts/acceptance.sh"))
             self.assertEqual(bash[0][2], str((work / "candidate").resolve()))
             self.assertEqual(bash[1][2], str((work / "candidate").resolve()))
+
+    def test_journal_unlink_failure_keeps_new_pair_and_complete_old_backup(self):
+        with tempfile.TemporaryDirectory() as d:
+            temp = Path(d)
+            root = temp / "root"
+            root.mkdir()
+            make_update_root(root)
+            old_lock = (root / "upstream.lock").read_bytes()
+            calls = []
+            fake_fetch, fake_run = install_fake_fetch(root, calls)
+            work = temp / "candidate-work"
+            real_unlink = type(root).unlink
+            resolved_root = root.resolve()
+
+            def fail_committed_journal_unlink(path, *args, **kwargs):
+                if path == resolved_root / ".upstream-update-journal.json":
+                    raise OSError("synthetic journal unlink failure")
+                return real_unlink(path, *args, **kwargs)
+
+            with mock.patch("overlay._fetch_candidate_snapshot", side_effect=fake_fetch), mock.patch(
+                "overlay.subprocess.run", side_effect=fake_run
+            ), mock.patch("overlay.tempfile.mkdtemp", side_effect=lambda **_: (work.mkdir(), str(work))[1]), mock.patch(
+                "pathlib.PosixPath.unlink", side_effect=fail_committed_journal_unlink, autospec=True
+            ):
+                with self.assertRaisesRegex(OSError, "journal unlink"):
+                    update(root, "candidate-ref")
+
+            self.assertEqual("new\n", (root / "upstream" / "version.txt").read_text(encoding="utf-8"))
+            self.assertEqual(old_lock, (root / ".upstream-update-backup" / "upstream.lock").read_bytes())
+            self.assertEqual(
+                "old\n",
+                (root / ".upstream-update-backup" / "upstream" / "version.txt").read_text(
+                    encoding="utf-8"
+                ),
+            )
+            journal = json.loads((root / ".upstream-update-journal.json").read_text(encoding="utf-8"))
+            self.assertEqual("committed", journal["phase"])
+            with mock.patch("overlay.subprocess.run") as run:
+                with self.assertRaisesRegex(RuntimeError, "recovered interrupted"):
+                    update(root, "candidate-ref")
+                run.assert_not_called()
+            self.assertEqual("new\n", (root / "upstream" / "version.txt").read_text(encoding="utf-8"))
+            self.assertEqual(old_lock, (root / ".upstream-update-backup" / "upstream.lock").read_bytes())
+            self.assertFalse((root / ".upstream-update-journal.json").exists())
 
     def test_prepare_refuses_unfinished_update_journal(self):
         with tempfile.TemporaryDirectory() as d:
@@ -643,6 +768,7 @@ class UpdateTests(unittest.TestCase):
             os.replace(root / "upstream.lock", backup / "upstream.lock")
             (root / "upstream").mkdir()
             (root / "upstream" / "version.txt").write_text("partial-new\n", encoding="utf-8")
+            new_digest = source_digest(root / "upstream")
             (root / ".upstream-update-journal.json").write_text(
                 json.dumps({
                     "format": 1,
@@ -650,6 +776,8 @@ class UpdateTests(unittest.TestCase):
                     "candidate": "/tmp/diagnostic-candidate",
                     "old_lock_sha256": hashlib.sha256(old_lock).hexdigest(),
                     "old_source_sha256": old_digest,
+                    "new_lock_sha256": "2" * 64,
+                    "new_source_sha256": new_digest,
                 }),
                 encoding="utf-8",
             )
@@ -662,6 +790,94 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual(old_digest, source_digest(root / "upstream"))
             self.assertFalse((root / ".upstream-update-journal.json").exists())
             self.assertFalse(backup.exists())
+
+    def test_recovery_refuses_to_delete_concurrent_current_data(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            make_update_root(root)
+            old_lock = (root / "upstream.lock").read_bytes()
+            old_digest = source_digest(root / "upstream")
+            backup = root / ".upstream-update-backup"
+            backup.mkdir()
+            os.replace(root / "upstream", backup / "upstream")
+            os.replace(root / "upstream.lock", backup / "upstream.lock")
+            (root / "upstream").mkdir()
+            current = root / "upstream" / "version.txt"
+            current.write_text("new\n", encoding="utf-8")
+            expected_new_digest = source_digest(root / "upstream")
+            current.write_text("concurrent edit after crash\n", encoding="utf-8")
+            (root / ".upstream-update-journal.json").write_text(
+                json.dumps({
+                    "format": 1,
+                    "phase": "upstream_installed",
+                    "candidate": "/tmp/diagnostic-candidate",
+                    "old_lock_sha256": hashlib.sha256(old_lock).hexdigest(),
+                    "old_source_sha256": old_digest,
+                    "new_lock_sha256": "2" * 64,
+                    "new_source_sha256": expected_new_digest,
+                }),
+                encoding="utf-8",
+            )
+
+            with mock.patch("overlay.subprocess.run") as run:
+                with self.assertRaisesRegex(RuntimeError, "current upstream changed"):
+                    update(root, "candidate-ref")
+                run.assert_not_called()
+            self.assertEqual("concurrent edit after crash\n", current.read_text(encoding="utf-8"))
+            self.assertEqual(old_lock, (backup / "upstream.lock").read_bytes())
+            self.assertEqual("old\n", (backup / "upstream" / "version.txt").read_text(encoding="utf-8"))
+            self.assertTrue((root / ".upstream-update-journal.json").exists())
+
+
+class AcceptanceScriptTests(unittest.TestCase):
+    def test_build_proxy_args_are_empty_by_default_and_use_only_explicit_environment(self):
+        acceptance = Path(__file__).parent / "acceptance.sh"
+        script = acceptance.read_text(encoding="utf-8")
+        self.assertNotIn("http://host.docker.internal:7890", script)
+        self.assertNotIn("WB2A_ACCEPTANCE_BUILD_PROXY", script)
+        self.assertIn('[[ -n "${HTTP_PROXY:-}" ]]', script)
+        self.assertIn('[[ -n "${HTTPS_PROXY:-}" ]]', script)
+        self.assertEqual(2, script.count('build_images "$fresh_project" "$fresh_port"'))
+        subprocess.run(["bash", "-n", str(acceptance)], check=True)
+
+        def first_build(proxy=None):
+            with tempfile.TemporaryDirectory() as d:
+                temp = Path(d)
+                docker = temp / "docker"
+                log = temp / "docker.log"
+                docker.write_text(
+                    "#!/bin/sh\n"
+                    "printf '%s\\n' \"$*\" >> \"$DOCKER_LOG\"\n"
+                    "case \" $* \" in *' build '*) exit 42;; esac\n"
+                    "exit 0\n",
+                    encoding="utf-8",
+                )
+                docker.chmod(0o755)
+                env = os.environ.copy()
+                env["PATH"] = str(temp) + os.pathsep + env["PATH"]
+                env["DOCKER_LOG"] = str(log)
+                env.pop("HTTP_PROXY", None)
+                env.pop("HTTPS_PROXY", None)
+                if proxy:
+                    env["HTTP_PROXY"] = proxy
+                    env["HTTPS_PROXY"] = proxy
+                result = subprocess.run(
+                    ["bash", str(acceptance), str(acceptance.parent.parent)],
+                    env=env,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+                lines = log.read_text(encoding="utf-8").splitlines() if log.exists() else []
+                builds = [line for line in lines if "build" in line]
+                self.assertTrue(builds, result.stderr.decode("utf-8", errors="replace"))
+                return builds[0]
+
+        direct = first_build()
+        self.assertNotIn("HTTP_PROXY=", direct)
+        self.assertNotIn("HTTPS_PROXY=", direct)
+        configured = first_build("http://host.docker.internal:7890")
+        self.assertIn("--build-arg HTTP_PROXY=http://host.docker.internal:7890", configured)
+        self.assertIn("--build-arg HTTPS_PROXY=http://host.docker.internal:7890", configured)
 
 
 if __name__ == "__main__":

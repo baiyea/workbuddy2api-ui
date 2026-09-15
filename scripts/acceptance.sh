@@ -21,7 +21,6 @@ core_image="${WB2A_ACCEPTANCE_CORE_IMAGE:-${fresh_project}-core}"
 console_image="${WB2A_ACCEPTANCE_CONSOLE_IMAGE:-${fresh_project}-console}"
 expected_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["commit"])' "$repo_root/upstream.lock")"
 expected_identity="$(python3 "$repo_root/scripts/overlay.py" identity)"
-build_proxy="${WB2A_ACCEPTANCE_BUILD_PROXY:-http://host.docker.internal:7890}"
 cookie_file="${TMPDIR:-/tmp}/${legacy_project}.cookie"
 
 compose_for() {
@@ -41,6 +40,20 @@ compose_for() {
   WB2A_PUBLIC_ORIGIN="http://127.0.0.1:$port" \
   docker compose --env-file "$repo_root/deploy/acceptance.env" --project-directory "$repo_root" -p "$project" \
     -f "$repo_root/docker-compose.yml" -f "$repo_root/deploy/compose.acceptance.yml" "$@"
+}
+
+build_images() {
+  local project="$1" port="$2"
+  if [[ -n "${HTTP_PROXY:-}" && -n "${HTTPS_PROXY:-}" ]]; then
+    compose_for "$project" "$port" build \
+      --build-arg "HTTP_PROXY=$HTTP_PROXY" --build-arg "HTTPS_PROXY=$HTTPS_PROXY"
+  elif [[ -n "${HTTP_PROXY:-}" ]]; then
+    compose_for "$project" "$port" build --build-arg "HTTP_PROXY=$HTTP_PROXY"
+  elif [[ -n "${HTTPS_PROXY:-}" ]]; then
+    compose_for "$project" "$port" build --build-arg "HTTPS_PROXY=$HTTPS_PROXY"
+  else
+    compose_for "$project" "$port" build
+  fi
 }
 
 create_volumes() {
@@ -84,8 +97,7 @@ cleanup() {
 trap cleanup EXIT
 
 create_volumes "$fresh_project"
-compose_for "$fresh_project" "$fresh_port" build \
-  --build-arg "HTTP_PROXY=$build_proxy" --build-arg "HTTPS_PROXY=$build_proxy"
+build_images "$fresh_project" "$fresh_port"
 compose_for "$fresh_project" "$fresh_port" up -d --wait --no-build
 [[ "$(compose_for "$fresh_project" "$fresh_port" port console 7863)" == "127.0.0.1:$fresh_port" ]]
 wait_live "http://127.0.0.1:$fresh_port/livez"
@@ -128,8 +140,7 @@ curl --noproxy '*' -fsS -H "Origin: http://127.0.0.1:$fresh_port" -H 'Content-Ty
 [[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer short-override' "http://127.0.0.1:$fresh_port/status")" == "200" ]]
 [[ "$fresh_digest" == "$(compose_for "$fresh_project" "$fresh_port" exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
 compose_for "$fresh_project" "$fresh_port" exec -T core sh -c 'printf "%s\n" mock-account > /app/auths/preserved.txt; printf "%s\n" mock-state > /app/data/preserved.txt'
-compose_for "$fresh_project" "$fresh_port" build \
-  --build-arg "HTTP_PROXY=$build_proxy" --build-arg "HTTPS_PROXY=$build_proxy"
+build_images "$fresh_project" "$fresh_port"
 compose_for "$fresh_project" "$fresh_port" up -d --force-recreate --wait --no-build
 [[ "$fresh_digest" == "$(compose_for "$fresh_project" "$fresh_port" exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
 compose_for "$fresh_project" "$fresh_port" exec -T core sh -c 'grep -qx mock-account /app/auths/preserved.txt && grep -qx mock-state /app/data/preserved.txt'

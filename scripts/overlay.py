@@ -21,13 +21,14 @@ UPDATE_PATHS = (
     "scripts",
     "console",
     "docker-compose.yml",
+    ".dockerignore",
 )
 JOURNAL_NAME = ".upstream-update-journal.json"
 BACKUP_NAME = ".upstream-update-backup"
 STAGED_NAME = ".upstream-update-new"
 
 
-def _tree_entries(root):
+def _tree_entries(root, ignore=None):
     if root.is_symlink() or not root.is_dir():
         raise ValueError(f"source is not a directory: {root}")
     root = root.resolve()
@@ -35,7 +36,11 @@ def _tree_entries(root):
 
     def visit(directory):
         with os.scandir(directory) as children:
-            for item in children:
+            items = list(children)
+            ignored = set(ignore(str(directory), [item.name for item in items])) if ignore else set()
+            for item in items:
+                if item.name in ignored:
+                    continue
                 path = Path(item.path)
                 relative = path.relative_to(root).as_posix()
                 if item.name == ".git":
@@ -59,10 +64,10 @@ def _tree_entries(root):
     return sorted(entries, key=lambda entry: entry[0])
 
 
-def source_digest(source: Path) -> str:
+def source_digest(source: Path, ignore=None) -> str:
     records = [
         [relative, mode, hashlib.sha256(content).hexdigest()]
-        for relative, mode, content, _ in _tree_entries(Path(source))
+        for relative, mode, content, _ in _tree_entries(Path(source), ignore=ignore)
     ]
     payload = json.dumps(records, ensure_ascii=False, separators=(",", ":")).encode()
     return hashlib.sha256(payload).hexdigest()
@@ -320,6 +325,20 @@ def _safe_candidate_ignore(_directory, names):
     ]
 
 
+def _candidate_inputs_identity(root):
+    records = []
+    for name in ("extensions", "patches", "deploy", "scripts", "console"):
+        records.append([name, source_digest(root / name, ignore=_safe_candidate_ignore)])
+    for name in ("docker-compose.yml", ".dockerignore"):
+        path = root / name
+        if path.is_symlink() or not path.is_file():
+            raise ValueError(f"invalid candidate source file: {name}")
+        mode = "100755" if path.stat().st_mode & 0o111 else "100644"
+        records.append([name, mode, hashlib.sha256(path.read_bytes()).hexdigest()])
+    payload = json.dumps(records, separators=(",", ":")).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
 def _build_candidate(root, ref, candidate):
     candidate.mkdir()
     commit = _fetch_candidate_snapshot(CANONICAL_REPOSITORY, ref, candidate / "upstream")
@@ -369,20 +388,61 @@ def _restore_interrupted_update(root):
         return False
     try:
         journal = json.loads(journal_path.read_text(encoding="utf-8"))
+        phase = journal["phase"]
         old_lock_sha = journal["old_lock_sha256"]
         old_source_sha = journal["old_source_sha256"]
+        new_lock_sha = journal["new_lock_sha256"]
+        new_source_sha = journal["new_source_sha256"]
     except (OSError, KeyError, TypeError, json.JSONDecodeError) as error:
         raise RuntimeError("invalid upstream update journal; manual recovery required") from error
     backup = root / BACKUP_NAME
     staged = root / STAGED_NAME
     backup_upstream = backup / "upstream"
     backup_lock = backup / "upstream.lock"
+
+    def lock_digest(path):
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    if phase == "committed":
+        if (
+            not (root / "upstream").is_dir()
+            or not (root / "upstream.lock").is_file()
+            or source_digest(root / "upstream") != new_source_sha
+            or lock_digest(root / "upstream.lock") != new_lock_sha
+            or not backup_upstream.is_dir()
+            or not backup_lock.is_file()
+            or source_digest(backup_upstream) != old_source_sha
+            or lock_digest(backup_lock) != old_lock_sha
+        ):
+            raise RuntimeError("committed upstream update does not match journal; manual recovery required")
+        _remove_created_directory(staged)
+        journal_path.unlink()
+        return True
+
+    if backup_upstream.exists() and source_digest(backup_upstream) != old_source_sha:
+        raise RuntimeError("upstream update backup changed; manual recovery required")
+    if backup_lock.exists() and lock_digest(backup_lock) != old_lock_sha:
+        raise RuntimeError("upstream update backup changed; manual recovery required")
+    current_upstream = root / "upstream"
+    current_lock = root / "upstream.lock"
+    if backup_upstream.exists() and current_upstream.exists():
+        if source_digest(current_upstream) != new_source_sha:
+            raise RuntimeError("current upstream changed; manual recovery required")
+    elif not backup_upstream.exists():
+        if not current_upstream.is_dir() or source_digest(current_upstream) != old_source_sha:
+            raise RuntimeError("upstream update recovery is incomplete; manual recovery required")
+    if backup_lock.exists() and current_lock.exists():
+        if lock_digest(current_lock) != new_lock_sha:
+            raise RuntimeError("current upstream lock changed; manual recovery required")
+    elif not backup_lock.exists():
+        if not current_lock.is_file() or lock_digest(current_lock) != old_lock_sha:
+            raise RuntimeError("upstream update recovery is incomplete; manual recovery required")
     if backup_upstream.exists():
-        _remove_created_directory(root / "upstream")
-        os.replace(backup_upstream, root / "upstream")
+        _remove_created_directory(current_upstream)
+        os.replace(backup_upstream, current_upstream)
     if backup_lock.exists():
-        (root / "upstream.lock").unlink(missing_ok=True)
-        os.replace(backup_lock, root / "upstream.lock")
+        current_lock.unlink(missing_ok=True)
+        os.replace(backup_lock, current_lock)
     if not (root / "upstream").is_dir() or not (root / "upstream.lock").is_file():
         raise RuntimeError("upstream update recovery is incomplete; manual recovery required")
     lock_sha = hashlib.sha256((root / "upstream.lock").read_bytes()).hexdigest()
@@ -394,7 +454,7 @@ def _restore_interrupted_update(root):
     return True
 
 
-def _install_candidate(root, candidate, old_lock, old_source_sha):
+def _stage_candidate(root, candidate):
     staged = root / STAGED_NAME
     backup = root / BACKUP_NAME
     journal_path = root / JOURNAL_NAME
@@ -405,8 +465,21 @@ def _install_candidate(root, candidate, old_lock, old_source_sha):
     ):
         raise RuntimeError("upstream update staging path already exists")
     staged.mkdir()
-    shutil.copytree(candidate / "upstream", staged / "upstream", symlinks=True)
-    shutil.copy2(candidate / "upstream.lock", staged / "upstream.lock")
+    try:
+        shutil.copytree(candidate / "upstream", staged / "upstream", symlinks=True)
+        shutil.copy2(candidate / "upstream.lock", staged / "upstream.lock")
+    except Exception:
+        _remove_created_directory(staged)
+        raise
+
+
+def _install_staged_candidate(root, candidate, old_lock, old_source_sha):
+    staged = root / STAGED_NAME
+    backup = root / BACKUP_NAME
+    journal_path = root / JOURNAL_NAME
+    journal_temporary = root / (JOURNAL_NAME + ".tmp")
+    new_lock_sha = hashlib.sha256((staged / "upstream.lock").read_bytes()).hexdigest()
+    new_source_sha = source_digest(staged / "upstream")
     backup.mkdir()
     journal = {
         "format": 1,
@@ -414,6 +487,8 @@ def _install_candidate(root, candidate, old_lock, old_source_sha):
         "candidate": str(candidate),
         "old_lock_sha256": hashlib.sha256(old_lock).hexdigest(),
         "old_source_sha256": old_source_sha,
+        "new_lock_sha256": new_lock_sha,
+        "new_source_sha256": new_source_sha,
     }
     try:
         _write_journal(root, journal)
@@ -423,22 +498,45 @@ def _install_candidate(root, candidate, old_lock, old_source_sha):
         os.replace(root / "upstream.lock", backup / "upstream.lock")
         journal["phase"] = "lock_backed_up"
         _write_journal(root, journal)
+        if (
+            source_digest(backup / "upstream") != old_source_sha
+            or hashlib.sha256((backup / "upstream.lock").read_bytes()).digest()
+            != hashlib.sha256(old_lock).digest()
+        ):
+            os.replace(backup / "upstream", root / "upstream")
+            os.replace(backup / "upstream.lock", root / "upstream.lock")
+            _remove_created_directory(staged)
+            _remove_created_directory(backup)
+            journal_path.unlink()
+            raise RuntimeError("upstream snapshot or lock changed during publish")
         os.replace(staged / "upstream", root / "upstream")
         journal["phase"] = "upstream_installed"
         _write_journal(root, journal)
         os.replace(staged / "upstream.lock", root / "upstream.lock")
         journal["phase"] = "lock_installed"
         _write_journal(root, journal)
+        if (
+            source_digest(root / "upstream") != new_source_sha
+            or hashlib.sha256((root / "upstream.lock").read_bytes()).hexdigest()
+            != new_lock_sha
+        ):
+            raise RuntimeError("installed upstream combination does not match staged candidate")
+        journal["phase"] = "committed"
+        _write_journal(root, journal)
     except Exception:
         if journal_path.exists():
-            _restore_interrupted_update(root)
+            try:
+                phase = json.loads(journal_path.read_text(encoding="utf-8")).get("phase")
+            except (OSError, json.JSONDecodeError):
+                phase = None
+            if phase != "committed":
+                _restore_interrupted_update(root)
         else:
             _remove_created_directory(staged)
             _remove_created_directory(backup)
             journal_temporary.unlink(missing_ok=True)
         raise
     _remove_created_directory(staged)
-    _remove_created_directory(backup)
     journal_path.unlink()
 
 
@@ -453,6 +551,7 @@ def update(root: Path, ref: str) -> None:
     _check_update_paths_clean(root)
     old_lock = (root / "upstream.lock").read_bytes()
     old_source_sha = source_digest(root / "upstream")
+    old_inputs_identity = _candidate_inputs_identity(root)
     if old_source_sha != lock["source_sha256"]:
         raise ValueError("upstream source digest does not match upstream.lock")
     work = Path(tempfile.mkdtemp(prefix="wb2a-upstream-candidate-"))
@@ -468,14 +567,19 @@ def update(root: Path, ref: str) -> None:
             ["bash", str(candidate / "scripts" / "acceptance.sh"), str(candidate)],
             check=True,
         )
+        _stage_candidate(root, candidate)
         _check_update_paths_clean(root)
         if (
             (root / "upstream.lock").read_bytes() != old_lock
             or source_digest(root / "upstream") != old_source_sha
         ):
             raise RuntimeError("upstream snapshot or lock changed during candidate validation")
-        _install_candidate(root, candidate, old_lock, old_source_sha)
+        if _candidate_inputs_identity(root) != old_inputs_identity:
+            raise RuntimeError("candidate inputs changed during candidate validation")
+        _install_staged_candidate(root, candidate, old_lock, old_source_sha)
     except Exception:
+        if not (root / JOURNAL_NAME).exists():
+            _remove_created_directory(root / STAGED_NAME)
         print(f"candidate retained for diagnosis: {candidate}", file=sys.stderr)
         raise
     shutil.rmtree(work, ignore_errors=True)
