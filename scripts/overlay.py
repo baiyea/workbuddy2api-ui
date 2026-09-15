@@ -454,14 +454,37 @@ def _restore_interrupted_update(root):
     return True
 
 
+def _discard_previous_backup(root):
+    backup = root / BACKUP_NAME
+    if not os.path.lexists(backup):
+        return
+    if backup.is_symlink() or not backup.is_dir():
+        raise RuntimeError("invalid previous upstream backup")
+    if {path.name for path in backup.iterdir()} != {"upstream", "upstream.lock"}:
+        raise RuntimeError("invalid previous upstream backup")
+    if (
+        (backup / "upstream").is_symlink()
+        or not (backup / "upstream").is_dir()
+        or (backup / "upstream.lock").is_symlink()
+        or not (backup / "upstream.lock").is_file()
+    ):
+        raise RuntimeError("invalid previous upstream backup")
+    lock = _read_lock(backup)
+    if (
+        lock["repository"] != CANONICAL_REPOSITORY
+        or source_digest(backup / "upstream") != lock["source_sha256"]
+    ):
+        raise RuntimeError("invalid previous upstream backup")
+    _remove_created_directory(backup)
+
+
 def _stage_candidate(root, candidate):
     staged = root / STAGED_NAME
-    backup = root / BACKUP_NAME
     journal_path = root / JOURNAL_NAME
     journal_temporary = root / (JOURNAL_NAME + ".tmp")
     if any(
         os.path.lexists(path)
-        for path in (staged, backup, journal_path, journal_temporary)
+        for path in (staged, journal_path, journal_temporary)
     ):
         raise RuntimeError("upstream update staging path already exists")
     staged.mkdir()
@@ -559,6 +582,8 @@ def update(root: Path, ref: str) -> None:
     try:
         _build_candidate(root, ref, candidate)
         candidate = candidate.resolve()
+        if _candidate_inputs_identity(candidate) != old_inputs_identity:
+            raise RuntimeError("candidate inputs do not match captured inputs")
         subprocess.run(
             ["bash", str(candidate / "scripts" / "check.sh"), str(candidate)],
             check=True,
@@ -567,6 +592,8 @@ def update(root: Path, ref: str) -> None:
             ["bash", str(candidate / "scripts" / "acceptance.sh"), str(candidate)],
             check=True,
         )
+        if _candidate_inputs_identity(candidate) != old_inputs_identity:
+            raise RuntimeError("candidate inputs do not match captured inputs")
         _stage_candidate(root, candidate)
         _check_update_paths_clean(root)
         if (
@@ -576,6 +603,9 @@ def update(root: Path, ref: str) -> None:
             raise RuntimeError("upstream snapshot or lock changed during candidate validation")
         if _candidate_inputs_identity(root) != old_inputs_identity:
             raise RuntimeError("candidate inputs changed during candidate validation")
+        if _candidate_inputs_identity(candidate) != old_inputs_identity:
+            raise RuntimeError("candidate inputs do not match captured inputs")
+        _discard_previous_backup(root)
         _install_staged_candidate(root, candidate, old_lock, old_source_sha)
     except Exception:
         if not (root / JOURNAL_NAME).exists():

@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import shutil
 import stat
 import subprocess
 import tempfile
@@ -437,6 +438,72 @@ class MaterializeTests(unittest.TestCase):
 
 
 class UpdateTests(unittest.TestCase):
+    def test_candidate_copy_must_match_inputs_even_if_root_edit_is_restored(self):
+        with tempfile.TemporaryDirectory() as d:
+            temp = Path(d)
+            root = temp / "root"
+            root.mkdir()
+            make_update_root(root)
+            old_lock = (root / "upstream.lock").read_bytes()
+            calls = []
+            fake_fetch, fake_run = install_fake_fetch(root, calls)
+            work = temp / "candidate-work"
+            real_copy2 = shutil.copy2
+            resolved_dockerignore = root.resolve() / ".dockerignore"
+
+            def transient_edit_during_copy(source, dest, *args, **kwargs):
+                source = Path(source)
+                if source == resolved_dockerignore:
+                    original = source.read_bytes()
+                    source.write_text("transient candidate input\n", encoding="utf-8")
+                    try:
+                        return real_copy2(source, dest, *args, **kwargs)
+                    finally:
+                        source.write_bytes(original)
+                return real_copy2(source, dest, *args, **kwargs)
+
+            with mock.patch("overlay._fetch_candidate_snapshot", side_effect=fake_fetch), mock.patch(
+                "overlay.subprocess.run", side_effect=fake_run
+            ), mock.patch("overlay.tempfile.mkdtemp", side_effect=lambda **_: (work.mkdir(), str(work))[1]), mock.patch(
+                "overlay.shutil.copy2", side_effect=transient_edit_during_copy
+            ):
+                with self.assertRaisesRegex(RuntimeError, "candidate inputs do not match"):
+                    update(root, "candidate-ref")
+
+            self.assertEqual(old_lock, (root / "upstream.lock").read_bytes())
+            self.assertEqual("old\n", (root / "upstream" / "version.txt").read_text(encoding="utf-8"))
+            self.assertEqual("**\n", (root / ".dockerignore").read_text(encoding="utf-8"))
+            self.assertFalse(any(command and command[0] == "bash" for command in calls))
+
+    def test_candidate_changed_by_validation_is_rejected_before_install(self):
+        with tempfile.TemporaryDirectory() as d:
+            temp = Path(d)
+            root = temp / "root"
+            root.mkdir()
+            make_update_root(root)
+            old_lock = (root / "upstream.lock").read_bytes()
+            calls = []
+            fake_fetch, base_run = install_fake_fetch(root, calls)
+
+            def change_candidate(args, **kwargs):
+                command = [str(value) for value in args]
+                result = base_run(args, **kwargs)
+                if command and command[0] == "bash" and command[1].endswith("/check.sh"):
+                    (Path(command[2]) / ".dockerignore").write_text(
+                        "changed by validation\n", encoding="utf-8"
+                    )
+                return result
+
+            work = temp / "candidate-work"
+            with mock.patch("overlay._fetch_candidate_snapshot", side_effect=fake_fetch), mock.patch(
+                "overlay.subprocess.run", side_effect=change_candidate
+            ), mock.patch("overlay.tempfile.mkdtemp", side_effect=lambda **_: (work.mkdir(), str(work))[1]):
+                with self.assertRaisesRegex(RuntimeError, "candidate inputs do not match"):
+                    update(root, "candidate-ref")
+
+            self.assertEqual(old_lock, (root / "upstream.lock").read_bytes())
+            self.assertEqual("old\n", (root / "upstream" / "version.txt").read_text(encoding="utf-8"))
+
     def test_update_rejects_unsafe_ref_and_noncanonical_lock_without_running_commands(self):
         for ref in ("-main", "main\nnext", "main\x00next"):
             with self.subTest(ref=ref), tempfile.TemporaryDirectory() as d:
@@ -702,6 +769,94 @@ class UpdateTests(unittest.TestCase):
             self.assertTrue(bash[1][1].endswith("/candidate/scripts/acceptance.sh"))
             self.assertEqual(bash[0][2], str((work / "candidate").resolve()))
             self.assertEqual(bash[1][2], str((work / "candidate").resolve()))
+
+    def test_two_successful_updates_rotate_backup_to_the_previous_pair(self):
+        with tempfile.TemporaryDirectory() as d:
+            temp = Path(d)
+            root = temp / "root"
+            root.mkdir()
+            make_update_root(root)
+            calls = []
+            _, fake_run = install_fake_fetch(root, calls)
+            fetch_count = 0
+            work_count = 0
+
+            def varying_fetch(_repository, _ref, dest):
+                nonlocal fetch_count
+                fetch_count += 1
+                dest.mkdir()
+                (dest / "version.txt").write_text(f"new-{fetch_count}\n", encoding="utf-8")
+                return str(fetch_count + 1) * 40
+
+            def new_work(**_kwargs):
+                nonlocal work_count
+                work_count += 1
+                work = temp / f"candidate-work-{work_count}"
+                work.mkdir()
+                return str(work)
+
+            with mock.patch("overlay._fetch_candidate_snapshot", side_effect=varying_fetch), mock.patch(
+                "overlay.subprocess.run", side_effect=fake_run
+            ), mock.patch("overlay.tempfile.mkdtemp", side_effect=new_work):
+                update(root, "first-ref")
+                first_lock = (root / "upstream.lock").read_bytes()
+                update(root, "second-ref")
+
+            self.assertEqual("new-2\n", (root / "upstream" / "version.txt").read_text(encoding="utf-8"))
+            self.assertEqual("3" * 40, json.loads((root / "upstream.lock").read_bytes())["commit"])
+            backup = root / ".upstream-update-backup"
+            self.assertEqual("new-1\n", (backup / "upstream" / "version.txt").read_text(encoding="utf-8"))
+            self.assertEqual(first_lock, (backup / "upstream.lock").read_bytes())
+
+    def test_publish_failure_after_prior_backup_restores_current_pair(self):
+        with tempfile.TemporaryDirectory() as d:
+            temp = Path(d)
+            root = temp / "root"
+            root.mkdir()
+            make_update_root(root)
+            calls = []
+            _, fake_run = install_fake_fetch(root, calls)
+            fetch_count = 0
+            work_count = 0
+
+            def varying_fetch(_repository, _ref, dest):
+                nonlocal fetch_count
+                fetch_count += 1
+                dest.mkdir()
+                (dest / "version.txt").write_text(f"new-{fetch_count}\n", encoding="utf-8")
+                return str(fetch_count + 1) * 40
+
+            def new_work(**_kwargs):
+                nonlocal work_count
+                work_count += 1
+                work = temp / f"candidate-work-{work_count}"
+                work.mkdir()
+                return str(work)
+
+            real_replace = os.replace
+            with mock.patch("overlay._fetch_candidate_snapshot", side_effect=varying_fetch), mock.patch(
+                "overlay.subprocess.run", side_effect=fake_run
+            ), mock.patch("overlay.tempfile.mkdtemp", side_effect=new_work):
+                update(root, "first-ref")
+                current_lock = (root / "upstream.lock").read_bytes()
+                current_digest = source_digest(root / "upstream")
+
+                def fail_second_new_lock(source, dest):
+                    if (
+                        Path(source).name == "upstream.lock"
+                        and Path(source).parent.name == ".upstream-update-new"
+                    ):
+                        raise OSError("synthetic second publish failure")
+                    return real_replace(source, dest)
+
+                with mock.patch("overlay.os.replace", side_effect=fail_second_new_lock):
+                    with self.assertRaisesRegex(OSError, "second publish failure"):
+                        update(root, "second-ref")
+
+            self.assertEqual(current_lock, (root / "upstream.lock").read_bytes())
+            self.assertEqual(current_digest, source_digest(root / "upstream"))
+            self.assertEqual("new-1\n", (root / "upstream" / "version.txt").read_text(encoding="utf-8"))
+            self.assertFalse((root / ".upstream-update-journal.json").exists())
 
     def test_journal_unlink_failure_keeps_new_pair_and_complete_old_backup(self):
         with tempfile.TemporaryDirectory() as d:

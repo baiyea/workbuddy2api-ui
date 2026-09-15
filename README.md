@@ -178,7 +178,7 @@ WB2A_DATA_VOLUME=旧状态卷名
 
 **手动更新上游与回退**
 
-更新必须显式给出上游 ref；工具只从 `upstream.lock` 中批准的 canonical 仓库拉取，在临时候选目录完成完整检查、镜像构建和隔离 mock 验收。失败时当前 `upstream/`、锁文件、容器和数据卷都不变，并打印保留的候选目录。成功只产生 `upstream/` 和 `upstream.lock` 的 Git 变更，同时将完整旧组合保留在 `.upstream-update-backup/`；不会提交、推送或部署：
+更新必须显式给出上游 ref；工具只从 `upstream.lock` 中批准的 canonical 仓库拉取，在临时候选目录完成完整检查、镜像构建和隔离 mock 验收。失败时当前 `upstream/`、锁文件、容器和数据卷都不变，并打印保留的候选目录。成功只产生 `upstream/` 和 `upstream.lock` 的 Git 变更，同时将完整旧组合保留在 `.upstream-update-backup/`；下次候选通过验证后，工具会先校验并轮换这份备份。工具不会提交、推送或部署：
 
 ```bash
 python3 scripts/overlay.py update --ref COMMIT_OR_TAG
