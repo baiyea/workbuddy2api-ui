@@ -1,12 +1,56 @@
 package pool
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 	"time"
 	"workbuddy2api/internal/auth"
 )
+
+func TestInstallRejectsCrossRealmWhenGlobalRoutingDisabled(t *testing.T) {
+	enabled := auth.GlobalEnabled()
+	auth.SetGlobalEnabled(false)
+	defer auth.SetGlobalEnabled(enabled)
+	for _, identity := range []string{`"realm":"global","domain":""`, `"domain":"www.workbuddy.ai"`} {
+		t.Run(identity, func(t *testing.T) {
+			p := New("")
+			defer p.Close()
+			a, err := auth.Parse([]byte(`{"uid":"one","accessToken":"global-at","refreshToken":"global-rt",` + identity + `}`))
+			if err != nil {
+				t.Fatal(err)
+			}
+			a.FilePath = filepath.Join(t.TempDir(), "workbuddy-one.json")
+			if err := p.Install(a); err != nil {
+				t.Fatal(err)
+			}
+			before := a.Snapshot()
+			diskBefore, err := os.ReadFile(a.FilePath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			next, err := auth.Parse([]byte(`{"uid":"one","accessToken":"cn-at","refreshToken":"cn-rt","realm":"cn"}`))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := p.Install(next); err == nil {
+				t.Error("CN authorization replaced global identity while routing was disabled")
+			}
+			if p.AuthByUID("one") != a || !reflect.DeepEqual(a.Snapshot(), before) {
+				t.Error("rejected authorization changed live credentials or identity")
+			}
+			diskAfter, err := os.ReadFile(a.FilePath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !bytes.Equal(diskAfter, diskBefore) {
+				t.Error("rejected authorization changed persisted credentials")
+			}
+		})
+	}
+}
 
 func TestInstallPersistsBeforePublishingAndKeepsExistingIdentity(t *testing.T) {
 	p := New("")
