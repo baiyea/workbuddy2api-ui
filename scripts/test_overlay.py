@@ -69,6 +69,8 @@ def make_update_root(root):
     (root / "deploy" / "auths").mkdir()
     (root / "deploy" / "auths" / "account.json").write_text("secret\n", encoding="utf-8")
     (root / "docker-compose.yml").write_text("services: {}\n", encoding="utf-8")
+    (root / "docker-compose.build.yaml").write_text("services: {}\n", encoding="utf-8")
+    (root / "LICENSE").write_text("upstream license\n", encoding="utf-8")
     (root / ".dockerignore").write_text("**\n", encoding="utf-8")
     lock = {
         "format": 1,
@@ -547,6 +549,11 @@ class UpdateTests(unittest.TestCase):
             self.assertEqual(old_digest, source_digest(root / "upstream"))
             self.assertTrue((work / "candidate").is_dir())
             self.assertTrue((work / "candidate" / "deploy" / "acceptance.env").is_file())
+            self.assertTrue((work / "candidate" / "docker-compose.build.yaml").is_file(), "candidate cannot build")
+            self.assertTrue((work / "candidate" / "LICENSE").is_file(), "candidate omits license")
+            self.assertEqual((work / "candidate" / "docker-compose.build.yaml").read_bytes(),
+                             (root / "docker-compose.build.yaml").read_bytes())
+            self.assertEqual((work / "candidate" / "LICENSE").read_bytes(), (root / "LICENSE").read_bytes())
             self.assertFalse((work / "candidate" / "deploy" / ".env").exists())
             self.assertFalse((work / "candidate" / "deploy" / "auths").exists())
             flat = [part for command in calls for part in command]
@@ -690,7 +697,7 @@ class UpdateTests(unittest.TestCase):
                 [
                     "git", "status", "--porcelain", "--", "upstream",
                     "upstream.lock", "extensions", "patches", "deploy", "scripts",
-                    "console", "docker-compose.yml", ".dockerignore",
+                    "console", "docker-compose.yml", "docker-compose.build.yaml", "LICENSE", ".dockerignore",
                 ],
                 run.call_args.args[0],
             )

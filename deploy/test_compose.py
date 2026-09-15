@@ -3,25 +3,59 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import shutil
+import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class ProductionConfigTest(unittest.TestCase):
-    def config(self, selected):
+    def config(self, selected="", files=None, directory=ROOT, overrides=None):
         env = {key: value for key, value in os.environ.items() if not key.startswith("WB2A_")}
+        env.pop("COMPOSE_FILE", None)
+        env.pop("COMPOSE_PROJECT_NAME", None)
         env.update(WB2A_CONFIG_FILE=selected, WB2A_API_KEY="mock-shared-api")
+        env.update(overrides or {})
+        args = ["docker", "compose", "--env-file", str(ROOT / "deploy/acceptance.env")]
+        for file in files or [directory / "docker-compose.yml"]:
+            args.extend(["-f", str(file)])
         result = subprocess.run(
-            ["docker", "compose", "--env-file", str(ROOT / "deploy/acceptance.env"),
-             "-f", str(ROOT / "docker-compose.yml"), "config", "--format", "json"],
+            [*args, "config", "--format", "json"], cwd=directory,
             env=env, capture_output=True, text=True, check=True)
         return json.loads(result.stdout)
 
-    def test_default_and_explicit_configs_use_readonly_production_mount(self):
+    def test_runtime_needs_only_compose_and_never_builds_or_mounts_source(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            shutil.copy2(ROOT / "docker-compose.yml", directory)
+            config = self.config(directory=directory)
+        for name in ("core", "console"):
+            service = config["services"][name]
+            self.assertNotIn("build", service, "runtime must not build images")
+            self.assertEqual(service["image"], f"baiyea/workbuddy2api-{name}:0.1.0")
+            self.assertEqual(service["platform"], "linux/amd64")
+            self.assertTrue(all(m["type"] == "volume" for m in service["volumes"]))
+            self.assertEqual(service["environment"]["WB2A_API_KEY"], "mock-shared-api")
+        self.assertNotIn("ports", config["services"]["core"])
+        self.assertEqual(len(config["services"]["console"]["ports"]), 1)
+
+    def test_runtime_uses_fixed_repositories_and_one_version(self):
+        config = self.config(overrides={"WB2A_VERSION": "0.2.0",
+                                      "WB2A_CORE_IMAGE": "other/core:old",
+                                      "WB2A_CONSOLE_IMAGE": "other/console:new"})
+        for name in ("core", "console"):
+            self.assertEqual(config["services"][name]["image"], f"baiyea/workbuddy2api-{name}:0.2.0")
+
+    def test_source_build_entry_preserves_config_and_runtime_topology(self):
+        build_file = ROOT / "docker-compose.build.yaml"
+        self.assertTrue(build_file.is_file(), "source build entry missing")
         for selected in ("", str(ROOT / "deploy/acceptance-config.json")):
             with self.subTest(selected=selected):
-                config = self.config(selected)
+                config = self.config(selected, files=[build_file])
+                for name in ("core", "console"):
+                    self.assertEqual(config["services"][name]["build"]["dockerfile"], f"deploy/{name}.Dockerfile")
+                    self.assertTrue(config["services"][name]["build"].get("pull"), "build must resolve target-platform base")
                 mounts = [m for m in config["services"]["core"]["volumes"] if m["target"] == "/app/config.json"]
                 self.assertEqual(len(mounts), 1, "production config selection is missing")
                 mount = mounts[0]
@@ -31,6 +65,18 @@ class ProductionConfigTest(unittest.TestCase):
                 self.assertFalse(mount.get("bind", {}).get("create_host_path", False))
                 for service in ("core", "console"):
                     self.assertEqual(config["services"][service]["environment"]["WB2A_API_KEY"], "mock-shared-api")
+
+    def test_optional_runtime_config_is_explicit_and_readonly(self):
+        override = ROOT / "deploy/compose.config.yml"
+        self.assertTrue(override.is_file(), "explicit config entry missing")
+        config = self.config(str(ROOT / "deploy/acceptance-config.json"),
+                             files=[ROOT / "docker-compose.yml", override])
+        mounts = [m for m in config["services"]["core"]["volumes"] if m["target"] == "/app/config.json"]
+        self.assertEqual(len(mounts), 1)
+        self.assertTrue(mounts[0]["read_only"])
+        self.assertFalse(mounts[0].get("bind", {}).get("create_host_path", False))
+        with self.assertRaises(subprocess.CalledProcessError):
+            self.config(files=[ROOT / "docker-compose.yml", override])
 
 
 if __name__ == "__main__":

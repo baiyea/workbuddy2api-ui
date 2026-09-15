@@ -1,0 +1,10 @@
+# Optional: docker compose -f docker-compose.yml -f deploy/compose.config.yml up -d
+services:
+  core:
+    volumes:
+      - type: bind
+        source: ${WB2A_CONFIG_FILE:?set WB2A_CONFIG_FILE to an existing absolute JSON file path}
+        target: /app/config.json
+        read_only: true
+        bind:
+          create_host_path: false

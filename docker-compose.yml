@@ -1,8 +1,7 @@
 services:
   core:
-    build:
-      context: .
-      dockerfile: deploy/core.Dockerfile
+    image: baiyea/workbuddy2api-core:${WB2A_VERSION:-0.1.0}
+    platform: linux/amd64
     restart: unless-stopped
     environment:
       TZ: ${TZ:-Asia/Shanghai}
@@ -13,12 +12,6 @@ services:
       WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
       WB2A_API_KEY: ${WB2A_API_KEY:-}
     volumes:
-      - type: bind
-        source: ${WB2A_CONFIG_FILE:-./deploy/default-config.json}
-        target: /app/config.json
-        read_only: true
-        bind:
-          create_host_path: false
       - auths:/app/auths
       - data:/app/data
       - keys:/run/wb2a
@@ -30,9 +23,8 @@ services:
       retries: 3
 
   console:
-    build:
-      context: .
-      dockerfile: deploy/console.Dockerfile
+    image: baiyea/workbuddy2api-console:${WB2A_VERSION:-0.1.0}
+    platform: linux/amd64
     restart: unless-stopped
     environment:
       TZ: ${TZ:-Asia/Shanghai}

@@ -6,7 +6,7 @@ case "$repo_root" in
   /*) ;;
   *) echo "repo root must be absolute" >&2; exit 2 ;;
 esac
-for path in upstream.lock scripts/overlay.py deploy/core.Dockerfile deploy/console.Dockerfile deploy/compose.acceptance.yml deploy/default-config.json deploy/acceptance-config.json deploy/acceptance.env deploy/mock_upstream.py; do
+for path in upstream.lock docker-compose.yml docker-compose.build.yaml LICENSE scripts/overlay.py deploy/core.Dockerfile deploy/console.Dockerfile deploy/compose.acceptance.yml deploy/compose.config.yml deploy/default-config.json deploy/acceptance-config.json deploy/acceptance.env deploy/mock_upstream.py; do
   test -e "$repo_root/$path" || { echo "missing $repo_root/$path" >&2; exit 2; }
 done
 
@@ -22,10 +22,17 @@ console_image="${WB2A_ACCEPTANCE_CONSOLE_IMAGE:-${fresh_project}-console}"
 expected_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["commit"])' "$repo_root/upstream.lock")"
 expected_identity="$(python3 "$repo_root/scripts/overlay.py" identity)"
 cookie_file="${TMPDIR:-/tmp}/${legacy_project}.cookie"
+standalone=""
 
 compose_for() {
   local project="$1" port="$2"
   shift 2
+  local base="$repo_root/docker-compose.build.yaml"
+  if [[ "${WB2A_ACCEPTANCE_SKIP_BUILD:-}" == "true" ]]; then base="$repo_root/docker-compose.yml"; fi
+  local compose_files=(-f "$base")
+  if [[ -n "${WB2A_ACCEPTANCE_CONFIG_FILE:-}" ]]; then
+    compose_files+=(-f "$repo_root/deploy/compose.config.yml")
+  fi
   WB2A_BIND_ADDRESS=127.0.0.1 \
   WB2A_PORT="$port" \
   WB2A_AUTHS_VOLUME="${project}_auths" \
@@ -39,21 +46,37 @@ compose_for() {
   WB2A_API_KEY="${WB2A_ACCEPTANCE_API_KEY:-}" \
   WB2A_PUBLIC_ORIGIN="http://127.0.0.1:$port" \
   docker compose --env-file "$repo_root/deploy/acceptance.env" --project-directory "$repo_root" -p "$project" \
-    -f "$repo_root/docker-compose.yml" -f "$repo_root/deploy/compose.acceptance.yml" "$@"
+    "${compose_files[@]}" -f "$repo_root/deploy/compose.acceptance.yml" "$@"
 }
 
 build_images() {
   local project="$1" port="$2"
+  if [[ "${WB2A_ACCEPTANCE_SKIP_BUILD:-}" == "true" ]]; then
+    docker image inspect "$core_image" "$console_image" | python3 -c '
+import json,sys
+assert all(i["Os"] == "linux" and i["Architecture"] == "amd64" for i in json.load(sys.stdin))
+'
+    return
+  fi
   if [[ -n "${HTTP_PROXY:-}" && -n "${HTTPS_PROXY:-}" ]]; then
-    compose_for "$project" "$port" build \
+    compose_for "$project" "$port" build --pull \
       --build-arg "HTTP_PROXY=$HTTP_PROXY" --build-arg "HTTPS_PROXY=$HTTPS_PROXY"
   elif [[ -n "${HTTP_PROXY:-}" ]]; then
-    compose_for "$project" "$port" build --build-arg "HTTP_PROXY=$HTTP_PROXY"
+    compose_for "$project" "$port" build --pull --build-arg "HTTP_PROXY=$HTTP_PROXY"
   elif [[ -n "${HTTPS_PROXY:-}" ]]; then
-    compose_for "$project" "$port" build --build-arg "HTTPS_PROXY=$HTTPS_PROXY"
+    compose_for "$project" "$port" build --pull --build-arg "HTTPS_PROXY=$HTTPS_PROXY"
   else
-    compose_for "$project" "$port" build
+    compose_for "$project" "$port" build --pull
   fi
+}
+
+# Production smoke copies Compose plus a test-only image override; no source mounts.
+standalone_compose() {
+  WB2A_BIND_ADDRESS=127.0.0.1 WB2A_PORT="$fresh_port" \
+  WB2A_AUTHS_VOLUME="${fresh_project}_auths" WB2A_DATA_VOLUME="${fresh_project}_data" \
+  WB2A_KEYS_VOLUME="${fresh_project}_keys" WB2A_ADMIN_KEY= WB2A_API_KEY= WB2A_PUBLIC_ORIGIN= \
+  docker compose --env-file /dev/null --project-directory "$standalone" -p "$fresh_project" \
+    -f "$standalone/docker-compose.yml" -f "$standalone/images.json" "$@"
 }
 
 create_volumes() {
@@ -84,6 +107,10 @@ remove_project_volumes() {
 
 cleanup() {
   rm -f -- "$cookie_file"
+  if [[ -n "$standalone" ]]; then
+    standalone_compose down --remove-orphans >/dev/null 2>&1 || true
+    rm -rf -- "$standalone"
+  fi
   if [[ "$acceptance_passed" == "true" && "${WB2A_ACCEPTANCE_KEEP:-}" == "true" ]]; then
     echo "acceptance kept: http://127.0.0.1:$legacy_port/ (project $legacy_project)"
     return
@@ -98,6 +125,26 @@ trap cleanup EXIT
 
 create_volumes "$fresh_project"
 build_images "$fresh_project" "$fresh_port"
+standalone="$(mktemp -d "${TMPDIR:-/tmp}/wb2a-image-smoke.XXXXXX")"
+cp "$repo_root/docker-compose.yml" "$standalone/docker-compose.yml"
+python3 -c '
+import json,sys
+with open(sys.argv[1], "w") as output:
+    json.dump({"services": {"core": {"image": sys.argv[2]}, "console": {"image": sys.argv[3]}}}, output)
+' "$standalone/images.json" "$core_image" "$console_image"
+standalone_compose up -d --wait --no-build --pull never
+wait_live "http://127.0.0.1:$fresh_port/livez"
+[[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$fresh_port/healthz")" == "503" ]]
+standalone_compose exec -T core python3 -c '
+import json,os
+assert json.load(open("/app/config.json")) == {}
+assert not os.listdir("/app/auths")
+assert "MIT License" in open("/app/LICENSE").read()
+'
+standalone_compose exec -T console test -s /app/LICENSE
+[[ "$(standalone_compose exec -T core apk --print-arch)" == "x86_64" ]]
+[[ "$(standalone_compose exec -T console apk --print-arch)" == "x86_64" ]]
+standalone_compose down --remove-orphans
 python3 -m unittest discover -s "$repo_root/deploy" -p test_compose.py -v
 missing_config="$repo_root/.build/acceptance-missing-$suffix.json"
 test ! -e "$missing_config"
@@ -129,8 +176,8 @@ assert set(console["NetworkSettings"]["Networks"]) == {sys.argv[1] + "_mock", sy
 mounts={m["Destination"]:m["RW"] for m in console["Mounts"]}
 assert "/app/auths" not in mounts and "/app/data" not in mounts
 assert mounts == {"/run/wb2a": False}
-core_config=next(m for m in core["Mounts"] if m["Destination"] == "/app/config.json")
-assert core_config["RW"] is False and core_config["Source"].endswith("/deploy/default-config.json")
+configs=[m for m in core["Mounts"] if m["Destination"] == "/app/config.json"]
+assert not configs or (configs[0]["RW"] is False and configs[0]["Source"].endswith("/deploy/default-config.json"))
 ' "$fresh_project"
 compose_for "$fresh_project" "$fresh_port" exec -T core sh -eu -c '
   test "$(stat -c %a /run/wb2a)" = 700

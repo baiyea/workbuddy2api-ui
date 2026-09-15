@@ -21,6 +21,8 @@ UPDATE_PATHS = (
     "scripts",
     "console",
     "docker-compose.yml",
+    "docker-compose.build.yaml",
+    "LICENSE",
     ".dockerignore",
 )
 JOURNAL_NAME = ".upstream-update-journal.json"
@@ -329,7 +331,7 @@ def _candidate_inputs_identity(root):
     records = []
     for name in ("extensions", "patches", "deploy", "scripts", "console"):
         records.append([name, source_digest(root / name, ignore=_safe_candidate_ignore)])
-    for name in ("docker-compose.yml", ".dockerignore"):
+    for name in ("docker-compose.yml", "docker-compose.build.yaml", "LICENSE", ".dockerignore"):
         path = root / name
         if path.is_symlink() or not path.is_file():
             raise ValueError(f"invalid candidate source file: {name}")
@@ -350,7 +352,7 @@ def _build_candidate(root, ref, candidate):
             source, candidate / name, symlinks=True, ignore=_safe_candidate_ignore
         )
         _tree_entries(candidate / name)
-    for name in ("docker-compose.yml", ".dockerignore"):
+    for name in ("docker-compose.yml", "docker-compose.build.yaml", "LICENSE", ".dockerignore"):
         source = root / name
         if not source.is_file() or source.is_symlink():
             raise ValueError(f"invalid candidate source file: {name}")

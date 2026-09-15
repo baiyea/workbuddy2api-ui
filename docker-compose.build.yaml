@@ -1,0 +1,36 @@
+services:
+  core:
+    extends:
+      file: docker-compose.yml
+      service: core
+    image: ${WB2A_BUILD_CORE_IMAGE:-workbuddy2api-core:dev}
+    pull_policy: build
+    build:
+      context: .
+      dockerfile: deploy/core.Dockerfile
+      pull: true
+    volumes:
+      - type: bind
+        source: ${WB2A_CONFIG_FILE:-./deploy/default-config.json}
+        target: /app/config.json
+        read_only: true
+        bind:
+          create_host_path: false
+  console:
+    extends:
+      file: docker-compose.yml
+      service: console
+    image: ${WB2A_BUILD_CONSOLE_IMAGE:-workbuddy2api-console:dev}
+    pull_policy: build
+    build:
+      context: .
+      dockerfile: deploy/console.Dockerfile
+      pull: true
+
+volumes:
+  auths:
+    name: ${WB2A_AUTHS_VOLUME:-workbuddy2api_auths}
+  data:
+    name: ${WB2A_DATA_VOLUME:-workbuddy2api_data}
+  keys:
+    name: ${WB2A_KEYS_VOLUME:-workbuddy2api_keys}

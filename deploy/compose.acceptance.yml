@@ -1,6 +1,8 @@
 services:
   mock:
     image: ${WB2A_ACCEPTANCE_CORE_IMAGE:?set WB2A_ACCEPTANCE_CORE_IMAGE}
+    platform: linux/amd64
+    pull_policy: never
     entrypoint: ["python3", "/mock/mock_upstream.py"]
     restart: "no"
     volumes:
@@ -14,6 +16,7 @@ services:
 
   core:
     image: ${WB2A_ACCEPTANCE_CORE_IMAGE:?set WB2A_ACCEPTANCE_CORE_IMAGE}
+    pull_policy: never
     restart: "no"
     networks: [mock]
     depends_on:
@@ -22,6 +25,7 @@ services:
 
   console:
     image: ${WB2A_ACCEPTANCE_CONSOLE_IMAGE:?set WB2A_ACCEPTANCE_CONSOLE_IMAGE}
+    pull_policy: never
     restart: "no"
     networks: [mock, entry]
 
