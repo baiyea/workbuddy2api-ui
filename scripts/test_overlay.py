@@ -4,6 +4,7 @@ import stat
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from overlay import export_snapshot, materialize, source_digest
@@ -260,6 +261,65 @@ class MaterializeTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     materialize(root, dest)
                 self.assertFalse(dest.exists())
+
+    def test_materialize_rejects_patch_alias_duplicate_and_symlink_parent(self):
+        series_values = ("change.patch\n./change.patch\n", "linked/change.patch\n")
+        for series in series_values:
+            with self.subTest(series=series), tempfile.TemporaryDirectory() as d:
+                root = Path(d)
+                make_overlay_root(root)
+                patch_dir = root / "patches"
+                if series.startswith("linked"):
+                    outside = root / "outside"
+                    outside.mkdir()
+                    os.symlink(outside, patch_dir / "linked")
+                    patch = outside / "change.patch"
+                else:
+                    patch = patch_dir / "change.patch"
+                patch.write_text(
+                    "diff --git a/base.txt b/base.txt\n"
+                    "--- a/base.txt\n"
+                    "+++ b/base.txt\n"
+                    "@@ -1 +1 @@\n"
+                    "-old\n"
+                    "+new\n",
+                    encoding="utf-8",
+                )
+                (patch_dir / "series").write_text(series, encoding="utf-8")
+                dest = root / "build"
+
+                with self.assertRaises(ValueError):
+                    materialize(root, dest)
+                self.assertFalse(dest.exists())
+
+    def test_materialize_rejects_output_inside_all_input_trees_before_mutation(self):
+        cases = ("upstream", "extensions", "patches", "resolved-upstream")
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as d:
+                root = Path(d)
+                make_overlay_root(root)
+                if case == "resolved-upstream":
+                    os.symlink("upstream", root / "redirect")
+                    input_tree = root / "upstream"
+                    output_base = root / "redirect"
+                else:
+                    input_tree = root / case
+                    output_base = input_tree
+                before = source_digest(input_tree) if input_tree.exists() else None
+                dest = output_base / "generated" / "core"
+
+                with mock.patch(
+                    "overlay.shutil.copytree",
+                    side_effect=AssertionError("copytree must not run"),
+                ):
+                    with self.assertRaises(ValueError):
+                        materialize(root, dest)
+
+                self.assertFalse((input_tree / "generated").exists())
+                if before is None:
+                    self.assertFalse(input_tree.exists())
+                else:
+                    self.assertEqual(before, source_digest(input_tree))
 
     def test_materialize_stops_on_patch_conflict_and_cleans_new_destination(self):
         with tempfile.TemporaryDirectory() as d:

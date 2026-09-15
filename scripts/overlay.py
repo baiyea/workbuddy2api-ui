@@ -136,8 +136,12 @@ def _read_lock(root):
 
 def _read_series(root):
     patches = root / "patches"
+    series = patches / "series"
+    if patches.is_symlink() or not patches.is_dir() or series.is_symlink():
+        raise ValueError("invalid patches/series")
+    patches = patches.resolve()
     try:
-        lines = (patches / "series").read_text(encoding="utf-8").splitlines()
+        lines = series.read_text(encoding="utf-8").splitlines()
     except (OSError, UnicodeError) as error:
         raise ValueError("invalid patches/series") from error
     result = []
@@ -153,11 +157,21 @@ def _read_series(root):
             or any(part in ("", ".", "..") for part in relative.parts)
         ):
             raise ValueError(f"unsafe patch path: {name!r}")
-        if name in seen:
-            raise ValueError(f"duplicate patch: {name}")
-        seen.add(name)
+        canonical = relative.as_posix()
+        if canonical in seen:
+            raise ValueError(f"duplicate patch: {canonical}")
+        seen.add(canonical)
         patch = patches.joinpath(*relative.parts)
-        if patch.is_symlink() or not patch.is_file():
+        current = patches
+        for part in relative.parts[:-1]:
+            current /= part
+            if current.is_symlink():
+                raise ValueError(f"patch parent is a symlink: {canonical}")
+        if (
+            patch.is_symlink()
+            or not patch.is_file()
+            or not patch.resolve().is_relative_to(patches)
+        ):
             raise ValueError(f"patch is not a regular file: {name}")
         result.append(patch)
     return result
@@ -188,6 +202,11 @@ def _copy_extensions(root, dest):
 def materialize(root: Path, dest: Path) -> None:
     root = Path(root).resolve()
     dest = Path(dest)
+    resolved_dest = dest.resolve(strict=False)
+    for name in ("upstream", "extensions", "patches"):
+        input_tree = (root / name).resolve(strict=False)
+        if resolved_dest == input_tree or resolved_dest.is_relative_to(input_tree):
+            raise ValueError(f"output cannot be inside {name}: {dest}")
     if os.path.lexists(dest):
         raise FileExistsError(dest)
     lock = _read_lock(root)
