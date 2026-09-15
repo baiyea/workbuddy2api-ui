@@ -258,6 +258,9 @@ clientWidth/scrollWidth 都为 390，键盘 Enter 退出回登录页，viewport 
 
 ## 已知限制
 
+- 最终限定范围复审确认五项原问题均已解决、无新增 Critical/Important；留下一个 Minor：
+  “加载更早记录”请求进行时隐藏标签页，返回后按钮可能仍禁用。点击“刷新任务”可恢复；
+  不影响任务执行、幂等或已保存记录。本轮不再追加第二次修复波次，后续可做独立小修复。
 - 没有真实部署、真实 OAuth、验证码、模型消费或任务奖励证据；本文不宣称真实到账。
 - Go `TravelClaim` 的 `int64` 不能区分缺失奖励和明确零，因此零显示为未确认；正数才是
   已确认奖励。
@@ -290,3 +293,4 @@ clientWidth/scrollWidth 都为 390，键盘 Enter 退出回登录页，viewport 
 21. Ruling: Store total bound is 1000 including active, but only terminal records may be pruned; impossible all-active overflow rejects writes instead of deleting active records. Recovery FinishedAt is observation time, DurationMS=null and fixed unknown-result note; array safety bounds are explicit constants and reject rather than silently truncate — preserves truthful recovery and bounded storage — cost if wrong: bounds may need deliberate adjustment for unusually large pools.
 22. Ruling: Task 7 request IDs use crypto.randomUUID when available, otherwise 16 crypto.getRandomValues bytes encoded as 32 hex characters; no Math.random fallback or dependency — default server HTTP may lack secure-context-only randomUUID, while getRandomValues is supported in insecure contexts — cost if wrong: tiny browser compatibility helper. Verify unavailable-randomUUID branch in Node tests. Primary browser docs checked: https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID and https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues .
 23. Ruling: Extend updater dirty/input identity coverage to .dockerignore plus all actual candidate inputs, despite brief's shorter exact path list; document-only edits remain allowed — candidate builds consume .dockerignore and committed concurrent input changes can evade dirty-only checks — cost if wrong: slightly stricter update preflight, no new deployment behavior. Host-local proxy is explicit invocation configuration only, never a portable default.
+24. Ruling: Park the final scoped-review pagination-control Minor; hiding a tab during a pending earlier-page load can leave its button disabled, recoverable with Refresh Tasks — the one final fix wave and one scoped re-review are complete, and this is not load-bearing for tasks or persisted data — cost if wrong: users need manual refresh and a later focused UI fix.
