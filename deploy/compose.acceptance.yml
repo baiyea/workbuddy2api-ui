@@ -15,8 +15,6 @@ services:
   core:
     image: ${WB2A_ACCEPTANCE_CORE_IMAGE:?set WB2A_ACCEPTANCE_CORE_IMAGE}
     restart: "no"
-    volumes:
-      - ${WB2A_ACCEPTANCE_CONFIG:?set WB2A_ACCEPTANCE_CONFIG}:/app/config.json:ro
     networks: [mock]
     depends_on:
       mock:

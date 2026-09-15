@@ -13,6 +13,12 @@ services:
       WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
       WB2A_API_KEY: ${WB2A_API_KEY:-}
     volumes:
+      - type: bind
+        source: ${WB2A_CONFIG_FILE:-./deploy/default-config.json}
+        target: /app/config.json
+        read_only: true
+        bind:
+          create_host_path: false
       - auths:/app/auths
       - data:/app/data
       - keys:/run/wb2a

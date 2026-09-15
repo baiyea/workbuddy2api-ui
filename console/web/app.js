@@ -2,6 +2,7 @@ const $ = (id) => document.getElementById(id);
 let csrf = '', modelList = [], accounts = [], history = [], conversation = newConversation(), activeRequest, flowID, flowTimer;
 let page = 'overview', sessionGeneration = 0;
 let taskState = {items:[],active_run:null,latest_runs:[]}, taskHistory = [], taskBefore = null, taskStarting = false, taskPollTimer, taskRenderKey, detailController, detailGeneration = 0;
+let selectedTaskRun, historyGeneration = 0, historyLoading = false, taskHistoryKey;
 const taskIntents = new Map(), taskReads = new Set();
 function newConversation() { return `web-${Date.now()}-${Math.random().toString(36).slice(2)}`; }
 function notice(text = '') { $('notice').textContent = text; $('notice').hidden = !text; }
@@ -88,8 +89,8 @@ function createTaskRequestID(){
  if(typeof crypto.randomUUID==='function')return crypto.randomUUID();
  const bytes=new Uint8Array(16);crypto.getRandomValues(bytes);return Array.from(bytes,byte=>byte.toString(16).padStart(2,'0')).join('');
 }
-function cancelTaskDetail(hide=false){detailGeneration++;detailController?.abort();detailController=undefined;if(hide)$('task-detail').hidden=true;}
-function stopTaskReads(hideDetail=false){clearTimeout(taskPollTimer);taskPollTimer=undefined;for(const controller of taskReads)controller.abort();taskReads.clear();cancelTaskDetail(hideDetail);}
+function cancelTaskDetail(hide=false){detailGeneration++;detailController?.abort();detailController=undefined;if(hide){selectedTaskRun=undefined;$('task-detail').hidden=true;}}
+function stopTaskReads(hideDetail=false){clearTimeout(taskPollTimer);taskPollTimer=undefined;historyGeneration++;historyLoading=false;for(const controller of taskReads)controller.abort();taskReads.clear();cancelTaskDetail(hideDetail);}
 async function taskJSON(path){
  const controller=new AbortController();taskReads.add(controller);
  try{return await jsonAPI(path,undefined,controller.signal);}finally{taskReads.delete(controller);}
@@ -97,19 +98,28 @@ async function taskJSON(path){
 function taskPageVisible(){return page==='tasks'&&csrf&&!document.hidden;}
 function scheduleTaskPoll(){
  clearTimeout(taskPollTimer);taskPollTimer=undefined;
- if(taskPageVisible()&&taskState.active_run)taskPollTimer=setTimeout(pollTaskRun,2000);
+ if(taskPageVisible())taskPollTimer=setTimeout(pollTaskRun,2000);
 }
 function scheduleTaskRetry(){clearTimeout(taskPollTimer);taskPollTimer=taskPageVisible()?setTimeout(loadTaskState,2000):undefined;}
-async function loadTaskState(){
+async function loadTaskState(schedule=true){
  if(!taskPageVisible())return;
- try{taskState=await taskJSON('tasks');renderTasks();$('task-live').textContent=taskState.active_run?'后台任务正在运行，页面将自动刷新。':'任务状态已刷新。';scheduleTaskPoll();}
- catch(error){if(error.name!=='AbortError'){$('task-live').textContent=error.message;notice(error.message);scheduleTaskRetry();}}
+ try{taskState=await taskJSON('tasks');renderTasks();$('task-live').textContent=taskState.active_run?'后台任务正在运行，页面将自动刷新。':'任务状态已刷新。';if(schedule)scheduleTaskPoll();return true;}
+ catch(error){if(error.name!=='AbortError'){$('task-live').textContent=error.message;notice(error.message);if(schedule)scheduleTaskRetry();}}
 }
-async function loadTaskHistory(reset=false){
+function taskRunKey(){return JSON.stringify([taskState.active_run,taskState.latest_runs]);}
+async function loadTaskHistory(reset=false,refresh=false){
  if(!taskPageVisible())return;
- const path='task-runs?limit=20'+(!reset&&taskBefore?'&before='+encodeURIComponent(taskBefore):'');
- try{const result=await taskJSON(path);taskHistory=reset?result.items:[...taskHistory,...result.items];taskBefore=result.next_before;renderTaskHistory();}
- catch(error){if(error.name!=='AbortError')notice(error.message);}
+ if(reset){historyGeneration++;historyLoading=false;}
+ if(historyLoading||(!reset&&!refresh&&!taskBefore))return;
+ const generation=historyGeneration,key=taskRunKey();historyLoading=true;$('task-more').disabled=true;
+ const path='task-runs?limit=20'+(!reset&&!refresh&&taskBefore?'&before='+encodeURIComponent(taskBefore):'');
+ try{
+  const result=await taskJSON(path);if(generation!==historyGeneration||!taskPageVisible())return;
+  if(refresh){const ids=new Set(result.items.map(run=>run.id));if(!taskHistory.length)taskBefore=result.next_before;taskHistory=[...result.items,...taskHistory.filter(run=>!ids.has(run.id))];}
+  else{taskHistory=reset?result.items:[...taskHistory,...result.items];taskBefore=result.next_before;}
+  if(reset||refresh)taskHistoryKey=key;renderTaskHistory();
+ }catch(error){if(generation===historyGeneration&&error.name!=='AbortError')notice(error.message);}
+ finally{if(generation===historyGeneration){historyLoading=false;$('task-more').disabled=false;}}
 }
 async function loadTaskPage(){
  stopTaskReads();taskHistory=[];taskBefore=null;renderTaskHistory();await Promise.all([loadTaskState(),loadTaskHistory(true)]);
@@ -138,10 +148,12 @@ async function triggerTask(taskID){
 }
 async function pollTaskRun(){
  if(!taskPageVisible())return;
- const activeID=taskState.active_run?.id;
- await loadTaskState();
- if(activeID)await loadTaskDetail(activeID);
- if(!taskState.active_run)await loadTaskHistory(true);
+ clearTimeout(taskPollTimer);taskPollTimer=undefined;
+ try{
+  if(!await loadTaskState(false))return;
+  if(selectedTaskRun&&!$('task-detail').hidden)await loadTaskDetail(selectedTaskRun,false);
+  if(taskHistoryKey!==taskRunKey())await loadTaskHistory(false,true);
+ }finally{scheduleTaskPoll();}
 }
 function appendHistoryCell(row,text){const td=document.createElement('td');td.textContent=text;row.append(td);}
 function renderTaskHistory(){
@@ -149,23 +161,26 @@ function renderTaskHistory(){
  for(const run of taskHistory){const row=document.createElement('tr');appendHistoryCell(row,taskNames[run.task_id]||run.task_id);appendHistoryCell(row,formatRunStatus(run.status));appendHistoryCell(row,formatTaskTime(run.started_at));appendHistoryCell(row,run.source==='scheduled'?'计划':'手动');const action=document.createElement('td');const button=document.createElement('button');button.className='quiet';button.textContent='查看详情';button.addEventListener('click',()=>loadTaskDetail(run.id));action.append(button);row.append(action);body.append(row);}
 }
 function formatBalance(balance){return balance?`余额 ${balance.value}（观测于 ${formatTaskTime(balance.observed_at)}）`:'余额未观测';}
-function renderTaskDetail(run){
+function renderTaskDetail(run,scroll=true){
+ selectedTaskRun=run.id;
  $('task-detail').hidden=false;$('task-detail-title').textContent=`${taskNames[run.task_id]||run.task_id} · ${formatRunStatus(run.status)}`;
  const finish=run.status==='interrupted'?`观察时间：${formatTaskTime(run.finished_at)}（不代表真实业务结束）`:`结束时间：${formatTaskTime(run.finished_at)}`;
  $('task-detail-meta').textContent=`开始时间：${formatTaskTime(run.started_at)} · ${finish} · 耗时：${run.duration_ms===null||run.duration_ms===undefined?'未知':run.duration_ms+' ms'}`;
  $('task-accounts').textContent=(run.accounts||[]).map(account=>`${account.uid} · ${formatRunStatus(account.status)} · ${account.detail||'无补充说明'}\n${formatBalance(account.before)} → ${formatBalance(account.after)} · 已确认奖励：${formatTaskReward(account.reward)}`).join('\n\n')||'没有账号结果。';
- $('task-log').textContent=run.log||'没有日志摘要。';$('task-log-truncated').hidden=!run.log_truncated;$('task-detail').scrollIntoView({block:'nearest'});
+ $('task-log').textContent=run.log||'没有日志摘要。';$('task-log-truncated').hidden=!run.log_truncated;if(scroll)$('task-detail').scrollIntoView({block:'nearest'});
 }
-async function loadTaskDetail(id){
+async function loadTaskDetail(id,scroll=true){
+ if(!scroll&&(detailController||selectedTaskRun!==id||$('task-detail').hidden))return;
+ selectedTaskRun=id;
  cancelTaskDetail();const generation=detailGeneration;const controller=new AbortController();detailController=controller;taskReads.add(controller);
- try{const run=await jsonAPI('task-runs/'+encodeURIComponent(id),undefined,controller.signal);if(generation===detailGeneration&&taskPageVisible())renderTaskDetail(run);}
+ try{const run=await jsonAPI('task-runs/'+encodeURIComponent(id),undefined,controller.signal);if(generation===detailGeneration&&selectedTaskRun===id&&taskPageVisible())renderTaskDetail(run,scroll);}
  catch(error){if(generation===detailGeneration&&error.name!=='AbortError')notice(error.message);}
  finally{taskReads.delete(controller);if(detailController===controller)detailController=undefined;}
 }
 $('task-refresh').addEventListener('click',loadTaskPage);
 $('task-more').addEventListener('click',()=>loadTaskHistory(false));
 $('task-detail-close').addEventListener('click',()=>cancelTaskDetail(true));
-document.addEventListener?.('visibilitychange',()=>{if(document.hidden)stopTaskReads();else if(page==='tasks')loadTaskPage();});
+document.addEventListener?.('visibilitychange',()=>{if(document.hidden)stopTaskReads();else if(page==='tasks')pollTaskRun();});
 
 $('add-account').addEventListener('submit',async event=>{
  event.preventDefault();clearTimeout(flowTimer);const button=event.submitter;button.disabled=true;notice('');

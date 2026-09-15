@@ -202,19 +202,63 @@ inspect 没有读取或记录容器 Env、key 或数据内容。真实容器没�
 
 正式切换仍需：用户确认停止使用/维护窗口 → 重新现场解析容器和两个挂载 → 停止精确旧
 实例但不删卷 → 创建并验证最终一致性数据备份 → 在 `.env` 写入这两个实际卷名及原端口
-17863 → 启动新 Compose → 只验证旧管理/API Key、已有账号状态和保存数据一致。真实登录、
+17863，同时用 `WB2A_CONFIG_FILE` 指向已核实并保留的旧配置文件，必要时设置共享
+`WB2A_API_KEY` → 启动新 Compose → 只验证旧管理/API Key、已有账号状态和保存数据一致。真实登录、
 模型消费和任务奖励由用户手工决定；任何挂载、备份或 key 冲突都应停止并回退旧镜像/
 服务定义复用原卷。
+
+## 最终 review 修复（基线 0326a8d）
+
+本轮只解决最终 review 的五项问题，没有升级上游、变更账户业务规则或执行真实部署。
+
+- 生产 Compose 通过 `WB2A_CONFIG_FILE` 选择只读 `/app/config.json`，默认选择仓库内的
+  `deploy/default-config.json` 空对象，保持无需用户配置的一条命令启动。显式缺失路径
+  不创建目录，目录和非法 JSON 均拒绝启动；旧配置的排程、开关与 global 设置由原有
+  loader 读取。旧配置不会被修改或写入镜像。既有 API Key 冲突保护不变：不同于持久
+  key 的配置值必须使用 core/console 共享的 `WB2A_API_KEY`，不能只覆盖 core。
+- 可见任务页空闲时也每次请求结束后约 2 秒继续轮询。latest/active 数据变化才合并最新
+  历史页，保持已加载较早记录和 cursor；不变化时不替换历史行。隐藏页停止读取，恢复
+  可见后同步变化而不重置分页。
+- 用户选择的详情拥有独立 ID；关闭、历史记录选择和未完成请求的失效控制不会被后台
+  轮询覆盖。后台仅更新仍被选中的可见详情，不触发滚动；主动查看仍可定位详情。
+- 分页请求有 in-flight guard，按钮读取时禁用，reset generation 拒绝旧分页响应。
+- 首次登录帮助命令修正为 `docker compose logs console`，与管理密钥实际输出服务一致。
+
+RED：Node 回归观察到后台滚动 1 次（期望 0）、空闲无 timer、关闭详情被打开，以及
+同 cursor 请求 2 次（期望 1）；生产 Compose 的默认/显式配置两分支均无配置挂载。
+补充 visibility 回归观察到返回页面时已加载历史从 3 条变 2 条。修复后 Node 20/20，
+生产 Compose 配置测试 1/1（两分支）通过。帮助文案通过真实 mock 登录页核对。
+
+最终源码再次执行 `bash scripts/check.sh`：物化 core 19 个 Go 包、vet、6 个 core 包
+race、console race、Node 20/20、Python 15/15 全通过。独立 overlay 测试 36/36、迁移
+测试 8/8 全通过；`bash -n scripts/acceptance.sh`、显式安全 env-file 的 Compose config
+和 `git diff --check` 通过。上游、锁文件、`.agents/` 无 diff；原 23 项裁决保留如下。
+
+隔离 Docker 验收通过 production 配置路径而非 acceptance-only 挂载：fresh 使用默认
+空配置，legacy 使用合成配置，确认 checkin 唯一时点 04:00、其余五任务禁用且手动返回
+409；mock global 模型/SSE 验证自定义 endpoint 生效。其余密钥覆盖、non-root、单端口、
+数据字节及重启任务历史验证继续由 `scripts/acceptance.sh` 覆盖。
+
+最终资产的 Docker 命令为
+`HTTP_PROXY=http://host.docker.internal:7890 HTTPS_PROXY=http://host.docker.internal:7890 bash scripts/acceptance.sh`，
+exit 0：`acceptance passed: fresh/rebuild/legacy`，mock URL 为
+`http://127.0.0.1:63425/`。项目 `wb2api-task4-1789478713-56652` 及其 `-legacy` 项目已清理，
+两个项目的容器、六个带项目标签的临时卷均确认不存在；未运行 prune 或删除真实卷。
+前一轮同样通过的 `wb2api-task4-1789478576-55753` 及其 `-legacy` 项目也已清理。
+最终只读检查真实服务仍为 running/healthy，两个原账号/数据卷仍存在。
+
+controller 对最终嵌入资产的浏览器验收（纯 mock `http://127.0.0.1:17864/`）：重新登录，
+双击加载较早记录后恰有 24 行；第二页启动 travel 后，第一张空闲可见页面自动增加第
+25 行且保留之前 24 行。活动运行时选中的 school 历史详情跨轮询保持不变；PageUp 后
+`scrollY=1882` 在后续轮询保持 1882。另一页已关闭的详情持续关闭。390x844 下
+clientWidth/scrollWidth 都为 390，键盘 Enter 退出回登录页，viewport 已恢复。
+在 visibility 单行修复前（同一 polling 实现）还观察到外部 activity 完成后自动新增
+第 25 行；visibility hide/show 保留分页由最终 Node 回归覆盖。夹具随后已停止，未留下
+预览监听；没有真实 OAuth、模型请求或任务奖励。
 
 ## 已知限制
 
 - 没有真实部署、真实 OAuth、验证码、模型消费或任务奖励证据；本文不宣称真实到账。
-- Task 7 页面在初始 `active_run=null` 时不会持续轮询，因此别的会话或定时任务后来开始，
-  空闲可见页可能要刷新后才显示。
-- active poll 每次会打开原 active run 的详情，可能重新打开用户已经关闭的详情，或覆盖
-  用户正在看的历史详情并再次滚动。
-- “加载更早记录”没有 in-flight guard；快速重复触发可能用同一 cursor 请求两次并追加
-  重复行。这是已登记的 deferred minor，本 Task 9 不越界修改。
 - Go `TravelClaim` 的 `int64` 不能区分缺失奖励和明确零，因此零显示为未确认；正数才是
   已确认奖励。
 - 历史默认保留 30 天且最多 1000 条；只裁剪终态记录。账号/合并计划数组上限各 10000，

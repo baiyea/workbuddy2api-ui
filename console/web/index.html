@@ -9,7 +9,7 @@
   <p class="muted">一个轻量的模型网关。管理账号、观察运行状态，并直接测试模型回答。</p>
   <form id="login-form"><label for="admin-key">管理密钥</label><input id="admin-key" type="password" autocomplete="current-password" required placeholder="输入此服务器的管理密钥"><button class="primary full" type="submit">进入控制台 <span>↗</span></button></form>
   <p id="login-error" class="error" role="alert"></p>
-  <details><summary>第一次使用？</summary><p>在服务器上查看容器日志，找到「管理密钥」后输入。若部署时已设置密钥，使用预设值。</p><code>docker compose logs wb2api</code><p>这是控制台密钥，不是上游账号密码。</p></details>
+  <details><summary>第一次使用？</summary><p>在服务器上查看容器日志，找到「管理密钥」后输入。若部署时已设置密钥，使用预设值。</p><code>docker compose logs console</code><p>这是控制台密钥，不是上游账号密码。</p></details>
  </section><p class="login-footer">自托管 · 凭据保存在你的服务器</p>
 </main>
 <div id="console-view" class="shell" hidden>

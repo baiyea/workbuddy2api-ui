@@ -48,6 +48,7 @@ WB2A_BIND_ADDRESS=0.0.0.0
 WB2A_PUBLIC_ORIGIN=
 WB2A_ADMIN_KEY=
 WB2A_API_KEY=
+WB2A_CONFIG_FILE=
 WB2A_AUTHS_VOLUME=workbuddy2api_auths
 WB2A_DATA_VOLUME=workbuddy2api_data
 WB2A_KEYS_VOLUME=workbuddy2api_keys
@@ -57,6 +58,12 @@ WB2A_KEYS_VOLUME=workbuddy2api_keys
 访问的完整 origin（不能带路径）。管理密钥至少 32 个字符；公共 API Key 可沿用原非空
 值。两个服务必须使用同一组 `WB2A_ADMIN_KEY`/`WB2A_API_KEY` 覆盖，不能只在 core 的
 `config.json` 中设置一个不同 API Key。
+
+未设置 `WB2A_CONFIG_FILE` 时会只读挂载仓库的 `deploy/default-config.json`（空对象，使用
+上游默认配置），全新启动无需创建用户配置。需要保留旧排程、任务开关或 global 设置时，
+将 `WB2A_CONFIG_FILE` 设为原配置文件的绝对路径；只读挂载到 core 的 `/app/config.json`，
+不会复制进镜像或改写原文件。显式选择的路径不存在、不是文件或 JSON 无效时启动失败，
+不会创建目录或悄悄退回默认。环境变量仍覆盖对应配置；API Key 覆盖必须由两个服务共享。
 
 `/livez` 表示进程存活，空账号也返回 200；`/healthz` 表示是否已有可服务账号，空账号
 返回 503 是正常状态。
@@ -74,7 +81,9 @@ python3 deploy/migrate.py backup \
 
 运行中备份会明确标为非最终一致。正式切换前应确认维护窗口、停止已核实的旧实例（不删
 卷），再生成并校验最终一致性备份。随后把 inspect 得到的账号卷、状态卷和原宿主端口写
-入 `.env`，执行 `docker compose up -d --build`。挂载、备份或密钥发生冲突时必须停止，
+入 `.env`，同时将 `WB2A_CONFIG_FILE` 指向已核实并保留的旧配置文件，再执行
+`docker compose up -d --build`。若旧 `api_key` 与持久密钥不同，必须显式设置共享
+`WB2A_API_KEY`；不要删掉配置来绕过冲突。挂载、备份或密钥发生冲突时必须停止，
 不能生成空数据继续。
 
 旧 `console-keys.json` 保持原字节不变；新布局会复用原管理/API Key 并新增桥接密钥。
@@ -87,6 +96,7 @@ python3 deploy/migrate.py backup \
 ```sh
 python3 -m unittest discover -s scripts -p test_overlay.py -v
 python3 -m unittest discover -s deploy -p test_migrate.py -v
+python3 -m unittest discover -s deploy -p test_compose.py -v
 bash scripts/check.sh
 docker compose config --quiet
 docker compose build

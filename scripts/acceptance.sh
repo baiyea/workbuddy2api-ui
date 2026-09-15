@@ -6,7 +6,7 @@ case "$repo_root" in
   /*) ;;
   *) echo "repo root must be absolute" >&2; exit 2 ;;
 esac
-for path in upstream.lock scripts/overlay.py deploy/core.Dockerfile deploy/console.Dockerfile deploy/compose.acceptance.yml deploy/acceptance-config.json deploy/acceptance.env deploy/mock_upstream.py; do
+for path in upstream.lock scripts/overlay.py deploy/core.Dockerfile deploy/console.Dockerfile deploy/compose.acceptance.yml deploy/default-config.json deploy/acceptance-config.json deploy/acceptance.env deploy/mock_upstream.py; do
   test -e "$repo_root/$path" || { echo "missing $repo_root/$path" >&2; exit 2; }
 done
 
@@ -31,7 +31,7 @@ compose_for() {
   WB2A_AUTHS_VOLUME="${project}_auths" \
   WB2A_DATA_VOLUME="${project}_data" \
   WB2A_KEYS_VOLUME="${project}_keys" \
-  WB2A_ACCEPTANCE_CONFIG="$repo_root/deploy/acceptance-config.json" \
+  WB2A_CONFIG_FILE="${WB2A_ACCEPTANCE_CONFIG_FILE:-$repo_root/deploy/default-config.json}" \
   WB2A_ACCEPTANCE_MOCK="$repo_root/deploy/mock_upstream.py" \
   WB2A_ACCEPTANCE_CORE_IMAGE="$core_image" \
   WB2A_ACCEPTANCE_CONSOLE_IMAGE="$console_image" \
@@ -98,6 +98,16 @@ trap cleanup EXIT
 
 create_volumes "$fresh_project"
 build_images "$fresh_project" "$fresh_port"
+python3 -m unittest discover -s "$repo_root/deploy" -p test_compose.py -v
+missing_config="$repo_root/.build/acceptance-missing-$suffix.json"
+test ! -e "$missing_config"
+for invalid_config in "$missing_config" "$repo_root/deploy" "$repo_root/README.md"; do
+  if WB2A_ACCEPTANCE_CONFIG_FILE="$invalid_config" compose_for "$fresh_project" "$fresh_port" run --rm --no-deps core; then
+    echo "invalid selected config unexpectedly started" >&2
+    exit 1
+  fi
+done
+test ! -e "$missing_config"
 compose_for "$fresh_project" "$fresh_port" up -d --wait --no-build
 [[ "$(compose_for "$fresh_project" "$fresh_port" port console 7863)" == "127.0.0.1:$fresh_port" ]]
 wait_live "http://127.0.0.1:$fresh_port/livez"
@@ -119,6 +129,8 @@ assert set(console["NetworkSettings"]["Networks"]) == {sys.argv[1] + "_mock", sy
 mounts={m["Destination"]:m["RW"] for m in console["Mounts"]}
 assert "/app/auths" not in mounts and "/app/data" not in mounts
 assert mounts == {"/run/wb2a": False}
+core_config=next(m for m in core["Mounts"] if m["Destination"] == "/app/config.json")
+assert core_config["RW"] is False and core_config["Source"].endswith("/deploy/default-config.json")
 ' "$fresh_project"
 compose_for "$fresh_project" "$fresh_port" exec -T core sh -eu -c '
   test "$(stat -c %a /run/wb2a)" = 700
@@ -147,6 +159,7 @@ compose_for "$fresh_project" "$fresh_port" exec -T core sh -c 'grep -qx mock-acc
 compose_for "$fresh_project" "$fresh_port" down --remove-orphans >/dev/null
 remove_project_volumes "$fresh_project"
 
+export WB2A_ACCEPTANCE_CONFIG_FILE="$repo_root/deploy/acceptance-config.json"
 create_volumes "$legacy_project"
 docker run --rm --network none \
   --mount "type=volume,src=${legacy_project}_auths,dst=/auths" \
@@ -206,7 +219,12 @@ import json,sys
 body=json.load(sys.stdin)
 checkin=next(task for task in body["items"] if task["id"] == "checkin")
 assert checkin["enabled"] is True and body["active_run"] is None
+assert checkin["hours"] == [4]
+assert all(task["enabled"] is False for task in body["items"] if task["id"] != "checkin")
 '
+[[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' -b "$cookie_file" \
+  -H "Origin: http://127.0.0.1:$legacy_port" -H "X-CSRF-Token: $csrf" -H 'Content-Type: application/json' \
+  --data '{"request_id":"disabled-task-acceptance"}' "http://127.0.0.1:$legacy_port/admin/tasks/travel/runs")" == "409" ]]
 request_id="acceptance-run-$suffix"
 run_json="$(curl --noproxy '*' -fsS -b "$cookie_file" -H "Origin: http://127.0.0.1:$legacy_port" \
   -H "X-CSRF-Token: $csrf" -H 'Content-Type: application/json' --data "{\"request_id\":\"$request_id\"}" \

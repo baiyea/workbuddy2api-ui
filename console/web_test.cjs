@@ -85,7 +85,7 @@ function taskFixture(fetch, cryptoImpl={randomUUID:()=> '11111111-2222-4333-8444
       replaceChildren(...children){this.children=children;},querySelector(){return null;},scrollIntoView(){},select(){}};
   }
   const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
-  const ctx=vm.createContext({document:{getElementById:get,querySelectorAll:()=>[],createElement:element,hidden:false,addEventListener(){}},
+  const ctx=vm.createContext({document:{getElementById:get,querySelectorAll:()=>[],createElement:element,hidden:false,handlers:{},addEventListener(name,fn){this.handlers[name]=fn;}},
     location:{origin:'http://console.test'},AbortController,TextDecoder,TextEncoder,Option:function(text,value){return {textContent:text,value};},
     setInterval(){},clearTimeout(){},setTimeout(){},fetch,crypto:cryptoImpl,navigator:{clipboard:{writeText:async()=>{}}}});
   vm.runInContext(readFileSync(__dirname+'/web/app.js','utf8'),ctx);
@@ -162,8 +162,91 @@ test('poll refreshes the former active run after catalog turns inactive', async 
     throw new Error('unexpected '+url);
   });
   vm.runInContext("taskState.active_run={id:'run-active',task_id:'checkin',status:'running'}",ctx);
+  await vm.runInContext("loadTaskDetail('run-active')",ctx);
+  let scrolls=0;get('task-detail').scrollIntoView=()=>scrolls++;
   await vm.runInContext('pollTaskRun()',ctx);
   assert.match(get('task-detail-title').textContent,/成功/,'final detail was left at running');
+  assert.equal(scrolls,0,'background completion scrolled the page');
+});
+
+test('visible idle polls detect external history changes without losing loaded pages', async () => {
+  let newest=null, historyReads=0, timer;
+  const response=body=>({ok:true,status:200,json:async()=>body});
+  const old={id:'old',task_id:'checkin',status:'success',accounts:[]};
+  const older={id:'older',task_id:'travel',status:'success',accounts:[]};
+  const {ctx,get}=taskFixture(url=>{
+    if(url==='/admin/session')return new Promise(()=>{});
+    if(url==='/admin/tasks')return response({items:[],active_run:newest?.status==='running'?newest:null,latest_runs:newest?[newest]:[]});
+    if(url==='/admin/task-runs?limit=20'){historyReads++;return response({items:newest?[newest,old]:[old],next_before:'old'});}
+    if(url==='/admin/task-runs?limit=20&before=old')return response({items:[older],next_before:'older'});
+    throw new Error('unexpected '+url);
+  });
+  ctx.setTimeout=(fn,ms)=>{timer={fn,ms};return 1;};
+  await vm.runInContext('loadTaskPage();',ctx);
+  assert.equal(typeof timer?.fn,'function','idle page stopped polling');
+  assert.ok(timer.ms>=2000,'idle poll is unbounded');
+  await vm.runInContext('loadTaskHistory()',ctx);
+  const row=get('task-history-body').children[0];
+  await vm.runInContext('pollTaskRun()',ctx);
+  assert.equal(historyReads,1,'unchanged idle tick reloaded history');
+  assert.equal(get('task-history-body').children[0],row,'unchanged tick replaced rows');
+  newest={id:'external',task_id:'activity',status:'running',accounts:[]};
+  await vm.runInContext('pollTaskRun()',ctx);
+  assert.equal(vm.runInContext('taskHistory.map(run=>run.id).join(",")',ctx),'external,old,older');
+  assert.equal(vm.runInContext('taskBefore',ctx),'older');
+  newest={...newest,status:'partial_failure'};
+  await vm.runInContext('pollTaskRun()',ctx);
+  assert.equal(vm.runInContext('taskHistory[0].status',ctx),'partial_failure');
+  assert.equal(vm.runInContext('taskHistory.length',ctx),3);
+  assert.equal(historyReads,3);
+  ctx.document.hidden=true;ctx.document.handlers.visibilitychange();
+  ctx.document.hidden=false;ctx.document.handlers.visibilitychange();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(vm.runInContext('taskHistory.length',ctx),3,'returning to visible page discarded loaded history');
+  assert.equal(historyReads,3,'visibility resume reloaded unchanged history');
+});
+
+test('active polling preserves closed and historical detail ownership', async () => {
+  const response=body=>({ok:true,status:200,json:async()=>body});
+  const active={id:'active',task_id:'travel',status:'running',accounts:[]};
+  const {ctx,get}=taskFixture(url=>{
+    if(url==='/admin/session')return new Promise(()=>{});
+    if(url==='/admin/tasks')return response({items:[],active_run:active,latest_runs:[active]});
+    if(url==='/admin/task-runs?limit=20')return response({items:[active],next_before:null});
+    if(url.startsWith('/admin/task-runs/'))return response(url.endsWith('/old')?{id:'old',task_id:'cat',status:'success',accounts:[]}:active);
+    throw new Error('unexpected '+url);
+  });
+  await vm.runInContext("loadTaskState();",ctx);
+  await vm.runInContext("loadTaskDetail('active')",ctx);
+  get('task-detail-close').handlers.click();
+  await vm.runInContext('pollTaskRun()',ctx);
+  assert.equal(get('task-detail').hidden,true,'poll reopened closed detail');
+  await vm.runInContext("loadTaskDetail('old')",ctx);
+  let scrolls=0;get('task-detail').scrollIntoView=()=>scrolls++;
+  await vm.runInContext('pollTaskRun()',ctx);
+  assert.match(get('task-detail-title').textContent,/夜猫子/,'poll replaced historical selection');
+  assert.equal(scrolls,0);
+});
+
+test('pagination guards the cursor and a reset invalidates a late earlier page', async () => {
+  const pending=[];
+  const response=body=>({ok:true,status:200,json:async()=>body});
+  const {ctx,get}=taskFixture(url=>{
+    if(url==='/admin/session')return new Promise(()=>{});
+    return new Promise(resolve=>pending.push({url,resolve}));
+  });
+  vm.runInContext("taskBefore='cursor';taskHistory=[{id:'cursor',task_id:'cat'}]",ctx);
+  const first=vm.runInContext('loadTaskHistory()',ctx);
+  const duplicate=vm.runInContext('loadTaskHistory()',ctx);
+  assert.equal(pending.length,1,'same cursor requested concurrently');
+  await duplicate;
+  assert.equal(get('task-more').disabled,true);
+  const reset=vm.runInContext('loadTaskHistory(true)',ctx);
+  pending[1].resolve(response({items:[{id:'new',task_id:'travel'}],next_before:'new'}));await reset;
+  pending[0].resolve(response({items:[{id:'stale',task_id:'cat'}],next_before:null}));await first;
+  assert.equal(vm.runInContext('taskHistory.map(run=>run.id).join(",")',ctx),'new');
+  assert.equal(vm.runInContext('taskBefore',ctx),'new');
+  assert.equal(get('task-more').disabled,false);
 });
 
 test('closing detail invalidates a pending response and newest detail wins', async () => {
