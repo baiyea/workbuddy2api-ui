@@ -10,7 +10,15 @@ index be2e916..9fba3df 100644
  	"flag"
  	"log"
  	"net/http"
-@@ -27,7 +28,7 @@ func main() {
+@@ -17,6 +18,7 @@ import (
+ 	"workbuddy2api/internal/scheduler"
+ 	"workbuddy2api/internal/server"
+ 	"workbuddy2api/internal/session"
++	"workbuddy2api/internal/taskrun"
+ 	"workbuddy2api/internal/upstream"
+ )
+ 
+@@ -27,7 +29,7 @@ func main() {
  	cfg, err := Load(*cfgPath)
  	if err != nil {
  		// 配置文件不存在时给一次机会用纯默认 + env
@@ -19,7 +27,7 @@ index be2e916..9fba3df 100644
  			log.Printf("config %s not found, using defaults+env", *cfgPath)
  			cfg, err = Load("")
  		}
-@@ -36,6 +37,9 @@ func main() {
+@@ -36,6 +38,9 @@ func main() {
  		}
  	}
  
@@ -29,11 +37,22 @@ index be2e916..9fba3df 100644
  	auths, err := auth.LoadDir(cfg.AuthDir)
  	if err != nil {
  		log.Fatalf("load auths: %v", err)
-@@ -188,11 +192,15 @@ func main() {
+@@ -119,7 +124,9 @@ func main() {
+ 	up.BillingBaseGlobal = cfg.Global.BillingBase
+ 	up.GlobalEnabled = cfg.Global.Enabled
+ 
++	var tasks *taskrun.Runner
+ 	sch := scheduler.New(scheduler.Config{
++		Scheduled:           coreTaskSchedule(&tasks),
+ 		Pool:                p,
+ 		Upstream:            up,
+ 		CheckinHours:        cfg.Schedule.CheckinHours,
+@@ -188,11 +195,16 @@ func main() {
  
  	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
  	defer stop()
-+	coreHandler, err := wrapCore(ctx, cfg, p, up, sch, h)
++	tasks, history, taskErr := newCoreTasks(ctx, cfg, sch)
++	coreHandler, err := wrapCore(ctx, cfg, p, up, sch, h, tasks, history, taskErr)
 +	if err != nil {
 +		log.Fatalf("wrap core: %v", err)
 +	}

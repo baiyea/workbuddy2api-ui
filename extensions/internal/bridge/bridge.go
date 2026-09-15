@@ -14,6 +14,7 @@ import (
 	"workbuddy2api/internal/oauth"
 	"workbuddy2api/internal/pool"
 	"workbuddy2api/internal/scheduler"
+	"workbuddy2api/internal/taskrun"
 	"workbuddy2api/internal/upstream"
 )
 
@@ -27,6 +28,9 @@ type Config struct {
 	Pool           *pool.Pool
 	Upstream       *upstream.Client
 	Scheduler      *scheduler.Scheduler
+	Tasks          *taskrun.Runner
+	History        *taskrun.Store
+	TaskError      error
 	Public         http.Handler
 }
 

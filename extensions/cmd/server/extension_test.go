@@ -9,9 +9,12 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"workbuddy2api/internal/pool"
+	"workbuddy2api/internal/scheduler"
 	"workbuddy2api/internal/server"
+	"workbuddy2api/internal/taskrun"
 	"workbuddy2api/internal/upstream"
 )
 
@@ -181,7 +184,7 @@ func TestCoreSourceModeRemainsUnchanged(t *testing.T) {
 	if _, err := os.Stat(cfg.AuthDir); !os.IsNotExist(err) {
 		t.Fatal("source mode initialized directory")
 	}
-	h, err := wrapCore(context.Background(), cfg, nil, nil, nil, public)
+	h, err := wrapCore(context.Background(), cfg, nil, nil, nil, public, nil, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -208,7 +211,7 @@ func TestCoreRejectsInvalidBridgeKeysBeforeInitialization(t *testing.T) {
 			if _, err := os.Stat(cfg.AuthDir); !os.IsNotExist(err) {
 				t.Fatal("initialized before validating")
 			}
-			if _, err := wrapCore(context.Background(), cfg, nil, nil, nil, http.NotFoundHandler()); err == nil {
+			if _, err := wrapCore(context.Background(), cfg, nil, nil, nil, http.NotFoundHandler(), nil, nil, nil); err == nil {
 				t.Fatal("wrapper accepted invalid bridge key")
 			}
 		})
@@ -231,7 +234,7 @@ func TestCoreInitializesEarlyAndSeparatesLivenessAndPublicAuth(t *testing.T) {
 	defer p.Close()
 	up := upstream.New()
 	public := server.NewHandler(server.Config{Pool: p, Upstream: up, APIKey: cfg.APIKey})
-	h, err := wrapCore(context.Background(), cfg, p, up, nil, public)
+	h, err := wrapCore(context.Background(), cfg, p, up, nil, public, nil, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -251,5 +254,92 @@ func TestCoreInitializesEarlyAndSeparatesLivenessAndPublicAuth(t *testing.T) {
 		if rr.Code != tc.code {
 			t.Fatalf("%s: got %d want %d: %s", tc.path, rr.Code, tc.code, rr.Body)
 		}
+	}
+}
+
+func TestCoreTaskScheduleUsesAssignedRunnerAndCoreLifecycle(t *testing.T) {
+	t.Setenv("WB2A_CORE", "")
+	t.Setenv("WB2A_BRIDGE_KEY", strings.Repeat("b", 32))
+	t.Setenv("WB2A_ADMIN_KEY", "")
+	ctx, cancel := context.WithCancel(context.Background())
+	t.Cleanup(cancel)
+	cfg := &Config{StateFile: filepath.Join(t.TempDir(), "pool.json")}
+	var tasks *taskrun.Runner
+	callback := coreTaskSchedule(&tasks)
+	if callback == nil {
+		t.Fatal("opt-in scheduling not attached")
+	}
+	sch := scheduler.New(scheduler.Config{Scheduled: callback})
+	var history *taskrun.Store
+	var err error
+	tasks, history, err = newCoreTasks(ctx, cfg, sch)
+	if err != nil || tasks == nil || history == nil {
+		t.Fatalf("task initialization: %v", err)
+	}
+	callback(ctx, "checkin", time.Now()) // Empty real scheduler, no account or network work.
+	rows, _, err := history.Page("", 20)
+	if err != nil || len(rows) != 1 || rows[0].Status != "skipped" || rows[0].Source != "scheduled" {
+		t.Fatalf("callback did not use assigned runner: %+v %v", rows, err)
+	}
+	cancel()
+	if _, err := tasks.StartManual("checkin", "request-1234567890"); err != context.Canceled {
+		t.Fatalf("core lifecycle not propagated: %v", err)
+	}
+}
+
+func TestCoreTaskSourceModeLeavesOriginalScheduler(t *testing.T) {
+	t.Setenv("WB2A_CORE", "")
+	t.Setenv("WB2A_BRIDGE_KEY", "")
+	var tasks *taskrun.Runner
+	if coreTaskSchedule(&tasks) != nil {
+		t.Fatal("source scheduler overridden")
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	cfg := &Config{StateFile: filepath.Join(t.TempDir(), "absent", "pool.json")}
+	runner, history, err := newCoreTasks(ctx, cfg, nil)
+	if err != nil || runner != nil || history != nil {
+		t.Fatal("source mode created task runtime")
+	}
+	if _, err := os.Stat(filepath.Dir(cfg.StateFile)); !os.IsNotExist(err) {
+		t.Fatal("source mode wrote task data")
+	}
+}
+
+func TestCorruptTaskHistorySkipsSchedulesAndPreservesPublic(t *testing.T) {
+	t.Setenv("WB2A_CORE", "")
+	t.Setenv("WB2A_BRIDGE_KEY", strings.Repeat("b", 32))
+	t.Setenv("WB2A_ADMIN_KEY", "")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	cfg := &Config{StateFile: filepath.Join(t.TempDir(), "pool.json")}
+	path := filepath.Join(filepath.Dir(cfg.StateFile), "tasks", "runs.json")
+	if err := os.MkdirAll(filepath.Dir(path), 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, []byte("broken-history"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	var tasks *taskrun.Runner
+	callback := coreTaskSchedule(&tasks)
+	sch := scheduler.New(scheduler.Config{Scheduled: callback})
+	tasks, history, taskErr := newCoreTasks(ctx, cfg, sch)
+	if taskErr == nil || tasks != nil || history != nil || callback == nil {
+		t.Fatal("corrupt history silently enabled tasks")
+	}
+	callback(ctx, "checkin", time.Now())
+	public := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(418) })
+	h, err := wrapCore(ctx, cfg, nil, nil, sch, public, tasks, history, taskErr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	rr := httptest.NewRecorder()
+	h.ServeHTTP(rr, httptest.NewRequest("GET", "/v1/models", nil))
+	if rr.Code != 418 {
+		t.Fatal("broken history stopped public handler")
+	}
+	raw, err := os.ReadFile(path)
+	if err != nil || string(raw) != "broken-history" {
+		t.Fatal("corrupt history overwritten")
 	}
 }

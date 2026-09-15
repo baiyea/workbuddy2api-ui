@@ -8,14 +8,17 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"workbuddy2api/internal/bridge"
 	"workbuddy2api/internal/pool"
 	"workbuddy2api/internal/scheduler"
+	"workbuddy2api/internal/taskrun"
 	"workbuddy2api/internal/upstream"
 )
 
@@ -250,7 +253,35 @@ func initializeCore(cfg *Config) error {
 	return nil
 }
 
-func wrapCore(ctx context.Context, cfg *Config, p *pool.Pool, up *upstream.Client, sch *scheduler.Scheduler, public http.Handler) (http.Handler, error) {
+// The callback is installed before scheduler.New; the local Runner is assigned
+// before scheduler.Run starts. A broken history must never fall back to dispatch.
+func coreTaskSchedule(tasks **taskrun.Runner) func(context.Context, string, time.Time) {
+	if os.Getenv("WB2A_CORE") != "true" && os.Getenv("WB2A_BRIDGE_KEY") == "" {
+		return nil
+	}
+	return func(ctx context.Context, id string, at time.Time) {
+		if *tasks == nil {
+			log.Print("task_schedule_storage_unavailable")
+			return
+		}
+		(*tasks).Scheduled(ctx, id, at)
+	}
+}
+
+func newCoreTasks(ctx context.Context, cfg *Config, sch *scheduler.Scheduler) (*taskrun.Runner, *taskrun.Store, error) {
+	key, err := coreBridgeKey(cfg)
+	if err != nil || key == "" {
+		return nil, nil, err
+	}
+	history, err := taskrun.OpenStore(filepath.Join(filepath.Dir(cfg.StateFile), "tasks", "runs.json"), time.Now())
+	if err != nil {
+		log.Print("task_history_unavailable")
+		return nil, nil, err
+	}
+	return taskrun.NewRunner(ctx, history, sch.TaskCatalog, sch.ExecuteTask), history, nil
+}
+
+func wrapCore(ctx context.Context, cfg *Config, p *pool.Pool, up *upstream.Client, sch *scheduler.Scheduler, public http.Handler, tasks *taskrun.Runner, history *taskrun.Store, taskError error) (http.Handler, error) {
 	key, err := coreBridgeKey(cfg)
 	if err != nil {
 		return nil, err
@@ -258,7 +289,7 @@ func wrapCore(ctx context.Context, cfg *Config, p *pool.Pool, up *upstream.Clien
 	if key == "" {
 		return public, nil
 	}
-	internal := bridge.New(ctx, bridge.Config{Key: key, APIKey: cfg.APIKey, AuthDir: cfg.AuthDir, UpstreamCommit: upstreamCommit, PatchIdentity: patchIdentity, GlobalEnabled: cfg.Global.Enabled, Pool: p, Upstream: up, Scheduler: sch, Public: public})
+	internal := bridge.New(ctx, bridge.Config{Key: key, APIKey: cfg.APIKey, AuthDir: cfg.AuthDir, UpstreamCommit: upstreamCommit, PatchIdentity: patchIdentity, GlobalEnabled: cfg.Global.Enabled, Pool: p, Upstream: up, Scheduler: sch, Tasks: tasks, History: history, TaskError: taskError, Public: public})
 	mux := http.NewServeMux()
 	mux.Handle("/internal/", internal)
 	mux.HandleFunc("GET /livez", func(w http.ResponseWriter, r *http.Request) {
