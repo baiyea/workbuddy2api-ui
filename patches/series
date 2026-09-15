@@ -2,4 +2,5 @@
 0001-auth-pool-consistency.patch
 0002-upstream-credential-snapshots.patch
 0003-core-wiring.patch
+0004-scheduler-observation.patch
 0005-regression-tests.patch

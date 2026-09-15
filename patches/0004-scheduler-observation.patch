@@ -1,0 +1,670 @@
+diff --git a/internal/scheduler/scheduler.go b/internal/scheduler/scheduler.go
+index 24de8b8..67969e5 100644
+--- a/internal/scheduler/scheduler.go
++++ b/internal/scheduler/scheduler.go
+@@ -21,6 +21,7 @@ import (
+ // 任务开关用「禁用」命名而非「启用」：零值 Config 即六类任务都启用（hours 回落默认），
+ // 与引入开关前的行为逐字一致（老调用方/老测试无需改动）。
+ type Config struct {
++	Scheduled      func(context.Context, string, time.Time)
+ 	Pool           *pool.Pool
+ 	Upstream       *upstream.Client
+ 	CheckinHours   []int // 默认 [9, 21]
+@@ -55,7 +56,11 @@ type Config struct {
+ 
+ // Scheduler 调度器。
+ type Scheduler struct {
+-	cfg Config
++	cfg           Config
++	executeMu     sync.Mutex
++	observationMu sync.Mutex
++	observation   *taskObservation
++	coreContext   context.Context
+ 
+ 	// mu/adoptTried 领养当日失败记录：uid → 自然日（CST）。门槛未达的账号当日不再重试，
+ 	// 避免同日多趟对上游重试轰炸；进程重启即清零（无需持久化）。
+@@ -194,10 +199,15 @@ func (s *Scheduler) nextWake(now time.Time) (time.Time, []taskKind) {
+ 	return earliest, kinds
+ }
+ 
++var schedulerNow = time.Now
++
+ // Run 主循环，阻塞直到 ctx 取消。
+ func (s *Scheduler) Run(ctx context.Context) {
++	s.observationMu.Lock()
++	s.coreContext = ctx
++	s.observationMu.Unlock()
+ 	for {
+-		next, kinds := s.nextWake(time.Now())
++		next, kinds := s.nextWake(schedulerNow().In(cstZone))
+ 		if next.IsZero() {
+ 			// 六类任务全部禁用：不空转，只等退出信号。
+ 			<-ctx.Done()
+@@ -211,7 +221,13 @@ func (s *Scheduler) Run(ctx context.Context) {
+ 		case <-timer.C:
+ 			// 到点任务在排程时确定（不依赖唤醒时刻的小时数），迟到唤醒也不会漏跑。
+ 			for _, k := range kinds {
+-				s.dispatch(k)
++				if s.cfg.Scheduled != nil {
++					if id := s.taskID(k); id != "" {
++						s.cfg.Scheduled(ctx, id, next)
++					}
++				} else {
++					s.dispatch(k)
++				}
+ 			}
+ 		}
+ 	}
+@@ -380,10 +396,12 @@ func (s *Scheduler) RunActivityNow() {
+ 	first := true
+ 	for _, st := range s.cfg.Pool.List() {
+ 		if st.Disabled {
++			s.observe(AccountResult{UID: st.UID, Status: "skipped", Detail: "disabled"})
+ 			continue
+ 		}
+ 		a := s.cfg.Pool.AuthByUID(st.UID)
+ 		if a == nil || a.Snapshot().AccessToken == "" {
++			s.observe(AccountResult{UID: st.UID, Status: "skipped", Detail: "no_credentials"})
+ 			continue
+ 		}
+ 		// global 账号同样上报（PR #45 实测国际版 /v2/report 在 workbuddy.ai 上 code=0 OK，
+@@ -399,6 +417,7 @@ func (s *Scheduler) RunActivityNow() {
+ 		for i := 1; i <= count; i++ {
+ 			rid := fmt.Sprintf("%s-r%d", cid, i)
+ 			if err := s.cfg.Upstream.ReportChatActivity(a, cid, rid); err != nil {
++				s.observe(AccountResult{UID: st.UID, Status: "failed", Detail: "report_failed"})
+ 				log.Printf("activity %s: report %d/%d: %v", logfmt.UID8(a.UID), i, count, err)
+ 				break // 本号上报失败：不再续发，streak 自检无意义
+ 			}
+@@ -427,13 +446,16 @@ func (s *Scheduler) checkActivityStreak(a *auth.Auth) bool {
+ 	days, err := s.cfg.Upstream.GrowthStreak(a)
+ 	if err != nil {
+ 		log.Printf("WARN: activity %s: streak check failed (report OK): %v", logfmt.UID8(a.UID), err)
++		s.observe(AccountResult{UID: a.UID, Status: "failed", Detail: "streak_failed"})
+ 		return true
+ 	}
+ 	if days == 0 {
++		s.observe(AccountResult{UID: a.UID, Status: "unknown", Detail: "streak_unconfirmed"})
+ 		log.Printf("WARN: activity %s: report OK but streak.days=0 (silent drop?)", logfmt.UID8(a.UID))
+ 		return true
+ 	}
+ 	log.Printf("activity %s: streak days=%d", logfmt.UID8(a.UID), days)
++	s.observe(AccountResult{UID: a.UID, Status: "success", Detail: "activity_confirmed"})
+ 	return false
+ }
+ 
+@@ -444,13 +466,16 @@ func (s *Scheduler) checkActivityStreak(a *auth.Auth) bool {
+ func (s *Scheduler) RunKeepaliveNow() {
+ 	for _, st := range s.cfg.Pool.List() {
+ 		if st.Disabled {
++			s.observe(AccountResult{UID: st.UID, Status: "skipped", Detail: "disabled"})
+ 			continue
+ 		}
+ 		a := s.cfg.Pool.AuthByUID(st.UID)
+ 		if a == nil || a.Snapshot().RefreshToken == "" {
++			s.observe(AccountResult{UID: st.UID, Status: "skipped", Detail: "no_credentials"})
+ 			continue
+ 		}
+ 		if err := s.cfg.Upstream.RefreshToken(a); err != nil {
++			s.observe(AccountResult{UID: st.UID, Status: "failed", Detail: "refresh_failed"})
+ 			log.Printf("keepalive %s: %v", logfmt.UID8(st.UID), err)
+ 			var ue *upstream.Error
+ 			if errors.As(err, &ue) && ue.Kind == upstream.ErrSessionDead {
+@@ -464,6 +489,9 @@ func (s *Scheduler) RunKeepaliveNow() {
+ 		a.BackfillRealm()                   // 老 auth 空 realm → 落盘前补标识（幂等：已有不动）
+ 		if err := a.SaveAtomic(); err != nil {
+ 			log.Printf("keepalive %s save: %v", logfmt.UID8(st.UID), err)
++			s.observe(AccountResult{UID: st.UID, Status: "failed", Detail: "save_failed"})
++		} else {
++			s.observe(AccountResult{UID: st.UID, Status: "success", Detail: "token_refreshed"})
+ 		}
+ 	}
+ }
+diff --git a/internal/scheduler/school.go b/internal/scheduler/school.go
+index 46331a1..6e8a60e 100644
+--- a/internal/scheduler/school.go
++++ b/internal/scheduler/school.go
+@@ -7,6 +7,8 @@
+ package scheduler
+ 
+ import (
++	"context"
++	"io"
+ 	"log"
+ 	"os"
+ 	"os/exec"
+@@ -41,6 +43,8 @@ func repoRoot() string {
+ // scriptRunner 脚本子进程的最小执行面：可被测试替换，避免测试真正拉起 python3。
+ type scriptRunner interface {
+ 	SetDir(string)
++	SetEnv([]string)
++	SetOutput(io.Writer)
+ 	Run() error
+ }
+ 
+@@ -48,13 +52,15 @@ type scriptRunner interface {
+ // 满足 scriptRunner 接口（exec.Cmd 本身只有字段没有方法）。
+ type scriptCmd struct{ cmd *exec.Cmd }
+ 
+-func (c *scriptCmd) SetDir(dir string) { c.cmd.Dir = dir }
+-func (c *scriptCmd) Run() error        { return c.cmd.Run() }
++func (c *scriptCmd) SetDir(dir string)     { c.cmd.Dir = dir }
++func (c *scriptCmd) SetEnv(env []string)   { c.cmd.Env = env }
++func (c *scriptCmd) SetOutput(w io.Writer) { c.cmd.Stdout = w; c.cmd.Stderr = w }
++func (c *scriptCmd) Run() error            { return c.cmd.Run() }
+ 
+ // newScriptCmd 构建脚本子进程。包级变量便于测试注入 fake（installFakeExec 覆盖）。
+ // 工作目录由调用方 SetDir 显式设置仓库根。
+-var newScriptCmd = func(program string, args ...string) scriptRunner {
+-	return &scriptCmd{cmd: exec.Command(program, args...)}
++var newScriptCmd = func(ctx context.Context, program string, args ...string) scriptRunner {
++	return &scriptCmd{cmd: exec.CommandContext(ctx, program, args...)}
+ }
+ 
+ // pythonCmd 返回执行 scripts/*.py 的解释器名。
+@@ -76,14 +82,29 @@ func pythonCmd() string {
+ 
+ // runScript 依次执行若干脚本命令：任一命令失败只记一行 WARN，不向上抛、
+ // 不影响调度主循环继续跑下一个时点。单命令失败不中断后续命令。
+-func runScript(name, root string, commands [][]string) {
++func (s *Scheduler) runScript(name, root string, commands [][]string) {
++	dir, uids, err := s.scriptSnapshot()
++	if err != nil {
++		s.scriptFailure(uids, "snapshot_failed")
++		log.Printf("WARN: %s: snapshot failed", name)
++		return
++	}
++	if dir == "" {
++		return
++	}
++	defer os.RemoveAll(dir)
+ 	for _, cmdArgs := range commands {
+-		c := newScriptCmd(cmdArgs[0], cmdArgs[1:]...)
++		output := newTaskOutput(s, uids)
++		c := newScriptCmd(s.scriptContext(), cmdArgs[0], cmdArgs[1:]...)
+ 		c.SetDir(root)
++		c.SetEnv(append(os.Environ(), "WB2A_AUTHS="+dir))
++		c.SetOutput(output)
+ 		if err := c.Run(); err != nil {
+-			log.Printf("WARN: %s (%s): %v", name, cmdArgs[1], err)
++			output.finish(true)
++			log.Printf("WARN: %s (%s): script failed", name, cmdArgs[1])
+ 			continue
+ 		}
++		output.finish(false)
+ 		log.Printf("%s: ok (%s)", name, cmdArgs[1])
+ 	}
+ }
+@@ -93,7 +114,7 @@ func runScript(name, root string, commands [][]string) {
+ // 各段全量跳过、正常退出，不视为失败。失败只记 WARN。
+ func (s *Scheduler) RunSchoolNow() {
+ 	root := repoRoot()
+-	runScript("school", root, [][]string{
++	s.runScript("school", root, [][]string{
+ 		{pythonCmd(), "scripts/school_open_day_2026.py", "ALL", "--run", "--yes"},
+ 	})
+ }
+@@ -103,7 +124,7 @@ func (s *Scheduler) RunSchoolNow() {
+ // 判定，非窗口期打印 skip 正常退出）。失败只记 WARN。
+ func (s *Scheduler) RunCatNow() {
+ 	root := repoRoot()
+-	runScript("cat", root, [][]string{
++	s.runScript("cat", root, [][]string{
+ 		{pythonCmd(), "scripts/task_runner.py", "ALL", "--yes", "--only", "black_cat"},
+ 	})
+ }
+diff --git a/internal/scheduler/travel.go b/internal/scheduler/travel.go
+index 1ec1588..5f69b9c 100644
+--- a/internal/scheduler/travel.go
++++ b/internal/scheduler/travel.go
+@@ -47,13 +47,16 @@ func (s *Scheduler) RunTravelNow() {
+ 	first := true
+ 	for _, st := range s.cfg.Pool.List() {
+ 		if st.Disabled {
++			s.observe(AccountResult{UID: st.UID, Status: "skipped", Detail: "disabled"})
+ 			continue
+ 		}
+ 		a := s.cfg.Pool.AuthByUID(st.UID)
+ 		if a == nil || a.Snapshot().RefreshToken == "" {
++			s.observe(AccountResult{UID: st.UID, Status: "skipped", Detail: "no_credentials"})
+ 			continue
+ 		}
+ 		if a.IsGlobal() {
++			s.observe(AccountResult{UID: st.UID, Status: "skipped", Detail: "global"})
+ 			continue // D4 门控：global 无猫猫旅行体系，不发起任何上游调用
+ 		}
+ 		if !first {
+@@ -68,6 +71,7 @@ func (s *Scheduler) RunTravelNow() {
+ func (s *Scheduler) travelOne(a *auth.Auth) {
+ 	buddy, err := s.cfg.Upstream.BuddyInfo(a)
+ 	if err != nil {
++		s.observe(AccountResult{UID: a.UID, Status: "failed", Detail: "buddy_query_failed"})
+ 		log.Printf("travel %s: buddy-info: %v", logfmt.UID8(a.UID), err)
+ 		return
+ 	}
+@@ -77,6 +81,7 @@ func (s *Scheduler) travelOne(a *auth.Auth) {
+ 	}
+ 	ts, err := s.cfg.Upstream.TravelStatus(a)
+ 	if err != nil {
++		s.observe(AccountResult{UID: a.UID, Status: "failed", Detail: "travel_query_failed"})
+ 		log.Printf("travel %s: status: %v", logfmt.UID8(a.UID), err)
+ 		return
+ 	}
+@@ -86,8 +91,10 @@ func (s *Scheduler) travelOne(a *auth.Auth) {
+ 	case travelStateIdle:
+ 		s.travelDepart(a, ts)
+ 	case travelStateTraveling:
++		s.observe(AccountResult{UID: a.UID, Status: "skipped", Detail: "traveling"})
+ 		log.Printf("travel %s: skip (traveling record=%d)", logfmt.UID8(a.UID), ts.RecordID)
+ 	default:
++		s.observe(AccountResult{UID: a.UID, Status: "unknown", Detail: "travel_state_unknown"})
+ 		log.Printf("travel %s: skip (unknown state %q)", logfmt.UID8(a.UID), ts.State)
+ 	}
+ }
+@@ -95,28 +102,39 @@ func (s *Scheduler) travelOne(a *auth.Auth) {
+ // travelDepart 空闲且未达当日上限时派出（每日 1 次，自然日 00:00 CST 重置）。
+ func (s *Scheduler) travelDepart(a *auth.Auth, ts *upstream.TravelState) {
+ 	if ts.DailyLimitReached {
++		s.observe(AccountResult{UID: a.UID, Status: "skipped", Detail: "daily_limit"})
+ 		log.Printf("travel %s: skip (daily limit reached)", logfmt.UID8(a.UID))
+ 		return
+ 	}
+ 	if err := s.cfg.Upstream.TravelDepart(a, travelLocationID); err != nil {
++		s.observe(AccountResult{UID: a.UID, Status: "failed", Detail: "depart_failed"})
+ 		log.Printf("travel %s: depart: %v", logfmt.UID8(a.UID), err)
+ 		return
+ 	}
+ 	log.Printf("travel %s: depart ok location=%d", logfmt.UID8(a.UID), travelLocationID)
++	s.observe(AccountResult{UID: a.UID, Status: "success", Detail: "departed"})
+ }
+ 
+ // travelClaim 到站领奖（必须带 record_id）。
+ func (s *Scheduler) travelClaim(a *auth.Auth, ts *upstream.TravelState) {
+ 	if ts.RecordID == 0 {
++		s.observe(AccountResult{UID: a.UID, Status: "unknown", Detail: "missing_record"})
+ 		log.Printf("travel %s: claim skipped (arrived but no record_id)", logfmt.UID8(a.UID))
+ 		return
+ 	}
+ 	reward, err := s.cfg.Upstream.TravelClaim(a, ts.RecordID)
+ 	if err != nil {
++		s.observe(AccountResult{UID: a.UID, Status: "failed", Detail: "claim_failed"})
+ 		log.Printf("travel %s: claim record=%d: %v", logfmt.UID8(a.UID), ts.RecordID, err)
+ 		return
+ 	}
+ 	log.Printf("travel %s: claim ok record=%d reward=%d", logfmt.UID8(a.UID), ts.RecordID, reward)
++	result := AccountResult{UID: a.UID, Status: "success", Detail: "reward_claimed"}
++	// Upstream's int64 cannot distinguish an omitted reward from an explicit zero.
++	if reward > 0 {
++		result.Reward = &reward
++	}
++	s.observe(result)
+ }
+ 
+ // travelAdopt 旅行巡检时领养：受 adoptTriedToday 当日防抖约束。
+@@ -131,10 +149,12 @@ func (s *Scheduler) travelAdopt(a *auth.Auth) {
+ func (s *Scheduler) travelAdoptForce(a *auth.Auth) {
+ 	buddy, err := s.cfg.Upstream.BuddyInfo(a)
+ 	if err != nil {
++		s.observe(AccountResult{UID: a.UID, Status: "failed", Detail: "buddy_query_failed"})
+ 		log.Printf("activity %s: buddy-info: %v", logfmt.UID8(a.UID), err)
+ 		return
+ 	}
+ 	if buddy != nil {
++		s.observe(AccountResult{UID: a.UID, Status: "skipped", Detail: "buddy_exists"})
+ 		return // 已有猫，无需领养
+ 	}
+ 	s.adoptBuddy(a, true) // force=true 豁免当日防抖
+@@ -145,21 +165,26 @@ func (s *Scheduler) travelAdoptForce(a *auth.Auth) {
+ // 记一次当日已试后静默跳过，不再重试。force=true 时豁免当日防抖（活跃上报补满对话量后重试）。
+ func (s *Scheduler) adoptBuddy(a *auth.Auth, force bool) {
+ 	if !force && s.adoptTriedToday(a.UID) {
++		s.observe(AccountResult{UID: a.UID, Status: "skipped", Detail: "adopt_tried_today"})
+ 		return
+ 	}
+ 	if err := s.cfg.Upstream.BuddyAgreement(a); err != nil {
++		s.observe(AccountResult{UID: a.UID, Status: "failed", Detail: "agreement_failed"})
+ 		log.Printf("travel %s: agreement: %v", logfmt.UID8(a.UID), err)
+ 		return
+ 	}
+ 	err := s.cfg.Upstream.BuddyFirst(a)
+ 	switch {
+ 	case err == nil:
++		s.observe(AccountResult{UID: a.UID, Status: "success", Detail: "adopted"})
+ 		log.Printf("travel %s: adopt ok (+300 credits)", logfmt.UID8(a.UID))
+ 	case upstream.IsBuddyTaskIncomplete(err):
++		s.observe(AccountResult{UID: a.UID, Status: "skipped", Detail: "adoption_incomplete"})
+ 		s.markAdoptTried(a.UID)
+ 		log.Printf("travel %s: adopt skipped (conversation threshold not reached, retry tomorrow)", logfmt.UID8(a.UID))
+ 	default:
+ 		log.Printf("travel %s: adopt: %v", logfmt.UID8(a.UID), err)
++		s.observe(AccountResult{UID: a.UID, Status: "failed", Detail: "adopt_failed"})
+ 	}
+ }
+ 
+diff --git a/scripts/school_open_day_2026.py b/scripts/school_open_day_2026.py
+index f6b6fde..5a83ac5 100644
+--- a/scripts/school_open_day_2026.py
++++ b/scripts/school_open_day_2026.py
+@@ -37,6 +37,7 @@ import sys, os, json, time, hashlib, argparse, glob, uuid, urllib.request, urlli
+ 
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ import task_common as tc  # 仅复用 load_auth / AUTHS 常量，不复用其 _headers（头不同源）
++from task_events import emit
+ 
+ # --------------------------------------------------------------------------
+ # 端点常量（接口地址）
+@@ -543,10 +544,12 @@ def run_account(auth, opts, stats):
+     try:
+         tasks, in_period = fetch_school_tasks(auth["token"])
+     except (AuthError, RuntimeError) as e:
++        emit(auth["uid"], "failed", "query_failed")
+         print(f"[school2026] {uid8} run 拉取任务失败: {e}")
+         stats["fail"] += 1
+         return
+     if not in_period:
++        emit(auth["uid"], "skipped", "activity_closed")
+         print(f"[school2026] {uid8} 活动非进行期（in_period=false），跳过")
+         return
+ 
+@@ -568,10 +571,12 @@ def run_account(auth, opts, stats):
+         if not t.get("task_code"):
+             continue
+         if status in ("completed", "claimed"):
++            emit(auth["uid"], "skipped", "already_claimed" if status == "claimed" else "task_progress")
+             print(f"[school2026] {uid8} {code}: {status} 已完成/已领，跳过")
+             stats["already"] += 1
+             continue
+         if mode == "manual":
++            emit(auth["uid"], "skipped", "manual_required")
+             print(f"[school2026] {uid8} {code}: {status} -> 人工环节（{spec.get('note')}），跳过")
+             stats["skip"] += 1
+         elif mode in ("share", "report"):
+@@ -584,6 +589,7 @@ def run_account(auth, opts, stats):
+                 try:
+                     post_viewed(auth["token"], code)
+                 except (AuthError, RuntimeError) as e:
++                    emit(auth["uid"], "failed", "action_failed")
+                     print(f"[school2026] {uid8} {code}: viewed 激活失败: {e}")
+                     stats["fail"] += 1
+                     continue
+@@ -608,10 +614,13 @@ def run_account(auth, opts, stats):
+                     else:
+                         events, host, extra_h = make_report_events(auth, spec.get("report_kind"))
+                         st, r = report_events(auth, events, host=host, extra_headers=extra_h)
++                        if st != 200 or not isinstance(r, dict) or r.get("code") not in OK_CODES:
++                            emit(auth["uid"], "failed", "report_failed")
+                         print(f"[school2026] {uid8} {code}: report #{ri+1}/{rounds} "
+                               f"{len(events)} 事件 -> http={st} "
+                               f"code={r.get('code') if isinstance(r, dict) else r}")
+                 except (AuthError, RuntimeError) as e:
++                    emit(auth["uid"], "failed", "action_failed")
+                     print(f"[school2026] {uid8} {code}: {mode} 触发 #{ri+1} 失败: {e}")
+                     break
+                 time.sleep(opts.gap)
+@@ -629,6 +638,7 @@ def run_account(auth, opts, stats):
+             # 3) 最终回读确认
+             t2 = refetch(code)
+             if not t2:
++                emit(auth["uid"], "failed", "query_failed")
+                 print(f"[school2026] {uid8} {code}: 回读任务失败，跳过")
+                 stats["fail"] += 1
+                 continue
+@@ -638,8 +648,11 @@ def run_account(auth, opts, stats):
+                 print(f"[school2026] {uid8} {code}: {status}/{t.get('progress')} -> "
+                       f"{after}/{after_prog}（点亮）")
+                 stats["ok"] += 1
++                emit(auth["uid"], "success" if after in ("completed", "claimed") else "unknown",
++                     "task_progress" if after in ("completed", "claimed") else "task_incomplete")
+             else:
+                 print(f"[school2026] {uid8} {code}: {status} -> {after}（未变化）")
++                emit(auth["uid"], "unknown", "task_incomplete")
+                 stats["pending"] += 1
+             # 4) 若 completed，claim 领奖（chance_granted）
+             if after == "completed":
+@@ -649,9 +662,11 @@ def run_account(auth, opts, stats):
+                           f"code={rc.get('code') if isinstance(rc, dict) else rc}")
+                     time.sleep(opts.gap)
+                 except (AuthError, RuntimeError) as e:
++                    emit(auth["uid"], "failed", "claim_failed")
+                     print(f"[school2026] {uid8} {code}: claim 失败: {e}（可稍后手动补领）")
+                     stats["fail"] += 1
+         else:  # unknown
++            emit(auth["uid"], "skipped", "task_unavailable")
+             print(f"[school2026] {uid8} {code}: {status} -> 未知任务类型（{t.get('title') or ''}），"
+                   f"无分类证据，保守跳过")
+             stats["skip"] += 1
+@@ -695,10 +710,12 @@ def lottery_account(auth, opts, stats, count_account=True):
+         cfg, chance = fetch_lottery_config(auth["token"])
+     except (AuthError, RuntimeError) as e:
+         print(f"[school2026] {uid8} lottery config 失败: {e}")
++        emit(auth["uid"], "failed", "query_failed")
+         stats["fail"] += 1
+         return
+ 
+     if not cfg.get("in_period"):
++        emit(auth["uid"], "skipped", "activity_closed")
+         print(f"[school2026] {uid8} 活动非进行期（in_period=false），抽奖跳过")
+         return
+ 
+@@ -707,6 +724,7 @@ def lottery_account(auth, opts, stats, count_account=True):
+     lottery_limit = chance.get("lottery_limit")
+     if bal <= 0:
+         print(f"[school2026] {uid8} lottery balance=0（累计获得 {total_earned} 次），无需抽奖")
++        emit(auth["uid"], "skipped", "no_chances")
+         return
+ 
+     print(f"[school2026] {uid8} lottery balance={bal} total_earned={total_earned} "
+@@ -722,25 +740,30 @@ def lottery_account(auth, opts, stats, count_account=True):
+             st, r = post_lottery_draw(auth["token"], draw_uuid)
+         except (AuthError, RuntimeError) as e:
+             print(f"[school2026] {uid8} draw 失败: {e}")
++            emit(auth["uid"], "failed", "lottery_failed")
+             stats["fail"] += 1
+             break
+         if st != 200 or (isinstance(r, dict) and r.get("code") not in OK_CODES):
+             code = (r or {}).get("code") if isinstance(r, dict) else None
+             msg = (r or {}).get("message") if isinstance(r, dict) else r
+             if code == 40900:
++                emit(auth["uid"], "skipped", "no_chances")
+                 print(f"[school2026] {uid8} draw http={st} code=40900（次数耗尽：no chance），"
+                       f"按边界正常结束")
+                 bal = 0  # 「no chance」边界，如实结束
+                 break
+             print(f"[school2026] {uid8} draw http={st} code={code} msg={msg}（未中奖，停）")
++            emit(auth["uid"], "failed", "lottery_failed")
+             break
+         d = (r or {}).get("data") or {}
+         prize_code = d.get("prize_code") or "?"
+         credit = d.get("credit_amount") or 0
++        emit(auth["uid"], "success", "reward_claimed", d.get("credit_amount"))
+         bal = d.get("chance_balance", bal)  # 服务端回读余额，驱动循环
+         if bal >= prev_bal:   # 余额未降：服务端异常，防死循环
+             stall += 1
+             if stall >= 3:
++                emit(auth["uid"], "unknown", "lottery_stalled")
+                 print(f"[school2026] {uid8} draw 余额未递减（服务端异常），提前停")
+                 break
+         else:
+@@ -829,6 +852,7 @@ def main():
+     for auth in auths:
+         # global realm 不适用 CN 开学季任务/转盘：明确跳过、不发起任何请求。
+         if tc.auth_is_global(auth):
++            emit(auth["uid"], "skipped", "global")
+             uid8 = (auth.get("uid") or "")[:8] or "?"
+             print(f"[skip] {uid8} global realm 不适用 CN 任务")
+             stats["skip"] += 1
+@@ -842,6 +866,7 @@ def main():
+                 list_account(auth, stats)
+         except (AuthError, RuntimeError) as e:
+             uid8 = (auth.get("uid") or "")[:8] or "?"
++            emit(auth["uid"], "failed", "action_failed")
+             print(f"ERR: [school2026] {uid8} 处理失败: {e}")
+             stats["fail"] += 1
+ 
+@@ -853,4 +878,4 @@ def main():
+ 
+ 
+ if __name__ == "__main__":
+-    main()
+\ No newline at end of file
++    main()
+diff --git a/scripts/task_common.py b/scripts/task_common.py
+index 787773f..e6e7d78 100755
+--- a/scripts/task_common.py
++++ b/scripts/task_common.py
+@@ -66,7 +66,8 @@ def load_auth(uid_or_file: str) -> dict:
+     # encoding="utf-8" 必须显式指定：Windows 上 open() 默认用 locale 代码页
+     # （中文系统为 GBK），而 auth 文件是 UTF-8 写入的，非 ASCII 昵称会触发
+     # UnicodeDecodeError，使所有脚本类任务（school/cat/trial 等）直接中断。
+-    d = json.load(open(p, encoding="utf-8"))
++    with open(p, encoding="utf-8") as source:
++        d = json.load(source)
+     a, acc = d["auth"], d["account"]
+     realm = a.get("realm") or d.get("realm") or ""
+     return {"token": a["accessToken"], "domain": a.get("domain") or "",
+@@ -259,4 +260,4 @@ def chat_completion(auth, model_id="glm-5.2", prompt="hi", max_tokens=32,
+         t = e.read().decode("utf-8", "replace")
+         return e.code, t[:200]
+     except Exception as e:
+-        return -1, repr(e)[:200]
+\ No newline at end of file
++        return -1, repr(e)[:200]
+diff --git a/scripts/task_runner.py b/scripts/task_runner.py
+index b3231a3..47d3e1a 100644
+--- a/scripts/task_runner.py
++++ b/scripts/task_runner.py
+@@ -64,6 +64,7 @@ import sys, os, json, time, argparse, glob, urllib.request
+ 
+ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+ import task_common as tc
++from task_events import emit
+ 
+ # --------------------------------------------------------------------------
+ # 任务映射表（task_code -> 完成定义）
+@@ -694,6 +695,7 @@ def _claim_parse(auth, code, uid8, stats, gap, st, r, via_web=False):
+     """解析 claim 响应信封；业务判定成功/已领/失败。via_web 仅用于日志标注。"""
+     tag = " web" if via_web else ""
+     if st != 200 or not isinstance(r, dict) or r.get("code") != 0:
++        emit(auth["uid"], "failed", "claim_failed")
+         msg = r.get("msg") if isinstance(r, dict) else r
+         print(f"[task_runner] {uid8} {code}: claim{tag} {st} {msg} -> ERR")
+         stats["fail"] += 1
+@@ -702,12 +704,14 @@ def _claim_parse(auth, code, uid8, stats, gap, st, r, via_web=False):
+     credit = data.get("credit") or 0
+     energy = data.get("energy") or 0
+     if data.get("already_claimed"):
++        emit(auth["uid"], "skipped", "already_claimed")
+         print(f"[task_runner] {uid8} {code}: claim{tag} 200 already_claimed(credit=+{credit} energy=+{energy})")
+         stats["already"] += 1
+         time.sleep(gap)
+         return 2
+     print(f"[task_runner] {uid8} {code}: claim{tag} 200 ok(credit=+{credit} energy=+{energy})")
+     stats["ok"] += 1
++    emit(auth["uid"], "success", "reward_claimed", data.get("credit"))
+     stats["credit"] += credit
+     stats["energy"] += energy
+     time.sleep(gap)
+@@ -737,6 +741,7 @@ def claim_one(auth, code, uid8, stats, gap):
+             print(f"[task_runner] {uid8} {code}: claim 400 {msg} -> 降级 web 域")
+             return _claim_via_web(auth, code, uid8, stats, gap)
+         print(f"[task_runner] {uid8} {code}: claim {st} {msg} -> ERR")
++        emit(auth["uid"], "failed", "claim_failed")
+         stats["fail"] += 1
+         return 0
+     return _claim_parse(auth, code, uid8, stats, gap, st, r)
+@@ -749,6 +754,7 @@ def process_task(auth, code, t, opts, stats):
+     uid8 = auth["uid"][:8]
+     spec = MAPPING.get(code)
+     if spec is None:
++        emit(auth["uid"], "skipped", "task_unavailable")
+         print(f"[task_runner] {uid8} {code}: query 非映射任务，skip")
+         stats["total"] += 1
+         stats["skip"] += 1
+@@ -761,6 +767,7 @@ def process_task(auth, code, t, opts, stats):
+ 
+     # 不可伪造任务：跳过并如实标注
+     if spec.get("unforgeable"):
++        emit(auth["uid"], "skipped", "manual_required")
+         print(f"[task_runner] {uid8} {code}: query {ast}({cur}/{target}) -> 不可伪造({spec['reason']})，skip")
+         stats["skip"] += 1
+         return
+@@ -781,6 +788,7 @@ def process_task(auth, code, t, opts, stats):
+ 
+     # 已领：跳过（除 only_claim 外不重复领）
+     if ast == "claimed":
++        emit(auth["uid"], "skipped", "already_claimed")
+         print(f"[task_runner] {uid8} {code}: query claimed({cur}/{target}) -> 已领，跳过")
+         stats["already"] += 1
+         return
+@@ -800,6 +808,7 @@ def process_task(auth, code, t, opts, stats):
+     if code == "black_cat":
+         in_window = within_night_window()
+         if not in_window:
++            emit(auth["uid"], "skipped", "outside_window")
+             print(f"[task_runner] {uid8} {code}: query in_progress({cur}/{target}) -> 非夜猫窗口(23-08 CST)，skip pending")
+             stats["pending"] += 1
+             return
+@@ -841,6 +850,7 @@ def light_up(auth, code, spec, cur, target, uid8, opts, stats, cap=0):
+         print(f"[task_runner] {uid8} {code}: accept {st_a} {msg}")
+         time.sleep(opts.gap)
+         if st_a != 200:
++            emit(auth["uid"], "failed", "action_failed")
+             stats["fail"] += 1
+             return
+ 
+@@ -902,6 +912,7 @@ def light_up(auth, code, spec, cur, target, uid8, opts, stats, cap=0):
+     else:
+         ids = ids_for(spec["kind"], auth, need, offset=cur)
+         if not ids:
++            emit(auth["uid"], "failed", "action_failed")
+             print(f"[task_runner] {uid8} {code}: report 无可用对象 id，skip")
+             stats["fail"] += 1
+             return
+@@ -909,6 +920,8 @@ def light_up(auth, code, spec, cur, target, uid8, opts, stats, cap=0):
+             ev = build_event(auth, spec["kind"], obj_id, m, i)
+             st_r, r_r = tc.do_post(auth, tc.billing_base(auth), tc.PATH_REPORT, [ev])
+             sc = r_r.get("code") if isinstance(r_r, dict) else r_r
++            if st_r != 200 or sc != 0:
++                emit(auth["uid"], "failed", "report_failed")
+             print(f"[task_runner] {uid8} {code}: report {i + 1}/{need} {st_r} code={sc} id={obj_id}")
+             if i < len(ids) - 1:
+                 time.sleep(opts.gap)
+@@ -923,6 +936,7 @@ def light_up(auth, code, spec, cur, target, uid8, opts, stats, cap=0):
+     if ast2 != "claimed" and cur2 >= prog2.get("target", tgt):
+         claim_one(auth, code, uid8, stats, opts.gap)
+     elif ast2 != "claimed":
++        emit(auth["uid"], "unknown", "task_incomplete")
+         # 未点亮：如实标注，不强行刷
+         print(f"[task_runner] {uid8} {code}: report 未达 target（{cur2}/{prog2.get('target', tgt)}），WARN 待下次")
+ 
+@@ -945,6 +959,7 @@ def process_account(auth, opts, stats):
+         tasks = tc.list_tasks(auth)
+     except Exception as e:
+         print(f"ERR: [task_runner] {uid8} query list_tasks 失败: {e}")
++        emit(auth["uid"], "failed", "query_failed")
+         stats["fail"] += 1
+         return
+ 
+@@ -970,6 +985,7 @@ def process_account(auth, opts, stats):
+     for code in codes:
+         t = by_code.get(code)
+         if t is None:
++            emit(auth["uid"], "skipped", "task_unavailable")
+             print(f"[task_runner] {uid8} {code}: query 任务不存在")
+             stats["total"] += 1
+             stats["skip"] += 1
+@@ -1033,6 +1049,7 @@ def main():
+         stats["accounts"] += 1
+         # global realm 不适用 CN 任务中心：明确跳过、不发起任何请求（P2 门控结论）。
+         if tc.auth_is_global(c):
++            emit(c["uid"], "skipped", "global")
+             uid8 = (c.get("uid") or "")[:8] or "?"
+             print(f"[skip] {uid8} global realm 不适用 CN 任务")
+             stats["skip"] += 1
+@@ -1043,4 +1060,4 @@ def main():
+ 
+ 
+ if __name__ == "__main__":
+-    main()
+\ No newline at end of file
++    main()

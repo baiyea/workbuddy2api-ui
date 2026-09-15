@@ -17,3 +17,65 @@ index 594dce7..2a36ce6 100644
  		t.Errorf("reset_at=%v want ~35m 后=%v", row.ResetAt, reset)
  	}
  	// 6004 模型级冷却不写账号级 until：Status.Until 应为零值，模型截止在台账行里。
+diff --git a/internal/scheduler/school_test.go b/internal/scheduler/school_test.go
+index 7c64457..bed9712 100644
+--- a/internal/scheduler/school_test.go
++++ b/internal/scheduler/school_test.go
+@@ -2,7 +2,9 @@ package scheduler
+ 
+ import (
+ 	"bytes"
++	"context"
+ 	"errors"
++	"io"
+ 	"log"
+ 	"os"
+ 	"path/filepath"
+@@ -20,15 +22,17 @@ type fakeScriptExec struct {
+ 	err      error
+ }
+ 
+-func (f *fakeScriptExec) SetDir(dir string) { f.lastDir = dir }
+-func (f *fakeScriptExec) Run() error        { f.runN++; return f.err }
++func (f *fakeScriptExec) SetDir(dir string)   { f.lastDir = dir }
++func (f *fakeScriptExec) SetEnv([]string)     {}
++func (f *fakeScriptExec) SetOutput(io.Writer) {}
++func (f *fakeScriptExec) Run() error          { f.runN++; return f.err }
+ 
+ // installFakeExec 替换 newScriptCmd，测试结束还原。
+ func installFakeExec(t *testing.T) *fakeScriptExec {
+ 	t.Helper()
+ 	f := &fakeScriptExec{}
+ 	orig := newScriptCmd
+-	newScriptCmd = func(name string, args ...string) scriptRunner {
++	newScriptCmd = func(_ context.Context, name string, args ...string) scriptRunner {
+ 		f.lastName, f.lastArgs = name, args
+ 		return f
+ 	}
+@@ -111,7 +115,7 @@ func TestRunSchoolNowBuildsCommand(t *testing.T) {
+ 	// 防环境泄漏：WB2A_PYTHON 若在测试机已设置会改写 pythonCmd()，使默认值断言失败。
+ 	t.Setenv("WB2A_PYTHON", "")
+ 	f := installFakeExec(t)
+-	s := New(Config{})
++	s := New(Config{Pool: scriptPool(t)})
+ 	s.RunSchoolNow()
+ 	if f.lastName != "python3" {
+ 		t.Errorf("name=%q want python3", f.lastName)
+@@ -133,7 +137,7 @@ func TestRunSchoolNowBuildsCommand(t *testing.T) {
+ func TestRunCatNowBuildsCommand(t *testing.T) {
+ 	t.Setenv("WB2A_PYTHON", "")
+ 	f := installFakeExec(t)
+-	s := New(Config{})
++	s := New(Config{Pool: scriptPool(t)})
+ 	s.RunCatNow()
+ 	want := []string{"scripts/task_runner.py", "ALL", "--yes", "--only", "black_cat"}
+ 	if f.lastName != "python3" || !equalArgs(f.lastArgs, want) {
+@@ -150,7 +154,7 @@ func TestDispatchSchoolCatAndFailureWarnsOnly(t *testing.T) {
+ 	t.Setenv("WB2A_PYTHON", "")
+ 	f := installFakeExec(t)
+ 	f.err = errors.New("boom boom")
+-	s := New(Config{})
++	s := New(Config{Pool: scriptPool(t)})
+ 
+ 	var buf bytes.Buffer
+ 	log.SetOutput(&buf)
