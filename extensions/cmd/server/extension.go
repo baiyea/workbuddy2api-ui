@@ -2,7 +2,12 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -17,7 +22,184 @@ import (
 // Build metadata is supplied by the overlay image build using -ldflags -X.
 var upstreamCommit, patchIdentity string
 
+type deploymentKeys struct {
+	AdminKey  string `json:"admin_key"`
+	APIKey    string `json:"api_key"`
+	BridgeKey string `json:"bridge_key"`
+}
+
+type legacyKeys struct {
+	AdminKey string `json:"admin_key"`
+	APIKey   string `json:"api_key"`
+}
+
+func validateKeys(keys deploymentKeys) error {
+	if len(keys.AdminKey) < 32 || keys.APIKey == "" || len(keys.BridgeKey) < 32 || keys.AdminKey == keys.APIKey || keys.AdminKey == keys.BridgeKey || keys.APIKey == keys.BridgeKey {
+		return errors.New("管理和桥接密钥须至少 32 字节，API Key 须非空，三种密钥须互不相同")
+	}
+	return nil
+}
+
+func decodeKeys(path string, out any) error {
+	info, err := os.Lstat(path)
+	if err != nil {
+		return err
+	}
+	if !info.Mode().IsRegular() || info.Size() > 4096 {
+		return fmt.Errorf("key file is not regular: %s", path)
+	}
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	decoder := json.NewDecoder(io.LimitReader(f, 4097))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(out); err != nil {
+		return err
+	}
+	if err := decoder.Decode(new(any)); err != io.EOF {
+		return errors.New("key file contains trailing data")
+	}
+	return nil
+}
+
+func randomKey() (string, error) {
+	raw := make([]byte, 32)
+	if _, err := rand.Read(raw); err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(raw), nil
+}
+
+func effectiveKeys(base deploymentKeys, adminOverride, apiOverride string) (deploymentKeys, error) {
+	effective := base
+	if adminOverride != "" {
+		effective.AdminKey = adminOverride
+	}
+	if apiOverride != "" {
+		effective.APIKey = apiOverride
+	}
+	return effective, validateKeys(effective)
+}
+
+func writeKeys(path string, keys deploymentKeys) error {
+	dir := filepath.Dir(path)
+	f, err := os.CreateTemp(dir, ".keys-*")
+	if err != nil {
+		return err
+	}
+	tmp := f.Name()
+	defer os.Remove(tmp)
+	if err = f.Chmod(0600); err == nil {
+		err = json.NewEncoder(f).Encode(keys)
+	}
+	if err == nil {
+		err = f.Sync()
+	}
+	if closeErr := f.Close(); err == nil {
+		err = closeErr
+	}
+	if err != nil {
+		return err
+	}
+	if err := os.Link(tmp, path); err != nil {
+		return err
+	}
+	if err := os.Remove(tmp); err != nil {
+		return err
+	}
+	d, err := os.Open(dir)
+	if err != nil {
+		return err
+	}
+	defer d.Close()
+	return d.Sync()
+}
+
+func initializeKeys(dataDir, keyDir, adminOverride, apiOverride string) (deploymentKeys, error) {
+	for _, dir := range []string{dataDir, keyDir} {
+		if err := os.MkdirAll(dir, 0700); err != nil {
+			return deploymentKeys{}, err
+		}
+	}
+	if err := os.Chmod(keyDir, 0700); err != nil {
+		return deploymentKeys{}, err
+	}
+	keyPath := filepath.Join(keyDir, "keys.json")
+	var base deploymentKeys
+	targetErr := decodeKeys(keyPath, &base)
+	if targetErr != nil && !errors.Is(targetErr, os.ErrNotExist) {
+		return deploymentKeys{}, errors.New("keys.json 损坏，请恢复备份；不会自动更换现有密钥")
+	}
+	var old legacyKeys
+	legacyPath := filepath.Join(dataDir, "console-keys.json")
+	legacyErr := decodeKeys(legacyPath, &old)
+	if legacyErr != nil && !errors.Is(legacyErr, os.ErrNotExist) {
+		return deploymentKeys{}, errors.New("console-keys.json 损坏，请恢复备份；不会自动更换现有密钥")
+	}
+	if targetErr == nil {
+		if err := validateKeys(base); err != nil {
+			return deploymentKeys{}, errors.New("keys.json 损坏，请恢复备份；不会自动更换现有密钥")
+		}
+		if legacyErr == nil && (old.AdminKey != base.AdminKey || old.APIKey != base.APIKey) {
+			return deploymentKeys{}, errors.New("旧密钥与部署密钥冲突；不会自动覆盖")
+		}
+		return effectiveKeys(base, adminOverride, apiOverride)
+	}
+	if legacyErr == nil {
+		base.AdminKey, base.APIKey = old.AdminKey, old.APIKey
+		if len(old.AdminKey) < 32 || old.APIKey == "" || old.AdminKey == old.APIKey {
+			return deploymentKeys{}, errors.New("console-keys.json 损坏，请恢复备份；不会自动更换现有密钥")
+		}
+	} else {
+		var err error
+		if base.AdminKey, err = randomKey(); err != nil {
+			return deploymentKeys{}, err
+		}
+		if base.APIKey, err = randomKey(); err != nil {
+			return deploymentKeys{}, err
+		}
+	}
+	var err error
+	if base.BridgeKey, err = randomKey(); err != nil {
+		return deploymentKeys{}, err
+	}
+	if err := validateKeys(base); err != nil {
+		return deploymentKeys{}, err
+	}
+	effective, err := effectiveKeys(base, adminOverride, apiOverride)
+	if err != nil {
+		return deploymentKeys{}, err
+	}
+	if err := writeKeys(keyPath, base); err != nil {
+		return deploymentKeys{}, err
+	}
+	return effective, nil
+}
+
+func keyDir() string {
+	if value := os.Getenv("WB2A_KEY_DIR"); value != "" {
+		return value
+	}
+	return "/run/wb2a"
+}
+
 func coreBridgeKey(cfg *Config) (string, error) {
+	if os.Getenv("WB2A_CORE") == "true" {
+		var base deploymentKeys
+		if err := decodeKeys(filepath.Join(keyDir(), "keys.json"), &base); err != nil {
+			return "", err
+		}
+		keys, err := effectiveKeys(base, os.Getenv("WB2A_ADMIN_KEY"), os.Getenv("WB2A_API_KEY"))
+		if err != nil {
+			return "", err
+		}
+		if cfg.APIKey != keys.APIKey {
+			return "", errors.New("core API Key 与部署密钥不一致")
+		}
+		return keys.BridgeKey, nil
+	}
 	key := os.Getenv("WB2A_BRIDGE_KEY")
 	if key == "" {
 		return "", nil
@@ -31,6 +213,31 @@ func coreBridgeKey(cfg *Config) (string, error) {
 // initializeCore runs before auth.LoadDir. The deployment credential lifecycle
 // extends this boundary; source mode remains opt-in through WB2A_BRIDGE_KEY.
 func initializeCore(cfg *Config) error {
+	if os.Getenv("WB2A_CORE") == "true" {
+		dataDir, deploymentDir := filepath.Dir(cfg.StateFile), keyDir()
+		apiOverride := os.Getenv("WB2A_API_KEY")
+		if apiOverride == "" && cfg.APIKey != "" {
+			var target deploymentKeys
+			err := decodeKeys(filepath.Join(deploymentDir, "keys.json"), &target)
+			baseAPI := target.APIKey
+			if errors.Is(err, os.ErrNotExist) {
+				var old legacyKeys
+				err = decodeKeys(filepath.Join(dataDir, "console-keys.json"), &old)
+				baseAPI = old.APIKey
+			}
+			if err != nil && !errors.Is(err, os.ErrNotExist) {
+				return errors.New("部署密钥文件损坏，请恢复备份")
+			}
+			if err != nil || cfg.APIKey != baseAPI {
+				return errors.New("Docker 双服务不能只使用 config.json 的 api_key；请通过共享 WB2A_API_KEY 设置")
+			}
+		}
+		keys, err := initializeKeys(dataDir, deploymentDir, os.Getenv("WB2A_ADMIN_KEY"), apiOverride)
+		if err != nil {
+			return err
+		}
+		cfg.APIKey = keys.APIKey
+	}
 	key, err := coreBridgeKey(cfg)
 	if err != nil || key == "" {
 		return err

@@ -199,6 +199,22 @@ def _copy_extensions(root, dest):
             shutil.copy2(source, target)
 
 
+def overlay_identity(root: Path) -> str:
+    root = Path(root).resolve()
+    extensions = root / "extensions"
+    extension_digest = (
+        source_digest(extensions)
+        if extensions.exists()
+        else hashlib.sha256(b"[]").hexdigest()
+    )
+    patches = _read_series(root)
+    digest = hashlib.sha256(extension_digest.encode("ascii"))
+    digest.update((root / "patches" / "series").read_bytes())
+    for patch in patches:
+        digest.update(patch.read_bytes())
+    return digest.hexdigest()
+
+
 def materialize(root: Path, dest: Path) -> None:
     root = Path(root).resolve()
     dest = Path(dest)
@@ -237,9 +253,12 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
     prepare = subparsers.add_parser("prepare")
     prepare.add_argument("--output", type=Path, required=True)
+    subparsers.add_parser("identity")
     args = parser.parse_args()
     if args.command == "prepare":
         materialize(Path(__file__).resolve().parent.parent, args.output)
+    else:
+        print(overlay_identity(Path(__file__).resolve().parent.parent))
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ import unittest
 from unittest import mock
 from pathlib import Path
 
-from overlay import export_snapshot, materialize, source_digest
+from overlay import export_snapshot, materialize, overlay_identity, source_digest
 
 
 def run_git(repo, *args, input=None):
@@ -83,8 +83,26 @@ class SourceDigestTests(unittest.TestCase):
             with self.subTest(build=build), tempfile.TemporaryDirectory() as d:
                 root = Path(d)
                 build(root)
-                with self.assertRaises(ValueError):
-                    source_digest(root)
+            with self.assertRaises(ValueError):
+                source_digest(root)
+
+
+class OverlayIdentityTests(unittest.TestCase):
+    def test_identity_hashes_extension_manifest_series_and_ordered_patch_bytes(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            extension = root / "extensions" / "extra"
+            extension.mkdir(parents=True)
+            (extension / "new.txt").write_bytes(b"extension\n")
+            patches = root / "patches"
+            patches.mkdir()
+            (patches / "series").write_bytes(b"# order\nchange.patch\n")
+            (patches / "change.patch").write_bytes(b"patch bytes\n")
+
+            self.assertEqual(
+                "9318ffe4a70f3e26e3e3194355ca15609bf7c5d1c3871e458a8e1c0a3d4c587b",
+                overlay_identity(root),
+            )
 
 
 class ExportSnapshotTests(unittest.TestCase):

@@ -1,0 +1,13 @@
+{
+  "listen": ":7863",
+  "auth_dir": "/app/auths",
+  "state_file": "/app/data/state.json",
+  "schedule": {
+    "checkin_enabled": false,
+    "travel_enabled": false,
+    "activity_enabled": false,
+    "keepalive_enabled": false,
+    "school_enabled": false,
+    "cat_enabled": false
+  }
+}

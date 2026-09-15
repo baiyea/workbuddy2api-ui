@@ -1,0 +1,37 @@
+FROM golang:1.23-alpine AS build
+RUN apk add --no-cache git python3
+WORKDIR /source
+COPY upstream.lock ./
+COPY upstream ./upstream
+COPY extensions ./extensions
+COPY patches ./patches
+COPY scripts/overlay.py ./scripts/overlay.py
+RUN python3 scripts/overlay.py prepare --output /build/core
+WORKDIR /build/core
+RUN go mod download
+RUN set -eu; \
+    commit="$(python3 -c 'import json; print(json.load(open("/source/upstream.lock"))["commit"])')"; \
+    identity="$(python3 /source/scripts/overlay.py identity)"; \
+    go test ./...; \
+    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X main.upstreamCommit=$commit -X main.patchIdentity=$identity" -o /out/wb2api ./cmd/server; \
+    for command in signin login credit trial activity; do CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o "/out/$command" "./cmd/$command"; done
+
+FROM alpine:3.20
+RUN apk add --no-cache bash ca-certificates python3 tzdata wget \
+    && adduser -D -u 10001 app \
+    && mkdir -p /app/auths /app/data /app/scripts /run/wb2a \
+    && chown -R app:app /app /run/wb2a
+WORKDIR /app
+COPY --from=build /out/wb2api /app/wb2api
+COPY --from=build /out/signin /app/signin_bin
+COPY --from=build /out/login /app/login
+COPY --from=build /out/credit /app/credit
+COPY --from=build /out/trial /app/trial_bin
+COPY --from=build /out/activity /app/activity_bin
+COPY --from=build /build/core/checkin.sh /build/core/login.sh /build/core/signin.sh /build/core/credit.sh /build/core/trial.sh /app/
+COPY --from=build /build/core/scripts/ /app/scripts/
+RUN sed -i 's/\r$//' /app/*.sh /app/scripts/*.py && chmod 755 /app/*.sh /app/scripts/*.py
+USER app
+EXPOSE 7863
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD wget -qO- http://127.0.0.1:7863/livez || exit 1
+ENTRYPOINT ["/app/wb2api", "-config", "/app/config.json"]

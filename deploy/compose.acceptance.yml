@@ -1,0 +1,25 @@
+services:
+  core:
+    image: ${WB2A_ACCEPTANCE_CORE_IMAGE:?set WB2A_ACCEPTANCE_CORE_IMAGE}
+    restart: "no"
+    volumes:
+      - ${WB2A_ACCEPTANCE_CONFIG:?set WB2A_ACCEPTANCE_CONFIG}:/app/config.json:ro
+    networks: [mock]
+
+  console:
+    image: ${WB2A_ACCEPTANCE_CONSOLE_IMAGE:?set WB2A_ACCEPTANCE_CONSOLE_IMAGE}
+    restart: "no"
+    networks: [mock, entry]
+
+networks:
+  mock:
+    internal: true
+  entry: {}
+
+volumes:
+  auths:
+    external: true
+  data:
+    external: true
+  keys:
+    external: true

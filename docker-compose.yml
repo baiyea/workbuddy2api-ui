@@ -1,16 +1,58 @@
 services:
-  wb2api:
-    build: .
-    container_name: workbuddy2api
+  core:
+    build:
+      context: .
+      dockerfile: deploy/core.Dockerfile
     restart: unless-stopped
     environment:
-      - TZ=Asia/Shanghai
-    ports:
-      - "7863:7863"
+      TZ: ${TZ:-Asia/Shanghai}
+      WB2A_CORE: "true"
+      WB2A_LISTEN: :7863
+      WB2A_AUTH_DIR: /app/auths
+      WB2A_STATE_FILE: /app/data/state.json
+      WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
+      WB2A_API_KEY: ${WB2A_API_KEY:-}
     volumes:
-      - ./auths:/app/auths
-      # data 保持 bind mount（本地映射，与旧版本一致）。
-      # 若容器内 app(uid 10001) 写 state.json 报 permission denied，宿主机执行：
-      #   chown -R 10001:10001 ./data
-      - ./data:/app/data
-      - ./config.json:/app/config.json:ro
+      - auths:/app/auths
+      - data:/app/data
+      - keys:/run/wb2a
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:7863/livez"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+
+  console:
+    build:
+      context: .
+      dockerfile: deploy/console.Dockerfile
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
+      WB2A_API_KEY: ${WB2A_API_KEY:-}
+      WB2A_CORE_URL: http://core:7863
+      WB2A_KEY_FILE: /run/wb2a/keys.json
+      WB2A_PUBLIC_ORIGIN: ${WB2A_PUBLIC_ORIGIN:-}
+    ports:
+      - "${WB2A_BIND_ADDRESS:-0.0.0.0}:${WB2A_PORT:-7863}:7863"
+    volumes:
+      - keys:/run/wb2a:ro
+    depends_on:
+      core:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:7863/livez"]
+      interval: 30s
+      timeout: 5s
+      start_period: 5s
+      retries: 3
+
+volumes:
+  auths:
+    name: ${WB2A_AUTHS_VOLUME:-workbuddy2api_auths}
+  data:
+    name: ${WB2A_DATA_VOLUME:-workbuddy2api_data}
+  keys:
+    name: ${WB2A_KEYS_VOLUME:-workbuddy2api_keys}

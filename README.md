@@ -110,37 +110,80 @@ flowchart LR
 - 一个或多个已注册的 CodeBuddy 账号，用于 OAuth 登录
 - 宿主机 Go ≥ 1.22（仅源码构建时需要）
 
-### Docker Compose 一键部署
+### Docker Compose 一键部署与 Web 控制台
+
+服务器安装 Docker Compose，取得本版本完整源码后，在项目目录执行：
 
 ```bash
-git clone https://github.com/Sliverkiss/workbuddy2api.git
-cd workbuddy2api
-cp config.example.json config.json
+docker compose up -d
 ```
 
-编辑 `config.json`，**至少设置 `api_key`**（`留空 = 不鉴权`，公网部署务必设置）。示例中的 `test_key` 等均为占位符，`config.example.json` 不含任何真实密钥。
+首次会从锁定的 `upstream/` 快照、`extensions/` 和有序补丁构建 `core`，并单独构建 `console`。只有 console 映射宿主机端口；两个服务都以 UID 10001 运行。更新源码后使用 `docker compose up -d --build` 重新构建。
+
+打开 `http://服务器地址:7863/`，即可看到中文控制台：
+
+1. 首次查看 `docker compose logs console`，将日志中的「管理密钥」输入网页。管理密钥保存在独立凭据卷中，重启保持不变。
+2. 在「账号管理」选择国内版或国际版，点击「浏览器授权」，在上游页面完成登录、扫码或验证码。控制台自动等待、保存并加载账号，无需重启。
+3. 国际版需要完善地区时，在网页选择实际注册地区并继续；激活失败会提示重试。
+4. 在「运行概览」查看账号状态，在「对话测试」选择模型发送问题，可查看流式回答、推理内容、用量或停止生成。
+5. 在「API 接入」取得 Base URL 与 API Key，连接其他客户端。API Key 与管理密钥互相独立。
+
+“一条命令”指启动服务；首次取管理密钥和上游人工登录仍需你操作。网关不会代输上游密码或完成验证码。网页对话仅保留在当前页面内存中，刷新会清空；工具调用仅展示，不执行。
+
+**持久化与配置**
+
+默认使用三个命名卷：`workbuddy2api_auths` 保存上游账号凭据，`workbuddy2api_data` 保存账号状态，`workbuddy2api_keys` 保存三种互不相同的部署密钥。core 是唯一初始化者，console 只读挂载凭据卷且不挂载账号或状态卷。普通重启或重建保留数据；不要使用 `docker compose down -v`。
+
+可选在 `.env` 中预设（不设置也能启动）：
+
+```dotenv
+# 至少 32 个字符，使用随机生成的强密钥；不要与其他密钥相同
+WB2A_ADMIN_KEY=
+WB2A_API_KEY=
+WB2A_PORT=7863
+# HTTPS 反向代理时设置为浏览器实际访问的 origin，无路径
+WB2A_PUBLIC_ORIGIN=
+```
+
+管理和 API 环境覆盖由两个服务共同校验并在运行时生效，不改写凭据卷；去掉覆盖会回到原持久值。API Key 可以沿用旧的非空值。Docker 双服务不接受只写在 core `config.json` 中、且与持久基础值不同的 `api_key`；请改用两个服务共享的 `WB2A_API_KEY`，避免 console/core 分叉。公网使用 HTTPS 反向代理，并将 `WB2A_PUBLIC_ORIGIN` 设置为例如 `https://gateway.example.com`；转发到 console 的 7863 端口，保留 Host，关闭聊天接口的响应缓冲。
+
+需要修改定时任务等配置时，将自定义配置以只读方式挂载到 core 的 `/app/config.json`。默认六类定时任务开启，会按排程实际调用上游；可通过 `schedule.*_enabled` 关闭。API Key 请通过共享 `WB2A_API_KEY` 设置，不要在生产配置中保留示例 `test_key`。
+
+**旧部署与 CLI 兼容**
+
+先检查旧容器实际挂载，不从 Compose 项目名猜卷名；命令只输出脱敏后的容器身份和 `/app/auths`、`/app/data` 映射，不读取容器环境变量：
 
 ```bash
-# 登录添加账号（重复执行可加多号）
-./login.sh
-
-# 启动服务
-docker compose up -d --build
-
-# 健康检查（无可用账号时 503）；service 字段用于确认打到的是本网关
-curl -s http://localhost:7863/healthz
-# {"healthy":2,"total":3,"service":"workbuddy2api"}
+python3 deploy/migrate.py inspect --container OLD_CONTAINER > /tmp/wb2a-migration.json
+python3 deploy/migrate.py backup --manifest /tmp/wb2a-migration.json --output /ABSOLUTE/NEW/BACKUP/DIR
 ```
 
-`login.sh` 内置授权 URL 获取 + 浏览器登录 + token 轮询 + 首次签到 + `auths/workbuddy-<uid>.json` 落盘 + 容器重启，全程无 PKCE（state 由服务端签发）。账号池在容器启动时用 `auths/` 目录自动对齐，新增凭证文件即自动发现。
+运行中备份会明确标记为非最终一致性备份；正式切换前应停止旧实例后再做最终备份。确认卷名后，在 `.env` 显式复用：
+
+```dotenv
+WB2A_AUTHS_VOLUME=旧账号卷名
+WB2A_DATA_VOLUME=旧状态卷名
+```
+
+旧数据中的 `console-keys.json` 保持原字节不变，首次启动会迁移原管理/API Key 并新增桥接密钥；旧文件损坏或与现有凭据卷冲突时启动失败，不会自动覆盖或轮换。绑定目录也受迁移工具支持，但生产 Compose 默认使用明确命名卷。
+
+**健康检查**
+
+- `/livez`：进程存活，Docker HEALTHCHECK 使用此端点。空账号池也返回 200，方便首次登录。
+- `/healthz`：账号当前能否服务；无可用账号返回 503，不代表控制台没有启动。
+
+**镜像交付**
+
+当前 Compose 构建本仓库锁定快照，不拉取“最新上游”。core 的诊断信息内嵌锁定 commit 与扩展/补丁身份摘要。只有明确发布了这两个镜像后，才能把 `build` 换成对应 `image`；本仓库不会在普通启动时推送或发布镜像。
 
 ### 源码构建
 
 ```bash
-go build ./...
-go vet ./...
-go test ./...      # 完整测试套件
-go run ./cmd/server -config config.json
+python3 scripts/overlay.py prepare --output .build/core
+go -C .build/core test ./...
+go -C console test ./...
+node --test console/web_test.cjs
+bash scripts/acceptance.sh /ABSOLUTE/PATH/TO/workbuddy2api
 ```
 
 构建二进制：
@@ -178,9 +221,9 @@ curl -s http://localhost:7863/v1/chat/completions \
 
 ### 发布来源与合规边界
 
-- **无预编译 release**：仓库无 Release / tag，产物 = 源码自构建（Dockerfile 多阶段在本地构建时完成）
+- **构建来源**：默认 Compose 从本地源码构建；多架构镜像发布流程见 `.github/workflows/build.yml`，以实际发布的版本为准。
 - 登录 / 签到 / 积分工具：`./login.sh` / `./signin.sh` / `./credit.sh`
-- **无产物校验和**：`go.sum` 仅约束 Go 模块依赖；Docker 镜像由本地 `docker compose build` 生成，未引用第三方镜像
+- **依赖校验**：`go.sum` 约束 Go 模块依赖；Dockerfile 基于官方 Go/Alpine 镜像构建。
 - 上游 CodeBuddy 属第三方商业产品，本项目是其**非官方 OpenAI 兼容网关**；使用其账号做 API 网关涉及目标平台服务条款与账号风险，作者不对账号封禁、条款违约或使用结果负责
 
 ### 授权使用边界
