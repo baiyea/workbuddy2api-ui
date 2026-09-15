@@ -1,10 +1,26 @@
 services:
+  mock:
+    image: ${WB2A_ACCEPTANCE_CORE_IMAGE:?set WB2A_ACCEPTANCE_CORE_IMAGE}
+    entrypoint: ["python3", "/mock/mock_upstream.py"]
+    restart: "no"
+    volumes:
+      - ${WB2A_ACCEPTANCE_MOCK:?set WB2A_ACCEPTANCE_MOCK}:/mock/mock_upstream.py:ro
+    networks: [mock]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/livez"]
+      interval: 1s
+      timeout: 1s
+      retries: 20
+
   core:
     image: ${WB2A_ACCEPTANCE_CORE_IMAGE:?set WB2A_ACCEPTANCE_CORE_IMAGE}
     restart: "no"
     volumes:
       - ${WB2A_ACCEPTANCE_CONFIG:?set WB2A_ACCEPTANCE_CONFIG}:/app/config.json:ro
     networks: [mock]
+    depends_on:
+      mock:
+        condition: service_healthy
 
   console:
     image: ${WB2A_ACCEPTANCE_CONSOLE_IMAGE:?set WB2A_ACCEPTANCE_CONSOLE_IMAGE}

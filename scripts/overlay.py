@@ -6,7 +6,25 @@ import os
 import shutil
 import stat
 import subprocess
+import sys
+import tempfile
 from pathlib import Path, PurePosixPath
+
+
+CANONICAL_REPOSITORY = "https://github.com/Sliverkiss/workbuddy2api"
+UPDATE_PATHS = (
+    "upstream",
+    "upstream.lock",
+    "extensions",
+    "patches",
+    "deploy",
+    "scripts",
+    "console",
+    "docker-compose.yml",
+)
+JOURNAL_NAME = ".upstream-update-journal.json"
+BACKUP_NAME = ".upstream-update-backup"
+STAGED_NAME = ".upstream-update-new"
 
 
 def _tree_entries(root):
@@ -217,6 +235,8 @@ def overlay_identity(root: Path) -> str:
 
 def materialize(root: Path, dest: Path) -> None:
     root = Path(root).resolve()
+    if (root / JOURNAL_NAME).exists():
+        raise RuntimeError("unfinished upstream update; run update again to recover")
     dest = Path(dest)
     resolved_dest = dest.resolve(strict=False)
     for name in ("upstream", "extensions", "patches"):
@@ -248,17 +268,234 @@ def materialize(root: Path, dest: Path) -> None:
         raise
 
 
+def _validate_ref(ref):
+    if (
+        not isinstance(ref, str)
+        or not ref
+        or ref.startswith("-")
+        or any(ord(c) < 32 or ord(c) == 127 for c in ref)
+    ):
+        raise ValueError("ref must be non-empty and contain no leading '-' or control characters")
+
+
+def _check_update_paths_clean(root):
+    result = subprocess.run(
+        ["git", "status", "--porcelain", "--", *UPDATE_PATHS],
+        cwd=root,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True,
+    )
+    if result.stdout:
+        detail = result.stdout.decode("utf-8", errors="replace")
+        raise RuntimeError("upstream update paths contain changes:\n" + detail)
+
+
+def _fetch_candidate_snapshot(repository, ref, dest):
+    fetch = dest.parent / "fetch"
+    fetch.mkdir()
+    try:
+        _run_git(fetch, "init", "-q")
+        _run_git(fetch, "remote", "add", "origin", repository)
+        _run_git(fetch, "fetch", "--depth=1", "--no-tags", "origin", ref)
+        commit = _run_git(
+            fetch, "rev-parse", "--verify", "FETCH_HEAD^{commit}"
+        ).decode().strip()
+        export_snapshot(fetch, commit, dest)
+        return commit
+    finally:
+        _remove_created_directory(fetch)
+
+
+def _safe_candidate_ignore(_directory, names):
+    blocked = {
+        ".git", ".agents", ".build", "__pycache__", "auths", "data", ".env", ".DS_Store"
+    }
+    return [
+        name
+        for name in names
+        if name in blocked
+        or name.endswith(".pyc")
+        or (name.endswith(".env") and name != "acceptance.env")
+    ]
+
+
+def _build_candidate(root, ref, candidate):
+    candidate.mkdir()
+    commit = _fetch_candidate_snapshot(CANONICAL_REPOSITORY, ref, candidate / "upstream")
+    for name in ("extensions", "patches", "deploy", "scripts", "console"):
+        source = root / name
+        if not source.is_dir() or source.is_symlink():
+            raise ValueError(f"invalid candidate source tree: {name}")
+        shutil.copytree(
+            source, candidate / name, symlinks=True, ignore=_safe_candidate_ignore
+        )
+        _tree_entries(candidate / name)
+    for name in ("docker-compose.yml", ".dockerignore"):
+        source = root / name
+        if not source.is_file() or source.is_symlink():
+            raise ValueError(f"invalid candidate source file: {name}")
+        shutil.copy2(source, candidate / name)
+    lock = {
+        "format": 1,
+        "repository": CANONICAL_REPOSITORY,
+        "commit": commit,
+        "source_sha256": source_digest(candidate / "upstream"),
+    }
+    (candidate / "upstream.lock").write_text(
+        json.dumps(lock, indent=2) + "\n", encoding="utf-8"
+    )
+
+
+def _write_journal(root, journal):
+    target = root / JOURNAL_NAME
+    temporary = root / (JOURNAL_NAME + ".tmp")
+    with temporary.open("x", encoding="utf-8") as stream:
+        json.dump(journal, stream, indent=2)
+        stream.write("\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, target)
+    descriptor = os.open(root, os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _restore_interrupted_update(root):
+    journal_path = root / JOURNAL_NAME
+    if not journal_path.exists():
+        return False
+    try:
+        journal = json.loads(journal_path.read_text(encoding="utf-8"))
+        old_lock_sha = journal["old_lock_sha256"]
+        old_source_sha = journal["old_source_sha256"]
+    except (OSError, KeyError, TypeError, json.JSONDecodeError) as error:
+        raise RuntimeError("invalid upstream update journal; manual recovery required") from error
+    backup = root / BACKUP_NAME
+    staged = root / STAGED_NAME
+    backup_upstream = backup / "upstream"
+    backup_lock = backup / "upstream.lock"
+    if backup_upstream.exists():
+        _remove_created_directory(root / "upstream")
+        os.replace(backup_upstream, root / "upstream")
+    if backup_lock.exists():
+        (root / "upstream.lock").unlink(missing_ok=True)
+        os.replace(backup_lock, root / "upstream.lock")
+    if not (root / "upstream").is_dir() or not (root / "upstream.lock").is_file():
+        raise RuntimeError("upstream update recovery is incomplete; manual recovery required")
+    lock_sha = hashlib.sha256((root / "upstream.lock").read_bytes()).hexdigest()
+    if source_digest(root / "upstream") != old_source_sha or lock_sha != old_lock_sha:
+        raise RuntimeError("recovered upstream combination does not match journal")
+    _remove_created_directory(staged)
+    _remove_created_directory(backup)
+    journal_path.unlink()
+    return True
+
+
+def _install_candidate(root, candidate, old_lock, old_source_sha):
+    staged = root / STAGED_NAME
+    backup = root / BACKUP_NAME
+    journal_path = root / JOURNAL_NAME
+    journal_temporary = root / (JOURNAL_NAME + ".tmp")
+    if any(
+        os.path.lexists(path)
+        for path in (staged, backup, journal_path, journal_temporary)
+    ):
+        raise RuntimeError("upstream update staging path already exists")
+    staged.mkdir()
+    shutil.copytree(candidate / "upstream", staged / "upstream", symlinks=True)
+    shutil.copy2(candidate / "upstream.lock", staged / "upstream.lock")
+    backup.mkdir()
+    journal = {
+        "format": 1,
+        "phase": "staged",
+        "candidate": str(candidate),
+        "old_lock_sha256": hashlib.sha256(old_lock).hexdigest(),
+        "old_source_sha256": old_source_sha,
+    }
+    try:
+        _write_journal(root, journal)
+        os.replace(root / "upstream", backup / "upstream")
+        journal["phase"] = "upstream_backed_up"
+        _write_journal(root, journal)
+        os.replace(root / "upstream.lock", backup / "upstream.lock")
+        journal["phase"] = "lock_backed_up"
+        _write_journal(root, journal)
+        os.replace(staged / "upstream", root / "upstream")
+        journal["phase"] = "upstream_installed"
+        _write_journal(root, journal)
+        os.replace(staged / "upstream.lock", root / "upstream.lock")
+        journal["phase"] = "lock_installed"
+        _write_journal(root, journal)
+    except Exception:
+        if journal_path.exists():
+            _restore_interrupted_update(root)
+        else:
+            _remove_created_directory(staged)
+            _remove_created_directory(backup)
+            journal_temporary.unlink(missing_ok=True)
+        raise
+    _remove_created_directory(staged)
+    _remove_created_directory(backup)
+    journal_path.unlink()
+
+
+def update(root: Path, ref: str) -> None:
+    root = Path(root).resolve()
+    _validate_ref(ref)
+    if _restore_interrupted_update(root):
+        raise RuntimeError("recovered interrupted upstream update; rerun update")
+    lock = _read_lock(root)
+    if lock["repository"] != CANONICAL_REPOSITORY:
+        raise ValueError("upstream.lock repository is not the approved canonical URL")
+    _check_update_paths_clean(root)
+    old_lock = (root / "upstream.lock").read_bytes()
+    old_source_sha = source_digest(root / "upstream")
+    if old_source_sha != lock["source_sha256"]:
+        raise ValueError("upstream source digest does not match upstream.lock")
+    work = Path(tempfile.mkdtemp(prefix="wb2a-upstream-candidate-"))
+    candidate = work / "candidate"
+    try:
+        _build_candidate(root, ref, candidate)
+        candidate = candidate.resolve()
+        subprocess.run(
+            ["bash", str(candidate / "scripts" / "check.sh"), str(candidate)],
+            check=True,
+        )
+        subprocess.run(
+            ["bash", str(candidate / "scripts" / "acceptance.sh"), str(candidate)],
+            check=True,
+        )
+        _check_update_paths_clean(root)
+        if (
+            (root / "upstream.lock").read_bytes() != old_lock
+            or source_digest(root / "upstream") != old_source_sha
+        ):
+            raise RuntimeError("upstream snapshot or lock changed during candidate validation")
+        _install_candidate(root, candidate, old_lock, old_source_sha)
+    except Exception:
+        print(f"candidate retained for diagnosis: {candidate}", file=sys.stderr)
+        raise
+    shutil.rmtree(work, ignore_errors=True)
+
+
 def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
     prepare = subparsers.add_parser("prepare")
     prepare.add_argument("--output", type=Path, required=True)
     subparsers.add_parser("identity")
+    update_parser = subparsers.add_parser("update")
+    update_parser.add_argument("--ref", required=True)
     args = parser.parse_args()
     if args.command == "prepare":
         materialize(Path(__file__).resolve().parent.parent, args.output)
-    else:
+    elif args.command == "identity":
         print(overlay_identity(Path(__file__).resolve().parent.parent))
+    else:
+        update(Path(__file__).resolve().parent.parent, args.ref)
 
 
 if __name__ == "__main__":

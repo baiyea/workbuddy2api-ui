@@ -176,13 +176,34 @@ WB2A_DATA_VOLUME=旧状态卷名
 
 当前 Compose 构建本仓库锁定快照，不拉取“最新上游”。core 的诊断信息内嵌锁定 commit 与扩展/补丁身份摘要。只有明确发布了这两个镜像后，才能把 `build` 换成对应 `image`；本仓库不会在普通启动时推送或发布镜像。
 
+**手动更新上游与回退**
+
+更新必须显式给出上游 ref；工具只从 `upstream.lock` 中批准的 canonical 仓库拉取，在临时候选目录完成完整检查、镜像构建和隔离 mock 验收。失败时当前 `upstream/`、锁文件、容器和数据卷都不变，并打印保留的候选目录。成功也只改工作区中的 `upstream/` 和 `upstream.lock`，不会提交、推送或部署：
+
+```bash
+python3 scripts/overlay.py update --ref COMMIT_OR_TAG
+git diff -- upstream upstream.lock
+git add upstream upstream.lock
+git commit -m "build: update pinned upstream"
+docker compose up -d --build
+```
+
+若验收后需要回到旧组合，先对记录该组合的提交执行可审阅的反向提交，再明确重建；若同一版本还改过扩展或补丁，应一起回退对应提交：
+
+```bash
+git revert --no-commit UPSTREAM_UPDATE_COMMIT
+git diff
+git commit -m "revert: restore previous upstream combination"
+docker compose up -d --build
+```
+
+更新和回退都不要使用 `docker compose down -v`；账号、状态、任务记录和密钥卷应原样保留。相关源码路径有未提交改动时，更新入口会拒绝覆盖，请先提交或另行保存这些改动。
+
 ### 源码构建
 
 ```bash
 python3 scripts/overlay.py prepare --output .build/core
-go -C .build/core test ./...
-go -C console test ./...
-node --test console/web_test.cjs
+bash scripts/check.sh /ABSOLUTE/PATH/TO/workbuddy2api
 bash scripts/acceptance.sh /ABSOLUTE/PATH/TO/workbuddy2api
 ```
 

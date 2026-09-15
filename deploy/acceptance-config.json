@@ -3,11 +3,17 @@
   "auth_dir": "/app/auths",
   "state_file": "/app/data/state.json",
   "schedule": {
-    "checkin_enabled": false,
+    "checkin_enabled": true,
+    "checkin_hours": [4],
     "travel_enabled": false,
     "activity_enabled": false,
     "keepalive_enabled": false,
     "school_enabled": false,
     "cat_enabled": false
+  },
+  "global": {
+    "enabled": true,
+    "chat_base": "http://mock:8080",
+    "billing_base": "http://mock:8080"
   }
 }

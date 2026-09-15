@@ -6,7 +6,7 @@ case "$repo_root" in
   /*) ;;
   *) echo "repo root must be absolute" >&2; exit 2 ;;
 esac
-for path in upstream.lock scripts/overlay.py deploy/core.Dockerfile deploy/console.Dockerfile deploy/compose.acceptance.yml deploy/acceptance-config.json deploy/acceptance.env; do
+for path in upstream.lock scripts/overlay.py deploy/core.Dockerfile deploy/console.Dockerfile deploy/compose.acceptance.yml deploy/acceptance-config.json deploy/acceptance.env deploy/mock_upstream.py; do
   test -e "$repo_root/$path" || { echo "missing $repo_root/$path" >&2; exit 2; }
 done
 
@@ -20,6 +20,9 @@ acceptance_passed=false
 core_image="${WB2A_ACCEPTANCE_CORE_IMAGE:-${fresh_project}-core}"
 console_image="${WB2A_ACCEPTANCE_CONSOLE_IMAGE:-${fresh_project}-console}"
 expected_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["commit"])' "$repo_root/upstream.lock")"
+expected_identity="$(python3 "$repo_root/scripts/overlay.py" identity)"
+build_proxy="${WB2A_ACCEPTANCE_BUILD_PROXY:-http://host.docker.internal:7890}"
+cookie_file="${TMPDIR:-/tmp}/${legacy_project}.cookie"
 
 compose_for() {
   local project="$1" port="$2"
@@ -30,10 +33,12 @@ compose_for() {
   WB2A_DATA_VOLUME="${project}_data" \
   WB2A_KEYS_VOLUME="${project}_keys" \
   WB2A_ACCEPTANCE_CONFIG="$repo_root/deploy/acceptance-config.json" \
+  WB2A_ACCEPTANCE_MOCK="$repo_root/deploy/mock_upstream.py" \
   WB2A_ACCEPTANCE_CORE_IMAGE="$core_image" \
   WB2A_ACCEPTANCE_CONSOLE_IMAGE="$console_image" \
   WB2A_ADMIN_KEY="${WB2A_ACCEPTANCE_ADMIN_KEY:-}" \
   WB2A_API_KEY="${WB2A_ACCEPTANCE_API_KEY:-}" \
+  WB2A_PUBLIC_ORIGIN="http://127.0.0.1:$port" \
   docker compose --env-file "$repo_root/deploy/acceptance.env" --project-directory "$repo_root" -p "$project" \
     -f "$repo_root/docker-compose.yml" -f "$repo_root/deploy/compose.acceptance.yml" "$@"
 }
@@ -65,6 +70,7 @@ remove_project_volumes() {
 }
 
 cleanup() {
+  rm -f -- "$cookie_file"
   if [[ "$acceptance_passed" == "true" && "${WB2A_ACCEPTANCE_KEEP:-}" == "true" ]]; then
     echo "acceptance kept: http://127.0.0.1:$legacy_port/ (project $legacy_project)"
     return
@@ -78,9 +84,8 @@ cleanup() {
 trap cleanup EXIT
 
 create_volumes "$fresh_project"
-if [[ "${WB2A_ACCEPTANCE_SKIP_BUILD:-}" != "true" ]]; then
-  compose_for "$fresh_project" "$fresh_port" build
-fi
+compose_for "$fresh_project" "$fresh_port" build \
+  --build-arg "HTTP_PROXY=$build_proxy" --build-arg "HTTPS_PROXY=$build_proxy"
 compose_for "$fresh_project" "$fresh_port" up -d --wait --no-build
 [[ "$(compose_for "$fresh_project" "$fresh_port" port console 7863)" == "127.0.0.1:$fresh_port" ]]
 wait_live "http://127.0.0.1:$fresh_port/livez"
@@ -88,12 +93,15 @@ wait_live "http://127.0.0.1:$fresh_port/livez"
 [[ "$(compose_for "$fresh_project" "$fresh_port" exec -T core id -u)" == "10001" ]]
 [[ "$(compose_for "$fresh_project" "$fresh_port" exec -T console id -u)" == "10001" ]]
 
+mock_id="$(compose_for "$fresh_project" "$fresh_port" ps -q mock)"
 core_id="$(compose_for "$fresh_project" "$fresh_port" ps -q core)"
 console_id="$(compose_for "$fresh_project" "$fresh_port" ps -q console)"
-docker inspect "$core_id" "$console_id" | python3 -c '
+docker inspect "$mock_id" "$core_id" "$console_id" | python3 -c '
 import json,sys
-core,console=json.load(sys.stdin)
+mock,core,console=json.load(sys.stdin)
 assert not any((core["HostConfig"]["PortBindings"] or {}).values())
+assert not any((mock["HostConfig"]["PortBindings"] or {}).values())
+assert set(mock["NetworkSettings"]["Networks"]) == {sys.argv[1] + "_mock"}
 assert set(core["NetworkSettings"]["Networks"]) == {sys.argv[1] + "_mock"}
 assert set(console["NetworkSettings"]["Networks"]) == {sys.argv[1] + "_mock", sys.argv[1] + "_entry"}
 mounts={m["Destination"]:m["RW"] for m in console["Mounts"]}
@@ -110,8 +118,8 @@ import json,sys
 info=json.load(sys.stdin)
 assert info["protocol"] == 1
 assert info["upstream_commit"] == sys.argv[1]
-assert len(info["patch_identity"]) == 64 and set(info["patch_identity"]) <= set("0123456789abcdef")
-' "$expected_commit"
+assert info["patch_identity"] == sys.argv[2]
+' "$expected_commit" "$expected_identity"
 fresh_digest="$(compose_for "$fresh_project" "$fresh_port" exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)"
 WB2A_ACCEPTANCE_ADMIN_KEY=cccccccccccccccccccccccccccccccc WB2A_ACCEPTANCE_API_KEY=short-override \
   compose_for "$fresh_project" "$fresh_port" up -d --force-recreate --wait --no-build
@@ -120,7 +128,9 @@ curl --noproxy '*' -fsS -H "Origin: http://127.0.0.1:$fresh_port" -H 'Content-Ty
 [[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer short-override' "http://127.0.0.1:$fresh_port/status")" == "200" ]]
 [[ "$fresh_digest" == "$(compose_for "$fresh_project" "$fresh_port" exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
 compose_for "$fresh_project" "$fresh_port" exec -T core sh -c 'printf "%s\n" mock-account > /app/auths/preserved.txt; printf "%s\n" mock-state > /app/data/preserved.txt'
-compose_for "$fresh_project" "$fresh_port" up -d --build --wait
+compose_for "$fresh_project" "$fresh_port" build \
+  --build-arg "HTTP_PROXY=$build_proxy" --build-arg "HTTPS_PROXY=$build_proxy"
+compose_for "$fresh_project" "$fresh_port" up -d --force-recreate --wait --no-build
 [[ "$fresh_digest" == "$(compose_for "$fresh_project" "$fresh_port" exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
 compose_for "$fresh_project" "$fresh_port" exec -T core sh -c 'grep -qx mock-account /app/auths/preserved.txt && grep -qx mock-state /app/data/preserved.txt'
 compose_for "$fresh_project" "$fresh_port" down --remove-orphans >/dev/null
@@ -147,6 +157,15 @@ wait_live "http://127.0.0.1:$legacy_port/livez"
 [[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer legacy-api' "http://127.0.0.1:$legacy_port/status")" == "200" ]]
 curl --noproxy '*' -fsS -H "Origin: http://127.0.0.1:$legacy_port" -H 'Content-Type: application/json' \
   --data '{"key":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}' "http://127.0.0.1:$legacy_port/admin/login" >/dev/null
+curl --noproxy '*' -fsS -H 'Authorization: Bearer legacy-api' "http://127.0.0.1:$legacy_port/v1/models" | python3 -c '
+import json,sys
+models=json.load(sys.stdin)["data"]
+assert any(model["id"] == "global:mock-model" for model in models)
+'
+mock_stream="$(curl --noproxy '*' -fsSN -H 'Authorization: Bearer legacy-api' -H 'Content-Type: application/json' \
+  --data '{"model":"global:mock-model","messages":[{"role":"user","content":"acceptance"}],"stream":true}' \
+  "http://127.0.0.1:$legacy_port/v1/chat/completions")"
+[[ "$mock_stream" == *"mock-runtime-ok"* && "$mock_stream" == *"data: [DONE]"* ]]
 curl --noproxy '*' -fsS -H 'Authorization: Bearer legacy-api' "http://127.0.0.1:$legacy_port/status" | python3 -c '
 import json,sys
 status=json.load(sys.stdin)
@@ -168,9 +187,41 @@ assert json.load(open("/app/data/state.json"))["accounts"]["mock"] == {"credits"
 auth=json.load(open("/app/auths/workbuddy-mock.json"))
 assert auth["account"]["uid"] == "mock" and auth["auth"]["realm"] == "global"
 '
+login_json="$(curl --noproxy '*' -fsS -c "$cookie_file" -H "Origin: http://127.0.0.1:$legacy_port" -H 'Content-Type: application/json' \
+  --data '{"key":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}' "http://127.0.0.1:$legacy_port/admin/login")"
+csrf="$(python3 -c 'import json,sys; print(json.loads(sys.argv[1])["csrf"])' "$login_json")"
+curl --noproxy '*' -fsS -b "$cookie_file" "http://127.0.0.1:$legacy_port/admin/tasks" | python3 -c '
+import json,sys
+body=json.load(sys.stdin)
+checkin=next(task for task in body["items"] if task["id"] == "checkin")
+assert checkin["enabled"] is True and body["active_run"] is None
+'
+request_id="acceptance-run-$suffix"
+run_json="$(curl --noproxy '*' -fsS -b "$cookie_file" -H "Origin: http://127.0.0.1:$legacy_port" \
+  -H "X-CSRF-Token: $csrf" -H 'Content-Type: application/json' --data "{\"request_id\":\"$request_id\"}" \
+  "http://127.0.0.1:$legacy_port/admin/tasks/checkin/runs")"
+run_id="$(python3 -c 'import json,sys; print(json.loads(sys.argv[1])["id"])' "$run_json")"
+for _ in {1..100}; do
+  run_json="$(curl --noproxy '*' -fsS -b "$cookie_file" "http://127.0.0.1:$legacy_port/admin/task-runs/$run_id")"
+  python3 -c 'import json,sys; raise SystemExit(json.loads(sys.argv[1])["finished_at"] is None)' "$run_json" && break
+  sleep 0.1
+done
+python3 -c '
+import json,sys
+run=json.loads(sys.argv[1])
+assert run["status"] == "skipped" and run["request_id"] == sys.argv[2]
+assert run["accounts"] == [{"uid":"mock","status":"skipped","detail":"global","before":None,"after":None,"reward":None}]
+' "$run_json" "$request_id"
 legacy_key_digest="$(compose_for "$legacy_project" "$legacy_port" exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)"
 compose_for "$legacy_project" "$legacy_port" up -d --force-recreate --wait --no-build
 [[ "$legacy_key_digest" == "$(compose_for "$legacy_project" "$legacy_port" exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
+login_json="$(curl --noproxy '*' -fsS -c "$cookie_file" -H "Origin: http://127.0.0.1:$legacy_port" -H 'Content-Type: application/json' \
+  --data '{"key":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}' "http://127.0.0.1:$legacy_port/admin/login")"
+curl --noproxy '*' -fsS -b "$cookie_file" "http://127.0.0.1:$legacy_port/admin/task-runs/$run_id" | python3 -c '
+import json,sys
+run=json.load(sys.stdin)
+assert run["id"] == sys.argv[1] and run["status"] == "skipped" and run["finished_at"] is not None
+' "$run_id"
 legacy_after="$(compose_for "$legacy_project" "$legacy_port" exec -T core sh -eu -c \
   'sha256sum /app/auths/workbuddy-mock.json /app/data/state.json /app/data/console-keys.json')"
 [[ "$legacy_before" == "$legacy_after" ]]

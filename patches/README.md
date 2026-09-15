@@ -5,6 +5,11 @@ Baseline: Sliverkiss/workbuddy2api commit
 `python3 scripts/overlay.py prepare --output ABS_NEW_DIRECTORY`; never edit
 `upstream/`. New source and tests live in `extensions/`, not in these patches.
 `series` is the explicit application order: 0001, 0002, 0003, 0004, 0005.
+For a deliberate upstream candidate, run
+`python3 scripts/overlay.py update --ref COMMIT_OR_TAG`; it keeps the current
+snapshot and lock until the candidate passes `scripts/check.sh` and isolated
+mock acceptance. Review every patch against the resolved commit before
+committing the resulting `upstream/` and `upstream.lock` changes.
 
 | Patch | Purpose and old files changed | Verification after materializing |
 | --- | --- | --- |

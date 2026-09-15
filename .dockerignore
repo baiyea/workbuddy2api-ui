@@ -8,6 +8,8 @@
 !patches/**
 !scripts/
 !scripts/overlay.py
+!scripts/check.sh
+!scripts/acceptance.sh
 !console/
 !console/**
 !deploy/
