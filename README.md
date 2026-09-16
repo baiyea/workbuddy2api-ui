@@ -21,7 +21,7 @@ docker compose logs console
 Compose 从阿里云仓库 `registry.cn-hangzhou.aliyuncs.com/cateyes/go` 拉取
 `wb2api-core-<时间戳>` 和 `wb2api-webui-<时间戳>`，不会构建。两个镜像使用相同时间戳。
 仓库若为私有，服务器需先执行 `docker login registry.cn-hangzhou.aliyuncs.com`。
-首次发布前的 `1789519503` 是命名示例，不代表本项目已完成发布；请使用成功发布后的 Compose。
+请使用发布脚本成功更新后的 Compose，其中的默认时间戳对应已验收并推送的镜像。
 只有 console 映射宿主机端口，
 默认访问 `http://服务器地址:7863/`；两个服务都以 UID 10001 运行。首次启动时 core
 生成彼此独立的管理、公共 API 和内部桥接密钥，console 日志只显示需要交给管理员的
