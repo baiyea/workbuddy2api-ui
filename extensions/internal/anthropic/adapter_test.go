@@ -136,7 +136,6 @@ func TestRejectInvalidRequestsBeforeNext(t *testing.T) {
 		{name: "stream null", body: field("stream", `null`), code: 400},
 		{name: "stream string", body: field("stream", `"false"`), code: 400},
 		{name: "stream number", body: field("stream", `1`), code: 400},
-		{name: "stream not implemented", body: field("stream", `true`), code: 400},
 		{name: "unknown field", body: field("temperature", `0.5`), code: 400},
 		{name: "private conversation field", body: field("conversationId", `"spoofed"`), code: 400},
 		{name: "null unsupported field", body: field("tools", `null`), code: 400},

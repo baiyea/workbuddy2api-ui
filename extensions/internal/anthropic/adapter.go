@@ -183,10 +183,6 @@ func New(next http.Handler, apiKey string, maxBodyBytes int64) http.Handler {
 			}
 			stream = *value
 		}
-		if stream {
-			writeError(w, 400, "流式文本响应尚未支持")
-			return
-		}
 		messages := make([]message, 0, len(input.Messages)+1)
 		if len(input.System) > 0 {
 			text, err := textContent(input.System)
@@ -220,6 +216,13 @@ func New(next http.Handler, apiKey string, maxBodyBytes int64) http.Handler {
 		req.Body, req.ContentLength = io.NopCloser(bytes.NewReader(body)), int64(len(body))
 		req.GetBody, req.TransferEncoding, req.Trailer = nil, nil, nil
 		req.Header = http.Header{"Content-Type": {"application/json"}, "Authorization": {"Bearer " + apiKey}}
+		if stream {
+			writer := newStreamWriter(w, *input.Model, cancel)
+			writer.ctx = ctx
+			next.ServeHTTP(writer, req)
+			_ = writer.finish()
+			return
+		}
 		capture := &responseBuffer{header: make(http.Header), ctx: ctx, cancel: cancel}
 		next.ServeHTTP(capture, req)
 		if capture.err != nil {
