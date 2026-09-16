@@ -65,10 +65,8 @@ assert all(i["Os"] == "linux" and i["Architecture"] == "amd64" for i in json.loa
 
 # Production smoke only substitutes image refs and an isolated port in a copied file.
 standalone_compose() {
-  local env_file=/dev/null
-  if [[ -f "$standalone/.env" ]]; then env_file="$standalone/.env"; fi
   env -u WB2A_ADMIN_KEY -u WB2A_API_KEY \
-  docker compose --env-file "$env_file" --project-directory "$standalone" -p "$fresh_project" \
+  docker compose --env-file /dev/null --project-directory "$standalone" -p "$fresh_project" \
     -f "$standalone/docker-compose.yml" "$@"
 }
 
@@ -79,6 +77,9 @@ logs=sys.stdin.read()
 base=json.load(open("/run/wb2a/keys.json"))
 admin=os.environ.get("WB2A_ADMIN_KEY") or base["admin_key"]
 api=os.environ.get("WB2A_API_KEY") or base["api_key"]
+case=sys.argv[1]
+assert admin == ("c"*32 if case in ("admin", "both") else base["admin_key"])
+assert api == ("fixture-api" if case in ("api", "both") else base["api_key"])
 assert len(admin) >= 32 and api and len({admin,api,base["bridge_key"]}) == 3
 assert "管理密钥（仅交给管理员）: " + admin in logs
 assert api not in logs and base["bridge_key"] not in logs
@@ -89,7 +90,7 @@ with urllib.request.urlopen(urllib.request.Request("http://console:7863/admin/lo
         data=json.dumps({"key":admin}).encode(),
         headers={"Origin":"http://console:7863","Content-Type":"application/json"}), timeout=5) as response:
     assert response.status == 200
-'
+' "${1:-none}"
 }
 
 create_volumes() {
@@ -187,6 +188,8 @@ assert not os.listdir("/app/auths")
 assert "MIT License" in open("/app/LICENSE").read()
 '
 standalone_compose exec -T console test -s /app/LICENSE
+[[ "$(standalone_compose exec -T core date +%z)" == "+0800" ]]
+[[ "$(standalone_compose exec -T console date +%z)" == "+0800" ]]
 [[ "$(standalone_compose exec -T core apk --print-arch)" == "x86_64" ]]
 [[ "$(standalone_compose exec -T console apk --print-arch)" == "x86_64" ]]
 docker inspect "$(standalone_compose ps -q core)" "$(standalone_compose ps -q console)" | python3 -c '
@@ -212,19 +215,26 @@ assert_standalone_keys
 test ! -e "$standalone/.env"
 standalone_compose exec -T core grep -qx retained /app/data/bind-smoke.txt
 [[ "$bind_keys_digest" == "$(standalone_compose exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
-for key_case in unrelated empty admin api both; do
+cp "$standalone/docker-compose.yml" "$standalone/docker-compose.default.yml"
+for key_case in empty admin api both none; do
   python3 -c '
-import pathlib,sys
-cases={"unrelated":"OTHER_SETTING=keep\n", "empty":"WB2A_ADMIN_KEY=\nWB2A_API_KEY=\n",
-       "admin":"WB2A_ADMIN_KEY="+"c"*32+"\n", "api":"WB2A_API_KEY=fixture-api\n",
-       "both":"WB2A_ADMIN_KEY="+"c"*32+"\nWB2A_API_KEY=fixture-api\n"}
-pathlib.Path(sys.argv[1]).write_text(cases[sys.argv[2]])
-' "$standalone/.env" "$key_case"
-  cp "$standalone/.env" "$standalone/.env.expected"
+import json,pathlib,sys
+directory=pathlib.Path(sys.argv[1])
+case=sys.argv[2]
+text=(directory / "docker-compose.default.yml").read_text()
+values={"empty":{"WB2A_ADMIN_KEY":"", "WB2A_API_KEY":""},
+        "admin":{"WB2A_ADMIN_KEY":"c"*32}, "api":{"WB2A_API_KEY":"fixture-api"},
+        "both":{"WB2A_ADMIN_KEY":"c"*32,"WB2A_API_KEY":"fixture-api"}, "none":{}}
+for key,value in values[case].items():
+    text=text.replace("# "+key+": \"\"", key+": "+json.dumps(value))
+(directory / "docker-compose.yml").write_text(text)
+' "$standalone" "$key_case"
+  cp "$standalone/docker-compose.yml" "$standalone/docker-compose.expected.yml"
   standalone_compose up -d --force-recreate --no-build --pull never
   wait_live "http://127.0.0.1:$fresh_port/livez"
-  assert_standalone_keys
-  cmp "$standalone/.env.expected" "$standalone/.env"
+  assert_standalone_keys "$key_case"
+  cmp "$standalone/docker-compose.expected.yml" "$standalone/docker-compose.yml"
+  test ! -e "$standalone/.env"
   [[ "$bind_keys_digest" == "$(standalone_compose exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
 done
 standalone_compose down --remove-orphans

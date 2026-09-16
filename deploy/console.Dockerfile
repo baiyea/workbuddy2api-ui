@@ -13,7 +13,7 @@ RUN test "$(apk --print-arch)" = x86_64 \
     && chown -R app:app /run/wb2a
 COPY --from=build /out/console /app/console
 COPY LICENSE /app/LICENSE
-ENV WB2A_CORE_URL=http://core:7863 WB2A_LISTEN=:7863
+ENV WB2A_CORE_URL=http://core:7863 WB2A_LISTEN=:7863 WB2A_KEY_FILE=/run/wb2a/keys.json
 USER app
 EXPOSE 7863
 ENTRYPOINT ["/app/console"]

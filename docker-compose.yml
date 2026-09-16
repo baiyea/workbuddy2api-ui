@@ -5,12 +5,9 @@ services:
     restart: unless-stopped
     environment:
       TZ: Asia/Shanghai
-      WB2A_CORE: "true"
-      WB2A_LISTEN: :7863
-      WB2A_AUTH_DIR: /app/auths
-      WB2A_STATE_FILE: /app/data/state.json
-      WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
-      WB2A_API_KEY: ${WB2A_API_KEY:-}
+      # 可选：填写后取消注释，否则自动生成并持久化。两个服务的同名密钥必须一致。
+      # WB2A_ADMIN_KEY: "" # 至少 32 字节，且与 API Key 不同
+      # WB2A_API_KEY: ""
     volumes:
       - ./runtime/wb2api/auths:/app/auths
       - ./runtime/wb2api/data:/app/data
@@ -22,11 +19,9 @@ services:
     restart: unless-stopped
     environment:
       TZ: Asia/Shanghai
-      WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
-      WB2A_API_KEY: ${WB2A_API_KEY:-}
-      WB2A_CORE_URL: http://core:7863
-      WB2A_KEY_FILE: /run/wb2a/keys.json
-      WB2A_PUBLIC_ORIGIN: ""
+      # 可选：填写后取消注释，否则使用自动生成的密钥。与 core 中的同名密钥保持一致。
+      # WB2A_ADMIN_KEY: "" # 至少 32 字节，且与 API Key 不同
+      # WB2A_API_KEY: ""
     ports:
       - "0.0.0.0:7863:7863"
     volumes:

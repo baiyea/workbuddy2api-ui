@@ -11,16 +11,16 @@
 ## 启动
 
 需要 Docker Engine 和 Docker Compose，目标服务器为 `linux/amd64`（Intel/AMD）。
-服务器只需本仓库的 `docker-compose.yml` 和可选 `.env`；无需下载源码或安装构建工具：
+服务器只需本仓库的 `docker-compose.yml`；无需 `.env`、下载源码或安装构建工具：
 
 ```sh
 docker compose up -d
 docker compose logs console
 ```
 
-`.env` 是可选的密钥覆盖入口，不需要启动脚本。没有 `.env`、文件中只有其他参数，
-或两项密钥缺失/为空，都能直接启动：core 自动生成缺少的密钥，console 读取共享密钥文件。
-只配置一项时保留该项、补齐另一项；重启复用持久化密钥，不会反写 `.env` 或宿主机环境变量。
+默认无需配置密钥，也不需要启动脚本：core 自动生成密钥，console 读取共享密钥文件。
+如需自定义，在 YAML 中取消密钥配置注释并填写，两个服务的同名密钥必须一致。
+只配置一项时保留该项、补齐另一项；重启复用持久化密钥，不会反写 YAML 或宿主机环境变量。
 已配置但无效的密钥（如管理密钥过短、两项相同）会明确报错，不会擅自替换。
 
 Compose 从阿里云仓库 `registry.cn-hangzhou.aliyuncs.com/cateyes/go` 拉取
@@ -34,7 +34,7 @@ core 镜像内的启动脚本先以 root 将三个存储目录的所有者设为
 两个业务进程均以普通用户运行；core 的 `docker compose exec` 默认仍为 root，需要普通
 用户时显式加 `--user 10001:10001`。首次启动时 core
 生成彼此独立的管理、公共 API 和内部桥接密钥，console 日志只显示需要交给管理员的
-管理密钥，包括 `.env` 中手动设置的值。输入该密钥后才能进入控制台。
+管理密钥，包括 YAML 中手动设置的值。输入该密钥后才能进入控制台。
 注意：能查看 console 日志的人也能获取管理登录密钥，请限制日志访问和转发范围；
 API Key 和内部桥接密钥不会写入启动日志。
 
@@ -67,23 +67,27 @@ docker compose -f docker-compose.build.yaml up -d --build
 
 普通重启和重建会复用这些目录，首次启动自动创建。不要删除或用空目录替代已有数据。
 `runtime/` 已被 Git 忽略，也不会进入镜像构建上下文；备份和搬迁时需要单独保存整个目录。
-仅管理员密钥和 API Key 支持 `.env` 配置；留空或不配置时由应用自动生成并持久保存：
+Compose 的环境配置默认只保留时区，密钥注释按需启用；留空或不配置时自动生成并持久保存：
 
-```dotenv
-WB2A_ADMIN_KEY=
-WB2A_API_KEY=
+```yaml
+environment:
+  TZ: Asia/Shanghai
+  # WB2A_ADMIN_KEY: "" # 至少 32 字节，且与 API Key 不同
+  # WB2A_API_KEY: ""
 ```
 
 自动生成的基础密钥保存在 `runtime/wb2api/keys/keys.json`，不会生成 `.env`。
 环境变量只覆盖当前生效值，不改写持久化基础密钥；移除覆盖后恢复使用基础密钥。
-备份时请同时保存已有的 `.env` 和 `runtime/`。
-当前镜像 `1789526563` 已支持在启动日志中显示手动设置的管理密钥；旧标签 `1789523951`
-仅在未手动设置管理密钥时打印，旧部署需同步新版 Compose 后重新启动。
+备份时请同时保存实际部署的 YAML 和 `runtime/`。填写真实密钥后不要公开或提交该 YAML。
+升级注意：新版 Compose 不再从 `.env` 或宿主环境传入密钥。旧部署若使用 `.env` 自定义密钥，
+请先将原值填入 core 和 console 的对应 YAML 配置，否则会恢复使用持久化的基础密钥。
+精简版 Compose 必须搭配本次发布的新镜像，不能仅删除旧部署的环境参数。
 
-镜像完整标签、端口、时区、目录和 origin 均在 Compose 中写固定值，不读取旧的
+镜像完整标签、端口、时区和挂载目录均在 Compose 中写固定值，不读取旧的
 `WB2A_VERSION`、`WB2A_PORT` 或存储路径环境变量。需要调整时直接编辑 Compose。
-容器内部必需的 `environment` 字段保留固定值。公网部署应由 HTTPS 反向代理转发到
-console，并在 Compose 中将 `WB2A_PUBLIC_ORIGIN` 设为浏览器实际
+core 模式、容器监听端口、内部路径和 console 到 core 的连接参数均内置在镜像中。
+公网部署应由 HTTPS 反向代理转发到 console，并在 console 的 `environment` 中添加
+`WB2A_PUBLIC_ORIGIN`，设为浏览器实际
 访问的完整 origin（不能带路径）。管理密钥至少 32 个字符；公共 API Key 可沿用原非空
 值。两个服务必须使用同一组 `WB2A_ADMIN_KEY`/`WB2A_API_KEY` 覆盖，不能只在 core 的
 `config.json` 中设置一个不同 API Key。

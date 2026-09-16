@@ -17,6 +17,9 @@ services:
 
   core:
     image: ${WB2A_ACCEPTANCE_CORE_IMAGE:?set WB2A_ACCEPTANCE_CORE_IMAGE}
+    environment:
+      WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
+      WB2A_API_KEY: ${WB2A_API_KEY:-}
     pull_policy: never
     restart: "no"
     networks: [mock]
@@ -47,6 +50,8 @@ services:
     networks: [mock, entry]
     environment:
       WB2A_PUBLIC_ORIGIN: ${WB2A_PUBLIC_ORIGIN:?set test origin}
+      WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
+      WB2A_API_KEY: ${WB2A_API_KEY:-}
     ports: !override
       - "127.0.0.1:${WB2A_PORT:?set test port}:7863"
     volumes:

@@ -41,7 +41,7 @@ class ProductionConfigTest(unittest.TestCase):
                 self.assertEqual(mount["type"], "bind")
                 self.assertTrue(mount["source"].startswith(str(directory / "runtime/wb2api") + "/"))
             self.assertNotIn("healthcheck", service)
-            self.assertEqual(service["environment"]["WB2A_API_KEY"], "mock-shared-api")
+            self.assertEqual(service["environment"], {"TZ": "Asia/Shanghai"})
         self.assertNotIn("ports", config["services"]["core"])
         self.assertEqual(len(config["services"]["console"]["ports"]), 1)
         self.assertEqual(config["services"]["core"]["image"].rsplit("-", 1)[1],
@@ -51,15 +51,29 @@ class ProductionConfigTest(unittest.TestCase):
         self.assertNotIn("depends_on", config["services"]["core"])
         self.assertTrue(config["services"]["console"]["volumes"][0]["read_only"])
 
-    def test_runtime_ignores_non_secret_environment(self):
+    def test_runtime_ignores_host_environment_without_explicit_yaml_configuration(self):
         baseline = self.config()
         config = self.config(overrides={"WB2A_VERSION": "1789519600", "TZ": "UTC",
                                       "WB2A_PORT": "19999", "WB2A_BIND_ADDRESS": "127.0.0.2",
                                       "WB2A_AUTHS_VOLUME": "unwanted", "WB2A_CONFIG_FILE": "/unwanted.json",
                                       "WB2A_PUBLIC_ORIGIN": "https://unwanted.test",
                                       "WB2A_CORE_IMAGE": "other/core:old",
-                                      "WB2A_CONSOLE_IMAGE": "other/console:new"})
-        self.assertEqual(config, baseline, "non-secret environment must not alter deployment")
+                                      "WB2A_CONSOLE_IMAGE": "other/console:new",
+                                      "WB2A_ADMIN_KEY": "unexpected-admin",
+                                      "WB2A_API_KEY": "unexpected-api"})
+        self.assertEqual(config, baseline, "host environment must not alter deployment")
+
+    def test_commented_keys_can_be_configured_directly_in_yaml(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            text = (ROOT / "docker-compose.yml").read_text()
+            text = text.replace('# WB2A_ADMIN_KEY: ""', 'WB2A_ADMIN_KEY: "' + "c" * 32 + '"')
+            text = text.replace('# WB2A_API_KEY: ""', 'WB2A_API_KEY: "fixture-api"')
+            (directory / "docker-compose.yml").write_text(text)
+            config = self.config(directory=directory)
+        for service in config["services"].values():
+            self.assertEqual(service["environment"], {"TZ": "Asia/Shanghai",
+                             "WB2A_ADMIN_KEY": "c" * 32, "WB2A_API_KEY": "fixture-api"})
 
     def test_source_build_entry_preserves_config_and_runtime_topology(self):
         build_file = ROOT / "docker-compose.build.yaml"
@@ -79,7 +93,7 @@ class ProductionConfigTest(unittest.TestCase):
                 self.assertTrue(mount["read_only"])
                 self.assertFalse(mount.get("bind", {}).get("create_host_path", False))
                 for service in ("core", "console"):
-                    self.assertEqual(config["services"][service]["environment"]["WB2A_API_KEY"], "mock-shared-api")
+                    self.assertEqual(config["services"][service]["environment"], {"TZ": "Asia/Shanghai"})
 
     def test_optional_runtime_config_is_explicit_and_readonly(self):
         override = ROOT / "deploy/compose.config.yml"

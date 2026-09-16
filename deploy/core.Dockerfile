@@ -25,6 +25,7 @@ RUN test "$(apk --print-arch)" = x86_64 \
     && mkdir -p /app/auths /app/data /app/scripts /run/wb2a \
     && chown -R app:app /app /run/wb2a
 WORKDIR /app
+ENV WB2A_CORE=true WB2A_LISTEN=:7863 WB2A_AUTH_DIR=/app/auths WB2A_STATE_FILE=/app/data/state.json
 COPY deploy/default-config.json /app/config.json
 COPY --chmod=755 deploy/core-entrypoint.sh /usr/local/bin/wb2api-entrypoint.sh
 COPY LICENSE /app/LICENSE
