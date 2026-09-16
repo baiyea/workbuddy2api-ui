@@ -201,9 +201,12 @@ Bash 入口复用 `scripts/release.py`，每次运行自动生成 Unix 秒级时
 需要本机 Docker 构建代理时：
 
 ```sh
-HTTP_PROXY=http://host.docker.internal:7890 \
-HTTPS_PROXY=http://host.docker.internal:7890 bash scripts/release.sh
+WB2A_BUILD_HTTP_PROXY=http://host.docker.internal:7890 \
+WB2A_BUILD_HTTPS_PROXY=http://host.docker.internal:7890 bash scripts/release.sh
 ```
+
+这两个变量只传入 Docker 构建步骤，不覆盖主机的 `HTTP_PROXY`/`HTTPS_PROXY`，避免影响
+仓库查询与推送。Docker 后台拉取基础镜像所用代理仍由 Docker 自身配置管理。
 
 脚本在开始和推送前均通过 Docker 检查标签是否已存在；鉴权或网络失败不会被当作标签
 不存在。请串行发布，不要让多个发布者共用同一时间戳；检查与推送不是原子操作，严格的

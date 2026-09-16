@@ -56,8 +56,9 @@ def release(root, version=None):
                 "--label", f"org.opencontainers.image.revision={revision}",
                 "--label", "org.opencontainers.image.licenses=MIT"]
         for key in ("HTTP_PROXY", "HTTPS_PROXY"):
-            if os.environ.get(key):
-                args.extend(["--build-arg", f"{key}={os.environ[key]}"])
+            proxy = os.environ.get(f"WB2A_BUILD_{key}", os.environ.get(key))
+            if proxy:
+                args.extend(["--build-arg", f"{key}={proxy}"])
         run([*args, "."], root)
     metadata = json.loads(run(["docker", "image", "inspect", *images], root, True))
     if len(metadata) != 2 or any(i["Os"] != "linux" or i["Architecture"] != "amd64" for i in metadata):

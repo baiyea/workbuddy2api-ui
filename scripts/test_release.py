@@ -116,6 +116,18 @@ class ReleaseTests(unittest.TestCase):
     def test_pulled_image_mismatch_preserves_compose(self):
         self.pipeline(mismatched=True)
 
+    def test_container_proxy_only_reaches_build_arguments(self):
+        with mock.patch.dict("os.environ", {"HTTP_PROXY": "http://127.0.0.1:7890",
+                                           "WB2A_BUILD_HTTP_PROXY": "http://host.docker.internal:7890"}):
+            calls = self.pipeline()
+        builds = [a for a, _ in calls if a[:3] == ["docker", "buildx", "build"]]
+        for args in builds:
+            self.assertIn("HTTP_PROXY=http://host.docker.internal:7890", args)
+            self.assertNotIn("HTTP_PROXY=http://127.0.0.1:7890", args)
+        for args, kwargs in calls:
+            if args[:3] == ["docker", "manifest", "inspect"]:
+                self.assertIsNone(kwargs.get("env"), "registry CLI must inherit host proxy")
+
 
 if __name__ == "__main__":
     unittest.main()
