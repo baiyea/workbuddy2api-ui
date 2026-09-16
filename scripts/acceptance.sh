@@ -65,9 +65,31 @@ assert all(i["Os"] == "linux" and i["Architecture"] == "amd64" for i in json.loa
 
 # Production smoke only substitutes image refs and an isolated port in a copied file.
 standalone_compose() {
-  WB2A_ADMIN_KEY= WB2A_API_KEY= \
-  docker compose --env-file /dev/null --project-directory "$standalone" -p "$fresh_project" \
+  local env_file=/dev/null
+  if [[ -f "$standalone/.env" ]]; then env_file="$standalone/.env"; fi
+  env -u WB2A_ADMIN_KEY -u WB2A_API_KEY \
+  docker compose --env-file "$env_file" --project-directory "$standalone" -p "$fresh_project" \
     -f "$standalone/docker-compose.yml" "$@"
+}
+
+assert_standalone_keys() {
+  standalone_compose logs --no-color console | standalone_compose exec -T core python3 -c '
+import json,os,sys,urllib.request
+logs=sys.stdin.read()
+base=json.load(open("/run/wb2a/keys.json"))
+admin=os.environ.get("WB2A_ADMIN_KEY") or base["admin_key"]
+api=os.environ.get("WB2A_API_KEY") or base["api_key"]
+assert len(admin) >= 32 and api and len({admin,api,base["bridge_key"]}) == 3
+assert "管理密钥（仅交给管理员）: " + admin in logs
+assert api not in logs and base["bridge_key"] not in logs
+with urllib.request.urlopen(urllib.request.Request("http://127.0.0.1:7863/status",
+        headers={"Authorization":"Bearer " + api}), timeout=5) as response:
+    assert response.status == 200
+with urllib.request.urlopen(urllib.request.Request("http://console:7863/admin/login",
+        data=json.dumps({"key":admin}).encode(),
+        headers={"Origin":"http://console:7863","Content-Type":"application/json"}), timeout=5) as response:
+    assert response.status == 200
+'
 }
 
 create_volumes() {
@@ -155,6 +177,8 @@ path.write_text(text.replace("0.0.0.0:7863:7863", "127.0.0.1:"+sys.argv[4]+":786
 ' "$standalone/docker-compose.yml" "$core_image" "$console_image" "$fresh_port"
 standalone_compose up -d --no-build --pull never
 wait_live "http://127.0.0.1:$fresh_port/livez"
+assert_standalone_keys
+test ! -e "$standalone/.env"
 [[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$fresh_port/healthz")" == "503" ]]
 standalone_compose exec -T core python3 -c '
 import json,os
@@ -184,8 +208,25 @@ bind_keys_digest="$(standalone_compose exec -T core sha256sum /run/wb2a/keys.jso
 standalone_compose down --remove-orphans
 standalone_compose up -d --no-build --pull never
 wait_live "http://127.0.0.1:$fresh_port/livez"
+assert_standalone_keys
+test ! -e "$standalone/.env"
 standalone_compose exec -T core grep -qx retained /app/data/bind-smoke.txt
 [[ "$bind_keys_digest" == "$(standalone_compose exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
+for key_case in unrelated empty admin api both; do
+  python3 -c '
+import pathlib,sys
+cases={"unrelated":"OTHER_SETTING=keep\n", "empty":"WB2A_ADMIN_KEY=\nWB2A_API_KEY=\n",
+       "admin":"WB2A_ADMIN_KEY="+"c"*32+"\n", "api":"WB2A_API_KEY=fixture-api\n",
+       "both":"WB2A_ADMIN_KEY="+"c"*32+"\nWB2A_API_KEY=fixture-api\n"}
+pathlib.Path(sys.argv[1]).write_text(cases[sys.argv[2]])
+' "$standalone/.env" "$key_case"
+  cp "$standalone/.env" "$standalone/.env.expected"
+  standalone_compose up -d --force-recreate --no-build --pull never
+  wait_live "http://127.0.0.1:$fresh_port/livez"
+  assert_standalone_keys
+  cmp "$standalone/.env.expected" "$standalone/.env"
+  [[ "$bind_keys_digest" == "$(standalone_compose exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
+done
 standalone_compose down --remove-orphans
 python3 -m unittest discover -s "$repo_root/deploy" -p test_compose.py -v
 missing_config="$repo_root/.build/acceptance-missing-$suffix.json"

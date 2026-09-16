@@ -3,11 +3,52 @@ package main
 import (
 	"bytes"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 )
+
+func TestConsoleStartupLogsOnlyEffectiveAdminKey(t *testing.T) {
+	for _, override := range []string{"", strings.Repeat("c", 32)} {
+		t.Run("override="+override, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "keys.json")
+			base := `{"admin_key":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","api_key":"never-log-api","bridge_key":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}`
+			if err := os.WriteFile(path, []byte(base), 0600); err != nil {
+				t.Fatal(err)
+			}
+			t.Setenv("WB2A_LOG_TEST", "1")
+			t.Setenv("WB2A_KEY_FILE", path)
+			t.Setenv("WB2A_ADMIN_KEY", override)
+			t.Setenv("WB2A_API_KEY", "never-log-api")
+			t.Setenv("WB2A_CORE_URL", "http://core:7863")
+			t.Setenv("WB2A_PUBLIC_ORIGIN", "")
+			// Invalid listen address ends main after startup logging without binding a port.
+			t.Setenv("WB2A_LISTEN", "invalid-address")
+			output, err := exec.Command(os.Args[0], "-test.run=^TestConsoleLogProcess$").CombinedOutput()
+			if err == nil {
+				t.Fatal("expected invalid listen address to exit")
+			}
+			want := override
+			if want == "" {
+				want = strings.Repeat("a", 32)
+			}
+			if !strings.Contains(string(output), "管理密钥（仅交给管理员）: "+want) {
+				t.Fatalf("effective admin key missing from startup log: %s", output)
+			}
+			if strings.Contains(string(output), "never-log-api") || strings.Contains(string(output), strings.Repeat("b", 32)) {
+				t.Fatal("API or bridge key leaked to log")
+			}
+		})
+	}
+}
+
+func TestConsoleLogProcess(t *testing.T) {
+	if os.Getenv("WB2A_LOG_TEST") == "1" {
+		main()
+	}
+}
 
 func TestReadDeploymentKeysAppliesOverridesWithoutWritingKeyFile(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "keys.json")

@@ -18,6 +18,11 @@ docker compose up -d
 docker compose logs console
 ```
 
+`.env` 是可选的密钥覆盖入口，不需要启动脚本。没有 `.env`、文件中只有其他参数，
+或两项密钥缺失/为空，都能直接启动：core 自动生成缺少的密钥，console 读取共享密钥文件。
+只配置一项时保留该项、补齐另一项；重启复用持久化密钥，不会反写 `.env` 或宿主机环境变量。
+已配置但无效的密钥（如管理密钥过短、两项相同）会明确报错，不会擅自替换。
+
 Compose 从阿里云仓库 `registry.cn-hangzhou.aliyuncs.com/cateyes/go` 拉取
 `wb2api-core-<时间戳>` 和 `wb2api-webui-<时间戳>`，不会构建。两个镜像使用相同时间戳。
 仓库若为私有，服务器需先执行 `docker login registry.cn-hangzhou.aliyuncs.com`。
@@ -29,7 +34,9 @@ core 镜像内的启动脚本先以 root 将三个存储目录的所有者设为
 两个业务进程均以普通用户运行；core 的 `docker compose exec` 默认仍为 root，需要普通
 用户时显式加 `--user 10001:10001`。首次启动时 core
 生成彼此独立的管理、公共 API 和内部桥接密钥，console 日志只显示需要交给管理员的
-管理密钥。输入该密钥后才能进入控制台。
+管理密钥，包括 `.env` 中手动设置的值。输入该密钥后才能进入控制台。
+注意：能查看 console 日志的人也能获取管理登录密钥，请限制日志访问和转发范围；
+API Key 和内部桥接密钥不会写入启动日志。
 
 保留源码构建方式（需要完整仓库）：
 
@@ -60,12 +67,18 @@ docker compose -f docker-compose.build.yaml up -d --build
 
 普通重启和重建会复用这些目录，首次启动自动创建。不要删除或用空目录替代已有数据。
 `runtime/` 已被 Git 忽略，也不会进入镜像构建上下文；备份和搬迁时需要单独保存整个目录。
-仅管理员密钥和 API Key 支持 `.env` 配置；留空时自动生成并持久保存：
+仅管理员密钥和 API Key 支持 `.env` 配置；留空或不配置时由应用自动生成并持久保存：
 
 ```dotenv
 WB2A_ADMIN_KEY=
 WB2A_API_KEY=
 ```
+
+自动生成的基础密钥保存在 `runtime/wb2api/keys/keys.json`，不会生成 `.env`。
+环境变量只覆盖当前生效值，不改写持久化基础密钥；移除覆盖后恢复使用基础密钥。
+备份时请同时保存已有的 `.env` 和 `runtime/`。
+手动密钥也显示在启动日志的改动需要重新构建或发布 console 镜像；旧标签 `1789523951`
+仅在未手动设置管理密钥时打印。
 
 镜像完整标签、端口、时区、目录和 origin 均在 Compose 中写固定值，不读取旧的
 `WB2A_VERSION`、`WB2A_PORT` 或存储路径环境变量。需要调整时直接编辑 Compose。

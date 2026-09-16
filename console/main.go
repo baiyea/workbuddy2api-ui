@@ -105,13 +105,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if os.Getenv("WB2A_KEY_FILE") != "" && os.Getenv("WB2A_ADMIN_KEY") == "" {
-		log.Printf("[console] 管理密钥（仅交给管理员）: %s", cfg.AdminKey)
-	}
 	h, err := NewServer(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Printf("[console] 管理密钥（仅交给管理员）: %s", cfg.AdminKey)
 	server := &http.Server{Addr: listen, Handler: h, ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 60 * time.Second}
 	log.Printf("console listening on %s", listen)
 	log.Fatal(server.ListenAndServe())
