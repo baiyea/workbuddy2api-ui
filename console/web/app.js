@@ -233,7 +233,7 @@ function renderAccess(){
  $('base-url').value=location.origin+(anthropic?'':'/v1');
  $('api-endpoint').value=location.origin+(anthropic?'/v1/messages':'/v1/chat/completions');
  $('api-auth').textContent=anthropic?'x-api-key · anthropic-version: 2023-06-01':'Authorization: Bearer <API Key>';
- $('protocol-support').textContent=anthropic?'Anthropic · 文本兼容':'OpenAI · Chat Completions';
+ $('protocol-support').textContent=anthropic?'Anthropic · Beta 测试 · 文本兼容':'OpenAI · Chat Completions';
  $('protocol-note').textContent=anthropic?'Base URL 使用站点根地址，SDK 会追加 /v1/messages。支持文本、多轮和流式回答；暂不支持图片、工具、thinking，也不承诺 Claude Code 兼容。':'Base URL 包含 /v1，使用兼容 Chat Completions 的客户端连接。';
  const available=modelList.some(item=>item.id===model);
  $('copy-example').disabled=!available||!!activeRequest;$('go-chat').disabled=!available||!!activeRequest;

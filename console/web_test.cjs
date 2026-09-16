@@ -426,6 +426,7 @@ test('protocol buttons synchronize, preserve same-protocol history and generate 
   const {ctx,get}=taskFixture(()=>new Promise(()=>{}));
   assert.equal(get('base-url').value,'http://console.test/v1');
   assert.equal(get('api-endpoint').value,'http://console.test/v1/chat/completions');
+  assert.doesNotMatch(get('protocol-support').textContent,/Beta 测试/);
   assert.equal(get('copy-example').disabled,true);
   assert.equal(get('go-chat').disabled,true);
   vm.runInContext("modelList=[{id:'global:real-model'}];history=[{role:'user',content:'old'}]",ctx);
@@ -434,6 +435,7 @@ test('protocol buttons synchronize, preserve same-protocol history and generate 
   assert.equal(vm.runInContext('history.length',ctx),0);
   assert.equal(get('base-url').value,'http://console.test');
   assert.equal(get('api-endpoint').value,'http://console.test/v1/messages');
+  assert.match(get('protocol-support').textContent,/Beta 测试/);
   assert.match(get('api-example').textContent,/anthropic-version: 2023-06-01/);
   assert.match(get('api-example').textContent,/global:real-model/);
   assert.doesNotMatch(get('api-example').textContent,/never-copy-this-secret/);
@@ -448,6 +450,7 @@ test('protocol buttons synchronize, preserve same-protocol history and generate 
   get('go-chat').handlers.click();assert.equal(vm.runInContext('page',ctx),'chat');assert.equal(get('model').value,'global:real-model');
   get('prompt').value='private draft';get('usage').textContent='private stream error';
   vm.runInContext('signedOut()',ctx);assert.equal(vm.runInContext('protocol',ctx),'openai');assert.equal(get('api-key').value,'');assert.equal(get('prompt').value,'');assert.equal(get('usage').textContent,'用量将在上游返回后显示');
+  assert.doesNotMatch(get('protocol-support').textContent,/Beta 测试/);
 });
 
 test('Anthropic fragmented UTF8 stream uses management envelope and preserves real usage and multi-turn text', async()=>{
