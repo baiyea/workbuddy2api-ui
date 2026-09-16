@@ -91,8 +91,8 @@ docker compose -f docker-compose.yml -f deploy/compose.config.yml up -d
 
 新镜像和 Compose 均不定义 Docker 健康检查。console 在 core 启动后启动，并等待密钥文件。
 `/livez`、`/healthz` 接口仍可手动诊断：空账号时分别返回 200、503，不会自动定时访问。
-此启动方式需要重新发布镜像后使用；旧标签 `1789520619` 不含权限初始化脚本且仍内置
-健康检查，不能直接配合删除 init 的 Compose 用于全新部署。发布脚本成功后会更新两个标签。
+当前 Compose 已固定到通过验收的 `1789523951` 镜像，包含权限初始化脚本且无内置健康检查。
+旧标签 `1789520619` 不支持此启动方式，不能直接配合删除 init 的 Compose 用于全新部署。
 
 ## 旧部署迁移
 
