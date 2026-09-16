@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -14,9 +15,83 @@ import (
 	"testing"
 	"time"
 
+	"workbuddy2api/internal/anthropic"
 	"workbuddy2api/internal/scheduler"
 	"workbuddy2api/internal/taskrun"
 )
+
+const messagesRequest = `{"model":"cn:model","max_tokens":4,"messages":[{"role":"user","content":"hello"}]}`
+
+func TestMessagesEnvelopeUsesTrustedConversationWithoutMutatingRequest(t *testing.T) {
+	calls := 0
+	public := anthropic.New(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		var got map[string]any
+		if err := json.NewDecoder(r.Body).Decode(&got); err != nil {
+			t.Fatal(err)
+		}
+		if got["conversationId"] != "chat_123-ABC" || got["model"] != "cn:model" || r.URL.Path != "/v1/chat/completions" {
+			t.Fatalf("incorrect mapped request: %s %+v", r.URL, got)
+		}
+		if r.Header.Get("Authorization") != "Bearer core-api" || r.Header.Get("X-Console-Owner") != "" || r.Header.Get("X-Bridge-Key") != "" {
+			t.Fatal("bridge credentials leaked")
+		}
+		io.WriteString(w, `{"id":"response-1","choices":[{"message":{"role":"assistant","content":"hello"},"finish_reason":"stop"}]}`)
+	}), "core-api", 0)
+	h := New(context.Background(), Config{Key: testKey, APIKey: "core-api", Public: public})
+	r := httptest.NewRequest("POST", "/internal/v1/messages", strings.NewReader(`{"conversation_id":"chat_123-ABC","request":`+messagesRequest+`}`))
+	r = r.WithContext(anthropic.WithConversation(r.Context(), "forged-context"))
+	r.Header.Set("Authorization", "Bearer "+testKey)
+	r.Header.Set("X-Console-Owner", strings.Repeat("o", 32))
+	r.Header.Set("X-Bridge-Key", "forged")
+	r.Header.Set("x-api-key", "forged")
+	r.Header.Set("anthropic-version", "forged")
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, r)
+	if w.Code != 200 || calls != 1 || !strings.Contains(w.Body.String(), `"type":"message"`) {
+		t.Fatalf("response=%d %s calls=%d", w.Code, w.Body, calls)
+	}
+	if r.URL.Path != "/internal/v1/messages" || r.RequestURI != "/internal/v1/messages" || r.Header.Get("Authorization") != "Bearer "+testKey || r.Header.Get("X-Console-Owner") != strings.Repeat("o", 32) || r.Header.Get("x-api-key") != "forged" || r.Header.Get("anthropic-version") != "forged" {
+		t.Fatal("incoming request mutated")
+	}
+}
+
+func TestMessagesEnvelopeRejectsInvalidInputBeforePublicHandler(t *testing.T) {
+	h := New(context.Background(), Config{Key: testKey, APIKey: "core-api", Public: http.HandlerFunc(func(http.ResponseWriter, *http.Request) { t.Error("invalid envelope reached public handler") })})
+	valid := `{"conversation_id":"chat-1","request":` + messagesRequest + `}`
+	for _, tc := range []struct {
+		name, body, owner, query string
+		code                     int
+	}{
+		{"no owner", valid, "", "", 400},
+		{"empty id", strings.Replace(valid, "chat-1", "", 1), strings.Repeat("o", 32), "", 400},
+		{"path id", strings.Replace(valid, "chat-1", "../evil", 1), strings.Repeat("o", 32), "", 400},
+		{"unicode id", strings.Replace(valid, "chat-1", "聊天", 1), strings.Repeat("o", 32), "", 400},
+		{"long id", strings.Replace(valid, "chat-1", strings.Repeat("a", 129), 1), strings.Repeat("o", 32), "", 400},
+		{"unknown field", `{"extra":true,"conversation_id":"chat-1","request":` + messagesRequest + `}`, strings.Repeat("o", 32), "", 400},
+		{"trailing json", valid + `{}`, strings.Repeat("o", 32), "", 400},
+		{"missing request", `{"conversation_id":"chat-1"}`, strings.Repeat("o", 32), "", 400},
+		{"null request", `{"conversation_id":"chat-1","request":null}`, strings.Repeat("o", 32), "", 400},
+		{"array request", `{"conversation_id":"chat-1","request":[]}`, strings.Repeat("o", 32), "", 400},
+		{"query", valid, strings.Repeat("o", 32), "?conversationId=forged", 400},
+		{"oversized", valid + strings.Repeat(" ", 8<<20), strings.Repeat("o", 32), "", 413},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			w := bridgeRequest(h, "POST", "/internal/v1/messages"+tc.query, tc.body, tc.owner)
+			if w.Code != tc.code {
+				t.Fatalf("status=%d body=%s", w.Code, w.Body)
+			}
+		})
+	}
+	r := httptest.NewRequest("POST", "/internal/v1/messages", nil)
+	r.Body = unreadBody{t}
+	r.Header.Set("Authorization", "Bearer "+testKey)
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, r)
+	if w.Code != 400 {
+		t.Fatalf("owner gate status=%d", w.Code)
+	}
+}
 
 func TestBridgeRejectsWrongKey(t *testing.T) {
 	h := New(context.Background(), Config{Key: strings.Repeat("b", 32)})

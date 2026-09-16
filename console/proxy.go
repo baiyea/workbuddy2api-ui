@@ -70,6 +70,10 @@ func (h *server) proxy(management bool) *httputil.ReverseProxy {
 		FlushInterval: -1,
 		ErrorLog:      log.New(io.Discard, "", 0),
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err error) {
+			if !management && r.URL.Path == "/v1/messages" {
+				writeJSON(w, 503, map[string]any{"type": "error", "error": map[string]string{"type": "api_error", "message": "核心服务不可达，请稍后重试"}})
+				return
+			}
 			adminError(w, 503, "核心服务不可达，请稍后重试")
 		},
 	}

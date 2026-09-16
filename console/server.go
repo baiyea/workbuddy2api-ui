@@ -102,6 +102,7 @@ func NewServer(cfg Config) (http.Handler, error) {
 		{"GET /admin/status", "GET", "/internal/v1/status"},
 		{"GET /admin/models", "GET", "/internal/v1/models"},
 		{"POST /admin/chat", "POST", "/internal/v1/chat"},
+		{"POST /admin/messages", "POST", "/internal/v1/messages"},
 		{"POST /admin/oauth", "POST", "/internal/v1/oauth"},
 		{"POST /admin/oauth/{id}/poll", "GET", "/internal/v1/oauth/{id}"},
 		{"POST /admin/oauth/{id}/region", "POST", "/internal/v1/oauth/{id}/region"},

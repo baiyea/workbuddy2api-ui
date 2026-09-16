@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -192,6 +194,73 @@ func TestCoreSourceModeRemainsUnchanged(t *testing.T) {
 	h.ServeHTTP(rr, httptest.NewRequest("GET", "/livez", nil))
 	if rr.Code != 418 {
 		t.Fatal("source handler changed")
+	}
+	rr = httptest.NewRecorder()
+	h.ServeHTTP(rr, httptest.NewRequest("POST", "/v1/messages", nil))
+	if rr.Code != 418 {
+		t.Fatal("source mode gained Anthropic wrapper")
+	}
+}
+
+func TestCoreAnthropicUsesSharedHandlerAndIsolatedCredentials(t *testing.T) {
+	t.Setenv("WB2A_CORE", "")
+	t.Setenv("WB2A_BRIDGE_KEY", strings.Repeat("b", 32))
+	cfg := &Config{APIKey: "public-api"}
+	cfg.Server.MaxBodyMB = 1
+	const body = `{"model":"cn:model","max_tokens":4,"messages":[{"role":"user","content":"hello"}]}`
+	calls := 0
+	public := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+		if r.URL.Path != "/v1/chat/completions" || r.Header.Get("Authorization") != "Bearer public-api" {
+			t.Errorf("wrong shared handler request: %s %s", r.URL.Path, r.Header.Get("Authorization"))
+		}
+		var got map[string]any
+		if err := json.NewDecoder(r.Body).Decode(&got); err != nil {
+			t.Error(err)
+		}
+		if got["conversationId"] != nil || r.Header.Get("X-Console-Owner") != "" || r.Header.Get("X-Bridge-Key") != "" {
+			t.Error("public caller injected private identity")
+		}
+		io.WriteString(w, `{"id":"chatcmpl-core","choices":[{"message":{"role":"assistant","content":"hello"},"finish_reason":"stop"}]}`)
+	})
+	h, err := wrapCore(context.Background(), cfg, nil, nil, nil, public, nil, nil, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		key  string
+		code int
+	}{{"public-api", 200}, {strings.Repeat("b", 32), 401}, {"", 401}} {
+		r := httptest.NewRequest("POST", "/v1/messages", strings.NewReader(body))
+		r.Header.Set("x-api-key", tc.key)
+		r.Header.Set("anthropic-version", "2023-06-01")
+		r.Header.Set("Authorization", "Bearer "+strings.Repeat("b", 32))
+		r.Header.Set("X-Console-Owner", strings.Repeat("o", 32))
+		r.Header.Set("X-Bridge-Key", strings.Repeat("b", 32))
+		r.Header.Set("X-Console-Conversation", "forged")
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, r)
+		if w.Code != tc.code {
+			t.Fatalf("key=%q: %d %s", tc.key, w.Code, w.Body)
+		}
+		if tc.code == 200 && !strings.Contains(w.Body.String(), `"type":"message"`) {
+			t.Fatalf("not adapted: %s", w.Body)
+		}
+	}
+	if calls != 1 {
+		t.Fatalf("handler calls=%d", calls)
+	}
+	for _, path := range []string{"/v1/messages", "/internal/v1/messages"} {
+		r := httptest.NewRequest("POST", path, strings.NewReader(strings.Repeat(" ", (1<<20)+1)))
+		r.Header.Set("x-api-key", "public-api")
+		r.Header.Set("anthropic-version", "2023-06-01")
+		r.Header.Set("Authorization", "Bearer "+strings.Repeat("b", 32))
+		r.Header.Set("X-Console-Owner", strings.Repeat("o", 32))
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, r)
+		if w.Code != 413 {
+			t.Errorf("configured body limit %s: %d %s", path, w.Code, w.Body)
+		}
 	}
 }
 

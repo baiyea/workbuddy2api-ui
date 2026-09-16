@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -263,7 +264,7 @@ func TestCoreUnavailableAndConsoleLiveness(t *testing.T) {
 	}
 }
 func TestStreamingDisconnectCancelsCore(t *testing.T) {
-	for _, path := range []string{"/v1/chat/completions", "/admin/chat"} {
+	for _, path := range []string{"/v1/chat/completions", "/admin/chat", "/v1/messages", "/admin/messages"} {
 		t.Run(path, func(t *testing.T) {
 			canceled := make(chan struct{})
 			h, _ := testConsole(t, func(w http.ResponseWriter, r *http.Request) {
@@ -300,6 +301,150 @@ func TestStreamingDisconnectCancelsCore(t *testing.T) {
 				t.Fatal("client disconnect did not cancel core")
 			}
 		})
+	}
+}
+
+func TestMessagesManagementGuardsAndCredentialIsolation(t *testing.T) {
+	const body = `{"conversation_id":"chat-1","request":{"model":"cn:model","max_tokens":8,"messages":[{"role":"user","content":"hi"}]}}`
+	var calls atomic.Int32
+	h, _ := testConsole(t, func(w http.ResponseWriter, r *http.Request) {
+		if mockInfo(w, r) {
+			return
+		}
+		calls.Add(1)
+		got, _ := io.ReadAll(r.Body)
+		if r.Method != "POST" || r.URL.Path != "/internal/v1/messages" || string(got) != body {
+			t.Errorf("wrong mapping: %s %s %s", r.Method, r.URL, got)
+		}
+		if r.Header.Get("Authorization") != "Bearer "+strings.Repeat("b", 32) || r.Header.Get("X-Console-Owner") == "forged" || r.Header.Get("X-Console-Owner") == "" || r.Header.Get("X-Bridge-Key") != "" || r.Header.Get("Cookie") != "" || r.Header.Get("X-CSRF-Token") != "" {
+			t.Error("credential boundary failed")
+		}
+		fmt.Fprint(w, `{"type":"message"}`)
+	})
+	if w := adminRequest(h, "POST", "/admin/messages", body, nil, ""); w.Code != 401 {
+		t.Fatalf("login guard=%d", w.Code)
+	}
+	cookie, csrf := login(t, h)
+	for _, tc := range []struct {
+		origin, token string
+		code          int
+	}{{"http://console.test", "", 403}, {"https://evil.test", csrf, 403}, {"http://console.test", csrf, 200}} {
+		r := httptest.NewRequest("POST", "http://console.test/admin/messages", strings.NewReader(body))
+		r.AddCookie(cookie)
+		r.Header.Set("Origin", tc.origin)
+		r.Header.Set("X-CSRF-Token", tc.token)
+		r.Header.Set("Authorization", "Bearer forged")
+		r.Header.Set("X-Console-Owner", "forged")
+		r.Header.Set("X-Bridge-Key", "forged")
+		w := httptest.NewRecorder()
+		h.ServeHTTP(w, r)
+		if w.Code != tc.code {
+			t.Fatalf("guard=%d want=%d %s", w.Code, tc.code, w.Body)
+		}
+		if r.URL.Path != "/admin/messages" || r.Header.Get("Authorization") != "Bearer forged" || r.Header.Get("X-Console-Owner") != "forged" {
+			t.Fatal("incoming request mutated")
+		}
+	}
+	if calls.Load() != 1 {
+		t.Fatalf("management calls=%d", calls.Load())
+	}
+}
+
+func TestPublicMessagesPreservesAPIKeyAndStripsPrivateHeaders(t *testing.T) {
+	const body = `{"model":"cn:model","max_tokens":1,"messages":[{"role":"user","content":"hi"}]}`
+	h, _ := testConsole(t, func(w http.ResponseWriter, r *http.Request) {
+		got, _ := io.ReadAll(r.Body)
+		if r.URL.Path != "/v1/messages" || string(got) != body || r.Header.Get("x-api-key") != "client-key" || r.Header.Get("anthropic-version") != "2023-06-01" {
+			t.Error("public request changed")
+		}
+		for _, name := range []string{"X-Console-Conversation", "X-Console-Owner", "X-Bridge-Key", "Cookie", "X-CSRF-Token"} {
+			if r.Header.Get(name) != "" {
+				t.Errorf("leaked %s", name)
+			}
+		}
+		w.WriteHeader(401)
+	})
+	r := httptest.NewRequest("POST", "http://console.test/v1/messages", strings.NewReader(body))
+	r.Header.Set("x-api-key", "client-key")
+	r.Header.Set("anthropic-version", "2023-06-01")
+	for _, name := range []string{"X-Console-Conversation", "X-Console-Owner", "X-Bridge-Key", "Cookie", "X-CSRF-Token"} {
+		r.Header.Set(name, "forged")
+	}
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, r)
+	if w.Code != 401 {
+		t.Fatalf("status=%d", w.Code)
+	}
+}
+
+func TestPublicMessagesUnavailableUsesAnthropicErrorOnly(t *testing.T) {
+	ts := httptest.NewServer(http.NotFoundHandler())
+	cfg := testConfig(ts.URL)
+	ts.Close()
+	h, err := NewServer(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, path := range []string{"/v1/messages", "/v1/chat/completions"} {
+		w := adminRequest(h, "POST", path, `{}`, nil, "")
+		var got map[string]any
+		if w.Code != 503 || json.Unmarshal(w.Body.Bytes(), &got) != nil || strings.Contains(w.Body.String(), cfg.CoreURL.Host) {
+			t.Fatalf("unsafe failure: %d %s", w.Code, w.Body)
+		}
+		if path == "/v1/messages" {
+			e, ok := got["error"].(map[string]any)
+			if got["type"] != "error" || !ok || e["type"] != "api_error" || e["message"] == "" {
+				t.Fatalf("not Anthropic error: %s", w.Body)
+			}
+		} else if _, ok := got["error"].(string); !ok {
+			t.Fatalf("OpenAI proxy error changed: %s", w.Body)
+		}
+	}
+}
+
+func TestLogoutCancelsMessagesStream(t *testing.T) {
+	started, canceled := make(chan struct{}), make(chan struct{})
+	h, _ := testConsole(t, func(w http.ResponseWriter, r *http.Request) {
+		if mockInfo(w, r) {
+			return
+		}
+		if r.URL.Path != "/internal/v1/messages" {
+			fmt.Fprint(w, `{"ok":true}`)
+			return
+		}
+		w.Header().Set("Content-Type", "text/event-stream")
+		fmt.Fprint(w, "event: message_start\ndata: {}\n\n")
+		w.(http.Flusher).Flush()
+		close(started)
+		<-r.Context().Done()
+		close(canceled)
+	})
+	cookie, csrf := login(t, h)
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		adminRequest(h, "POST", "/admin/messages", `{"conversation_id":"chat-1","request":{"stream":true}}`, cookie, csrf)
+	}()
+	select {
+	case <-started:
+	case <-time.After(time.Second):
+		t.Fatal("messages did not start")
+	}
+	if w := adminRequest(h, "POST", "/admin/logout", `{}`, cookie, csrf); w.Code != 200 {
+		t.Fatalf("logout=%d %s", w.Code, w.Body)
+	}
+	select {
+	case <-canceled:
+	case <-time.After(time.Second):
+		t.Fatal("logout did not cancel messages")
+	}
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("messages proxy did not return")
+	}
+	if w := adminRequest(h, "POST", "/admin/messages", `{}`, cookie, csrf); w.Code != 401 {
+		t.Fatalf("revoked session accepted=%d", w.Code)
 	}
 }
 

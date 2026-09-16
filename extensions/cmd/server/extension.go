@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	"workbuddy2api/internal/anthropic"
 	"workbuddy2api/internal/bridge"
 	"workbuddy2api/internal/pool"
 	"workbuddy2api/internal/scheduler"
@@ -289,7 +290,8 @@ func wrapCore(ctx context.Context, cfg *Config, p *pool.Pool, up *upstream.Clien
 	if key == "" {
 		return public, nil
 	}
-	internal := bridge.New(ctx, bridge.Config{Key: key, APIKey: cfg.APIKey, AuthDir: cfg.AuthDir, UpstreamCommit: upstreamCommit, PatchIdentity: patchIdentity, GlobalEnabled: cfg.Global.Enabled, Pool: p, Upstream: up, Scheduler: sch, Tasks: tasks, History: history, TaskError: taskError, Public: public})
+	public = anthropic.New(public, cfg.APIKey, int64(cfg.Server.MaxBodyMB)<<20)
+	internal := bridge.New(ctx, bridge.Config{Key: key, APIKey: cfg.APIKey, MaxBodyBytes: int64(cfg.Server.MaxBodyMB) << 20, AuthDir: cfg.AuthDir, UpstreamCommit: upstreamCommit, PatchIdentity: patchIdentity, GlobalEnabled: cfg.Global.Enabled, Pool: p, Upstream: up, Scheduler: sch, Tasks: tasks, History: history, TaskError: taskError, Public: public})
 	mux := http.NewServeMux()
 	mux.Handle("/internal/", internal)
 	mux.HandleFunc("GET /livez", func(w http.ResponseWriter, r *http.Request) {

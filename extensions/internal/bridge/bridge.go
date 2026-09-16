@@ -2,6 +2,7 @@
 package bridge
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"crypto/subtle"
@@ -14,6 +15,7 @@ import (
 	"sync"
 	"time"
 
+	"workbuddy2api/internal/anthropic"
 	"workbuddy2api/internal/oauth"
 	"workbuddy2api/internal/pool"
 	"workbuddy2api/internal/scheduler"
@@ -24,6 +26,7 @@ import (
 type Config struct {
 	Key            string
 	APIKey         string
+	MaxBodyBytes   int64
 	AuthDir        string
 	UpstreamCommit string
 	PatchIdentity  string
@@ -51,6 +54,9 @@ var taskRequestPattern = regexp.MustCompile(`^[A-Za-z0-9_-]{16,80}$`)
 var taskRunPattern = regexp.MustCompile(`^[A-Za-z0-9_-]{1,128}$`)
 
 func New(ctx context.Context, cfg Config) http.Handler {
+	if cfg.MaxBodyBytes <= 0 {
+		cfg.MaxBodyBytes = 8 << 20
+	}
 	h := &handler{ctx: ctx, cfg: cfg, mux: http.NewServeMux(), flows: make(map[string]*loginFlow), newOAuth: oauth.New}
 	h.mux.HandleFunc("GET /internal/v1/info", func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 200, map[string]any{"protocol": 1, "upstream_commit": cfg.UpstreamCommit, "patch_identity": cfg.PatchIdentity, "global_enabled": cfg.GlobalEnabled})
@@ -58,6 +64,7 @@ func New(ctx context.Context, cfg Config) http.Handler {
 	h.mux.HandleFunc("GET /internal/v1/status", h.forward("/status"))
 	h.mux.HandleFunc("GET /internal/v1/models", h.forward("/v1/models"))
 	h.mux.HandleFunc("POST /internal/v1/chat", h.forward("/v1/chat/completions"))
+	h.mux.HandleFunc("POST /internal/v1/messages", h.withOwner(h.messages))
 	h.mux.HandleFunc("POST /internal/v1/oauth", h.withOwner(h.startLogin))
 	h.mux.HandleFunc("GET /internal/v1/oauth/{id}", h.withOwner(h.pollLogin))
 	h.mux.HandleFunc("POST /internal/v1/oauth/{id}/region", h.withOwner(h.completeRegion))
@@ -103,6 +110,43 @@ func (h *handler) forward(path string) http.HandlerFunc {
 		req.Header.Del("X-Console-Owner")
 		h.cfg.Public.ServeHTTP(w, req)
 	}
+}
+
+func (h *handler) messages(w http.ResponseWriter, r *http.Request) {
+	if r.URL.RawQuery != "" || r.URL.ForceQuery {
+		bridgeError(w, 400, "查询参数无效")
+		return
+	}
+	raw, err := io.ReadAll(io.LimitReader(r.Body, h.cfg.MaxBodyBytes+1))
+	if int64(len(raw)) > h.cfg.MaxBodyBytes {
+		bridgeError(w, 413, "请求体超过大小限制")
+		return
+	}
+	var body struct {
+		ConversationID string          `json:"conversation_id"`
+		Request        json.RawMessage `json:"request"`
+	}
+	d := json.NewDecoder(bytes.NewReader(raw))
+	d.DisallowUnknownFields()
+	if err != nil || d.Decode(&body) != nil || d.Decode(new(any)) != io.EOF || !taskRunPattern.MatchString(body.ConversationID) || len(body.Request) == 0 || body.Request[0] != '{' {
+		bridgeError(w, 400, "消息请求或会话标识无效")
+		return
+	}
+	if h.cfg.Public == nil {
+		bridgeError(w, 503, "核心服务尚未就绪")
+		return
+	}
+	// The envelope itself is bounded, so its raw request is bounded as well.
+	req := r.Clone(anthropic.WithConversation(r.Context(), body.ConversationID))
+	req.URL.Path, req.URL.RawPath, req.RequestURI = "/v1/messages", "", "/v1/messages"
+	req.Body = io.NopCloser(bytes.NewReader(body.Request))
+	req.ContentLength = int64(len(body.Request))
+	req.GetBody, req.TransferEncoding, req.Trailer = nil, nil, nil
+	req.Header = make(http.Header)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("x-api-key", h.cfg.APIKey)
+	req.Header.Set("anthropic-version", "2023-06-01")
+	h.cfg.Public.ServeHTTP(w, req)
 }
 
 func knownTask(id string) bool {
