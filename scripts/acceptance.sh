@@ -330,6 +330,45 @@ mock_stream="$(curl --noproxy '*' -fsSN -H 'Authorization: Bearer legacy-api' -H
   --data '{"model":"global:mock-model","messages":[{"role":"user","content":"acceptance"}],"stream":true}' \
   "http://127.0.0.1:$legacy_port/v1/chat/completions")"
 [[ "$mock_stream" == *"mock-runtime-ok"* && "$mock_stream" == *"data: [DONE]"* ]]
+anthropic_body='{"model":"global:mock-model","max_tokens":32,"messages":[{"role":"user","content":"hello"}]}'
+curl --noproxy '*' -fsS -H 'x-api-key: legacy-api' -H 'anthropic-version: 2023-06-01' \
+  -H 'Content-Type: application/json' --data "$anthropic_body" \
+  "http://127.0.0.1:$legacy_port/v1/messages" | python3 -c '
+import json,sys
+reply=json.load(sys.stdin)
+assert reply["type"] == "message" and reply["role"] == "assistant"
+assert reply["model"] == "global:mock-model"
+assert reply["content"] == [{"type":"text","text":"mock-runtime-ok"}]
+assert reply["stop_reason"] == "end_turn"
+assert reply["usage"] == {"input_tokens":1,"output_tokens":1}
+'
+anthropic_stream="$(curl --noproxy '*' -fsSN -H 'x-api-key: legacy-api' -H 'anthropic-version: 2023-06-01' \
+  -H 'Content-Type: application/json' \
+  --data '{"model":"global:mock-model","max_tokens":32,"messages":[{"role":"user","content":"hello"}],"stream":true}' \
+  "http://127.0.0.1:$legacy_port/v1/messages")"
+[[ "$anthropic_stream" == *'mock-runtime-ok'* && "$anthropic_stream" == *'event: message_stop'* ]]
+[[ "$anthropic_stream" != *'data: [DONE]'* ]]
+for error_case in authentication version; do
+  test_api=legacy-api
+  test_version=2023-06-01
+  if [[ "$error_case" == authentication ]]; then test_api=wrong; else test_version=unsupported; fi
+  error_response="$(curl --noproxy '*' -sS -w '\n%{http_code}' \
+    -H "x-api-key: $test_api" -H "anthropic-version: $test_version" -H 'Content-Type: application/json' \
+    --data "$anthropic_body" "http://127.0.0.1:$legacy_port/v1/messages")"
+  python3 -c '
+import json,sys
+body,status=sys.argv[1].rsplit("\n",1)
+reply=json.loads(body)
+expected=("401","authentication_error") if sys.argv[2] == "authentication" else ("400","invalid_request_error")
+assert status == expected[0]
+assert reply["type"] == "error" and reply["error"]["type"] == expected[1]
+assert isinstance(reply["error"]["message"],str) and reply["error"]["message"]
+' "$error_response" "$error_case"
+done
+admin_messages_body="{\"conversation_id\":\"acceptance-chat-$suffix\",\"request\":$anthropic_body}"
+[[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' \
+  -H "Origin: http://127.0.0.1:$legacy_port" -H 'Content-Type: application/json' \
+  --data "$admin_messages_body" "http://127.0.0.1:$legacy_port/admin/messages")" == 401 ]]
 curl --noproxy '*' -fsS -H 'Authorization: Bearer legacy-api' "http://127.0.0.1:$legacy_port/status" | python3 -c '
 import json,sys
 status=json.load(sys.stdin)
@@ -354,6 +393,21 @@ assert auth["account"]["uid"] == "mock" and auth["auth"]["realm"] == "global"
 login_json="$(curl --noproxy '*' -fsS -c "$cookie_file" -H "Origin: http://127.0.0.1:$legacy_port" -H 'Content-Type: application/json' \
   --data '{"key":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}' "http://127.0.0.1:$legacy_port/admin/login")"
 csrf="$(python3 -c 'import json,sys; print(json.loads(sys.argv[1])["csrf"])' "$login_json")"
+[[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' -b "$cookie_file" \
+  -H "Origin: http://127.0.0.1:$legacy_port" -H 'Content-Type: application/json' \
+  --data "$admin_messages_body" "http://127.0.0.1:$legacy_port/admin/messages")" == 403 ]]
+[[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' -b "$cookie_file" \
+  -H 'Origin: https://invalid.example' -H "X-CSRF-Token: $csrf" -H 'Content-Type: application/json' \
+  --data "$admin_messages_body" "http://127.0.0.1:$legacy_port/admin/messages")" == 403 ]]
+curl --noproxy '*' -fsS -b "$cookie_file" -H "Origin: http://127.0.0.1:$legacy_port" \
+  -H "X-CSRF-Token: $csrf" -H 'Content-Type: application/json' \
+  --data "$admin_messages_body" "http://127.0.0.1:$legacy_port/admin/messages" | python3 -c '
+import json,sys
+reply=json.load(sys.stdin)
+assert reply["type"] == "message" and reply["stop_reason"] == "end_turn"
+assert reply["content"] == [{"type":"text","text":"mock-runtime-ok"}]
+assert reply["usage"] == {"input_tokens":1,"output_tokens":1}
+'
 curl --noproxy '*' -fsS -b "$cookie_file" "http://127.0.0.1:$legacy_port/admin/tasks" | python3 -c '
 import json,sys
 body=json.load(sys.stdin)
@@ -394,6 +448,11 @@ assert run["id"] == sys.argv[1] and run["status"] == "skipped" and run["finished
 legacy_after="$(compose_for "$legacy_project" "$legacy_port" exec -T core sh -eu -c \
   'sha256sum /app/auths/workbuddy-mock.json /app/data/state.json /app/data/console-keys.json')"
 [[ "$legacy_before" == "$legacy_after" ]]
+
+if [[ -n "${WB2A_SDK_PYTHON:-}" ]]; then
+  "$WB2A_SDK_PYTHON" "$repo_root/scripts/check_anthropic_sdk.py" \
+    --url "http://127.0.0.1:$legacy_port" --key legacy-api --model global:mock-model
+fi
 
 acceptance_passed=true
 echo "acceptance passed: fresh/rebuild/legacy; isolated mock URL http://127.0.0.1:$legacy_port/"

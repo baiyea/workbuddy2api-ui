@@ -15,7 +15,7 @@
 ## 架构
 
 ```text
-浏览器 / OpenAI 兼容客户端
+浏览器 / OpenAI 或 Anthropic 文本客户端
             │ :7863
             ▼
 console（独立 Go 服务，内嵌 HTML/CSS/JavaScript）
@@ -32,6 +32,7 @@ console（独立 Go 服务，内嵌 HTML/CSS/JavaScript）
 - **console**：负责网页、管理认证和代理；不加载账号凭据，不直接执行签到等业务。
 - 仅 console 发布宿主端口。core 只在 Compose 网络内访问；console 仅只读挂载密钥目录，不挂载账号和状态目录。
 - 当前 README 重点介绍 `/v1/models`、`/v1/chat/completions` 与流式调用；不得把“OpenAI 兼容”宣传为完整覆盖所有 OpenAI API 或客户端功能。
+- `/v1/messages` 由 core 的 Anthropic 文本适配器在进程内复用原 OpenAI Handler；不另建账号池、HTTP 回环或协议代理服务。只在启用 core 桥接的分支包装，未启用桥接的源码模式保持原 Handler。
 
 ## 目录与代码入口
 
@@ -40,6 +41,7 @@ console（独立 Go 服务，内嵌 HTML/CSS/JavaScript）
 | `upstream/`、`upstream.lock` | 上游普通源码快照；锁文件记录来源、commit 和源码摘要。 |
 | `extensions/cmd/server/extension.go` | core 初始化、密钥、桥接和任务生命周期接线。 |
 | `extensions/internal/bridge/` | 内部管理接口，复用公共能力。 |
+| `extensions/internal/anthropic/` | Messages 文本请求、普通响应与增量 SSE 适配，传递取消与真实用量。 |
 | `extensions/internal/oauth/`、`extensions/internal/pool/` | 授权流程、账号热加载等扩展。 |
 | `extensions/internal/scheduler/`、`extensions/internal/taskrun/` | 任务目录、执行观察、单运行器和持久历史。 |
 | `extensions/scripts/` | Python 任务结果事件与测试。 |
@@ -104,6 +106,23 @@ node --test console/web_test.cjs
 修改后重新物化，旧物化目录不会自动同步；重复运行使用新的输出路径，不删除不明来源的目录。
 
 涉及镜像、Compose、启动参数、密钥或持久化时，还需运行 `bash scripts/acceptance.sh`。它在隔离项目、端口和存储中验证直接启动、YAML 密钥覆盖与取消覆盖、日志、时区、数据保留以及 mock API/任务流程。禁止将测试指向真实凭据或数据；模拟验收不证明真实上游授权成功或奖励到账。
+
+### Anthropic 文本验证
+
+公共 `/v1/messages` 使用同一个模型 API Key（`x-api-key`）和固定 `anthropic-version: 2023-06-01`。`New(next, apiKey, maxBodyBytes)` 仅截获该路径，其他 OpenAI 路径不变；未知用量保持 `null`，不得伪造零或宣称完整 Claude Code 兼容。
+
+网页 `POST /admin/messages` 沿用管理会话、同源、CSRF 和退出取消，代理至带 owner 的 `/internal/v1/messages`。请求 envelope 为 `{conversation_id, request}`；ID 限 `[A-Za-z0-9_-]{1,128}`，request 为完整 Anthropic 文本请求，不加私有字段。bridge 有界读取并验证 envelope，通过 `WithConversation` 注入可信上下文，由 adapter 写入 OpenAI `conversationId`；不接受公共私有头伪造会话。体积限制沿用 `server.max_body_mb`，包含管理 envelope。
+
+SDK 仅用于隔离测试，不进入镜像或生产依赖。使用 Python 3.12 临时虚拟环境安装 `anthropic==0.67.0 httpx==0.28.1` 后执行：
+
+```bash
+# 内存契约：未知/晚到用量、raw events、text_stream、最终消息聚合
+/path/to/venv/bin/python scripts/check_anthropic_sdk.py
+# 实际访问验收脚本创建的隔离 mock 网关；执行后沿原机制清理
+WB2A_SDK_PYTHON=/path/to/venv/bin/python bash scripts/acceptance.sh
+```
+
+验收保留 OpenAI 流式断言，并覆盖 Anthropic JSON、SSE、错误包和管理入口；`WB2A_SDK_PYTHON` 未设置时仅跳过 SDK 步骤，不能将这次运行报告为 SDK 通过。实际网关 SDK 验收与内存 fixture、真实上游调用分开记录。Python 3.14 不作为 SDK 0.67.0 验收环境；不得为绕过解析失败而删断言。
 
 新增行为先补能失败的回归测试，再做最小修改。纯文档改动核对事实、命令和链接即可，不因此重建发布镜像。只报告有实际执行结果的验证。
 

@@ -11,6 +11,7 @@
 - **统一接入地址**：使用网关的 `/v1` 地址和 API Key 接入客户端，不向客户端分发上游账号凭据。
 - **模型列表与对话接口**：通过 `GET /v1/models` 获取模型 ID，通过 `POST /v1/chat/completions` 发起对话。
 - **流式回答**：支持 Chat Completions 流式输出，适合聊天客户端和自己的应用。
+- **Anthropic 文本兼容**：同一个 API Key 和模型列表也可通过 `POST /v1/messages` 调用，支持普通与流式文本对话。
 - **多账号管理**：由网关维护账号池和冷却状态，网页可查看可用账号及调用情况。
 - **网页辅助配置**：控制台提供 Base URL、API Key 和调用示例，并可直接测试模型回答。
 
@@ -54,6 +55,31 @@ curl -N http://127.0.0.1:7863/v1/chat/completions \
 
 以上是填写示例，请替换地址、密钥和模型 ID。
 
+### Anthropic 文本接口
+
+在控制台“API 接入”切换到 **Anthropic**，查看地址和示例；“前往对话测试”会带上所选协议与模型。官方 Python SDK 的 Base URL 填服务根地址 `http://服务器地址:7863`，SDK 会追加 `/v1/messages`，不要再追加 `/v1`。
+
+```bash
+curl -N http://127.0.0.1:7863/v1/messages \
+  -H "x-api-key: <你的 API Key>" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "<从模型列表选择的完整 ID，保留 cn: 或 global: 前缀>",
+    "max_tokens": 1024,
+    "messages": [{"role": "user", "content": "你好"}],
+    "stream": true
+  }'
+```
+
+`max_tokens` 必须是正整数；删除 `stream` 或设为 `false` 可获取普通 JSON 响应。支持 user/assistant 多轮消息、字符串或纯文本内容块，以及可选 `system`；不支持工具、图像、文件、扩展思考、缓存、beta、采样参数等高级字段，未支持字段会明确报错。
+
+仅传递上游实际返回的用量，未知 token 数返回 `null`，不会估算或填 0。这与原生 API 的整数用量字段有差异，严格要求整数的客户端可能不兼容。已验证的 SDK 基线为 Python 3.12 + `anthropic==0.67.0`，不代表所有版本或客户端可用，也不代表完整支持 Claude Code；模型能力仍由 WorkBuddy / CodeBuddy 上游决定。
+
+![Anthropic 文本接入页面](docs/superpowers/verification/anthropic-access-desktop-mock.jpg)
+
+*截图来自隔离 mock 页面，未展示真实密钥，不代表真实模型调用验收。*
+
 ## 一条命令启动
 
 准备一台已安装 Docker 和 Docker Compose 的 **Intel / AMD 64 位服务器（linux/amd64）**，将 [docker-compose.yml](docker-compose.yml) 保存到部署目录：
@@ -76,7 +102,7 @@ Compose 从阿里云仓库拉取成品镜像，**无需下载源码、构建镜�
 
 ### 对话测试
 
-选择模型并发送问题，直接检查模型响应与流式显示。真实部署中的测试会消耗账号额度；页面内的对话刷新后清空。
+选择 OpenAI 或 Anthropic 协议、模型并发送问题，直接检查模型响应与流式显示。Anthropic 模式可设置最大输出 tokens，默认 1024；切换协议会清空当前测试对话，生成中可停止。真实部署中的测试会消耗账号额度；页面内的对话刷新后清空。
 
 ![对话测试页面：选择模型并查看流式回答](docs/superpowers/verification/2026-09-16-openai-chat-playground.jpg)
 
