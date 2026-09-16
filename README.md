@@ -23,7 +23,11 @@ Compose 从阿里云仓库 `registry.cn-hangzhou.aliyuncs.com/cateyes/go` 拉取
 仓库若为私有，服务器需先执行 `docker login registry.cn-hangzhou.aliyuncs.com`。
 请使用发布脚本成功更新后的 Compose，其中的默认时间戳对应已验收并推送的镜像。
 只有 console 映射宿主机端口，
-默认访问 `http://服务器地址:7863/`；两个服务都以 UID 10001 运行。首次启动时 core
+固定访问 `http://服务器地址:7863/`；Compose 只有 core 和 console 两个服务。
+core 镜像内的启动脚本先以 root 将三个存储目录的所有者设为 10001、权限设为 700，
+不递归改写已有文件；失败立即退出，成功后以 `exec` 切换到 UID/GID 10001 运行程序。
+两个业务进程均以普通用户运行；core 的 `docker compose exec` 默认仍为 root，需要普通
+用户时显式加 `--user 10001:10001`。首次启动时 core
 生成彼此独立的管理、公共 API 和内部桥接密钥，console 日志只显示需要交给管理员的
 管理密钥。输入该密钥后才能进入控制台。
 
@@ -33,8 +37,8 @@ Compose 从阿里云仓库 `registry.cn-hangzhou.aliyuncs.com/cateyes/go` 拉取
 docker compose -f docker-compose.build.yaml up -d --build
 ```
 
-构建版复用运行版服务定义，使用本地 `:dev` 标签，同样构建 amd64。两个入口使用同一套
-数据卷参数，不应同时启动。Apple Silicon 可借助 Docker Desktop 模拟运行；不提供 ARM
+构建版复用运行版服务定义，使用本地 `:dev` 标签，同样构建 amd64。两个入口使用同一组
+存储目录，不应同时启动。Apple Silicon 可借助 Docker Desktop 模拟运行；不提供 ARM
 原生发布镜像。
 
 首次添加账号仍需人工操作：在「账号管理」选择国内版或国际版并发起浏览器授权，
@@ -48,50 +52,47 @@ docker compose -f docker-compose.build.yaml up -d --build
 
 ## 数据与配置
 
-默认使用三个命名卷：
+数据直接保存在 Compose 文件旁的三个目录，不再使用命名卷：
 
-- `workbuddy2api_auths`：账号凭据；
-- `workbuddy2api_data`：账号池状态和任务历史；
-- `workbuddy2api_keys`：管理、API、桥接密钥。
+- `./runtime/wb2api/auths` → `/app/auths`：账号凭据；
+- `./runtime/wb2api/data` → `/app/data`：账号池状态和任务历史；
+- `./runtime/wb2api/keys` → `/run/wb2a`：管理、API、桥接密钥，console 只读挂载。
 
-普通重启和重建会复用这些卷。不要运行 `docker compose down -v`，也不要删除或用空卷
-替代账号卷。可在 `.env` 中设置：
+普通重启和重建会复用这些目录，首次启动自动创建。不要删除或用空目录替代已有数据。
+`runtime/` 已被 Git 忽略，也不会进入镜像构建上下文；备份和搬迁时需要单独保存整个目录。
+仅管理员密钥和 API Key 支持 `.env` 配置；留空时自动生成并持久保存：
 
 ```dotenv
-WB2A_PORT=7863
-# 可选：固定到已发布的时间戳；不设置则使用 Compose 默认值
-# WB2A_VERSION=1789519503
-WB2A_BIND_ADDRESS=0.0.0.0
-WB2A_PUBLIC_ORIGIN=
 WB2A_ADMIN_KEY=
 WB2A_API_KEY=
-WB2A_AUTHS_VOLUME=workbuddy2api_auths
-WB2A_DATA_VOLUME=workbuddy2api_data
-WB2A_KEYS_VOLUME=workbuddy2api_keys
 ```
 
-公网部署应由 HTTPS 反向代理转发到 console，并将 `WB2A_PUBLIC_ORIGIN` 设为浏览器实际
+镜像完整标签、端口、时区、目录和 origin 均在 Compose 中写固定值，不读取旧的
+`WB2A_VERSION`、`WB2A_PORT` 或存储路径环境变量。需要调整时直接编辑 Compose。
+容器内部必需的 `environment` 字段保留固定值。公网部署应由 HTTPS 反向代理转发到
+console，并在 Compose 中将 `WB2A_PUBLIC_ORIGIN` 设为浏览器实际
 访问的完整 origin（不能带路径）。管理密钥至少 32 个字符；公共 API Key 可沿用原非空
 值。两个服务必须使用同一组 `WB2A_ADMIN_KEY`/`WB2A_API_KEY` 覆盖，不能只在 core 的
 `config.json` 中设置一个不同 API Key。
 
-成品镜像内置默认空配置，无需宿主文件。源码构建版仍支持 `WB2A_CONFIG_FILE`，未设置时
-只读挂载仓库的默认配置。
+成品镜像内置默认空配置，无需宿主配置文件。源码构建版固定只读挂载
+`./deploy/default-config.json`，不读取 `WB2A_CONFIG_FILE`。
 
-**已有自定义配置的部署升级时注意：仅在 `.env` 中保留 `WB2A_CONFIG_FILE` 不会让成品版
-自动挂载它。** 请额外取得 `deploy/compose.config.yml` 并显式启用挂载：
+需要自定义配置时，将 JSON 保存到 `./runtime/wb2api/config.json`，额外取得
+`deploy/compose.config.yml` 并显式启用只读挂载（路径相对第一个 Compose 文件）：
 
 ```sh
-WB2A_CONFIG_FILE=/absolute/path/config.json \
-  docker compose -f docker-compose.yml -f deploy/compose.config.yml up -d
+docker compose -f docker-compose.yml -f deploy/compose.config.yml up -d
 ```
 
 默认部署仍只需一个 Compose 文件；额外文件仅用于自定义配置。原 JSON 只读挂载到
 `/app/config.json`，不会写进镜像或改写；缺失路径、目录或非法 JSON 拒绝启动。后续操作
 同一自定义配置部署须保留相同 `-f` 参数。API Key 覆盖仍必须由两个服务共享。
 
-`/livez` 表示进程存活，空账号也返回 200；`/healthz` 表示是否已有可服务账号，空账号
-返回 503 是正常状态。
+新镜像和 Compose 均不定义 Docker 健康检查。console 在 core 启动后启动，并等待密钥文件。
+`/livez`、`/healthz` 接口仍可手动诊断：空账号时分别返回 200、503，不会自动定时访问。
+此启动方式需要重新发布镜像后使用；旧标签 `1789520619` 不含权限初始化脚本且仍内置
+健康检查，不能直接配合删除 init 的 Compose 用于全新部署。发布脚本成功后会更新两个标签。
 
 ## 旧部署迁移
 
@@ -105,8 +106,10 @@ python3 deploy/migrate.py backup \
 ```
 
 运行中备份会明确标为非最终一致。正式切换前应确认维护窗口、停止已核实的旧实例（不删
-卷），再生成并校验最终一致性备份。随后把 inspect 得到的账号卷、状态卷和原宿主端口写
-入 `.env`。有旧自定义配置时按上一节显式挂载；没有则执行 `docker compose up -d`。
+卷），再生成并校验最终一致性备份。**旧命名卷不会自动迁移到新目录**，原 `.env` 中的
+卷名也不再生效。应按备份清单另行迁移 auths/data/keys 到 `runtime/wb2api` 的对应目录，
+保留文件内容和 UID 10001 的读写权限；或者先在 Compose 中明确保留旧挂载，不能直接
+启动空目录替代原数据。宿主端口直接改 Compose；有旧自定义配置时按上一节显式挂载。
 若旧 `api_key` 与持久密钥不同，必须显式设置共享
 `WB2A_API_KEY`；不要删掉配置来绕过冲突。挂载、备份或密钥发生冲突时必须停止，
 不能生成空数据继续。
@@ -140,8 +143,8 @@ git diff --check
 docker compose -f docker-compose.build.yaml build \
   --build-arg HTTP_PROXY=http://host.docker.internal:7890 \
   --build-arg HTTPS_PROXY=http://host.docker.internal:7890
-HTTP_PROXY=http://host.docker.internal:7890 \
-HTTPS_PROXY=http://host.docker.internal:7890 \
+WB2A_BUILD_HTTP_PROXY=http://host.docker.internal:7890 \
+WB2A_BUILD_HTTPS_PROXY=http://host.docker.internal:7890 \
   bash scripts/acceptance.sh
 ```
 
@@ -176,7 +179,7 @@ git commit -m "revert: restore previous upstream combination"
 docker compose -f docker-compose.build.yaml up -d --build
 ```
 
-回退继续复用现有 auths/data/keys 卷，不执行 `down -v`。若相关源码有未提交改动，更新
+回退继续复用现有 auths/data/keys 目录，不删除已有数据。若相关源码有未提交改动，更新
 入口会拒绝覆盖；先提交或另行保存，不要强制清理。
 
 ## 手动发布成品镜像
@@ -192,9 +195,9 @@ bash scripts/release.sh
 Bash 入口复用 `scripts/release.py`，每次运行自动生成 Unix 秒级时间戳，两个镜像共用。
 也可显式传入一个未使用的时间戳：`bash scripts/release.sh 1789519503`。
 脚本要求构建相关文件已提交，执行回归检查、交叉编译、架构检查和隔离验收后才推送。
-两个镜像都推送成功、回拉并核对镜像 ID 后，才原子更新 `docker-compose.yml` 中的两个默认
-时间戳；请审阅并提交该文件，再把它复制到服务器。脚本不会部署、推送 Git 或修改上游，
-也不会修改服务器 `.env`；若其中固定了 `WB2A_VERSION`，需自行更新或移除这个覆盖值。
+两个镜像都推送成功、回拉并核对镜像 ID 后，才原子更新 `docker-compose.yml` 中两个完整
+镜像标签里的时间戳。请审阅并提交该文件，
+再把它复制到服务器。脚本不会部署、推送 Git 或修改上游，也不会修改服务器密钥。
 
 发布构建仍需拉取 Dockerfile 中的 `golang`/`alpine` 基础镜像；更换成品仓库不会改变
 基础镜像来源。构建会重新解析基础镜像并在镜像内验证 x86_64，防止 ARM 缓存混入。
@@ -221,7 +224,7 @@ docker compose up -d
 两个镜像推送不是原子操作：任一步失败时不切换服务器，不自动删标签；查明原因后使用
 新时间戳重新发布。只有两个镜像都能回拉且匹配本次验收镜像才更新 Compose；该检查使用
 发布者的 Docker 登录状态，不代表匿名可拉取。免登录部署需将仓库设为公开。
-回退时把 `WB2A_VERSION` 改回已发布旧时间戳再执行上述命令，继续复用原数据卷；
+回退时把 Compose 中两个完整镜像标签改回同一已发布旧时间戳再执行上述命令，继续复用原目录；
 自定义配置仍需原 `-f` 参数。
 镜像只包含程序、默认配置和许可，不包含本机账号、密钥或数据卷。
 

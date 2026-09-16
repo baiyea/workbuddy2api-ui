@@ -1,10 +1,10 @@
 services:
   core:
-    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-core-${WB2A_VERSION:-1789520619}
+    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-core-1789520619
     platform: linux/amd64
     restart: unless-stopped
     environment:
-      TZ: ${TZ:-Asia/Shanghai}
+      TZ: Asia/Shanghai
       WB2A_CORE: "true"
       WB2A_LISTEN: :7863
       WB2A_AUTH_DIR: /app/auths
@@ -12,45 +12,25 @@ services:
       WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
       WB2A_API_KEY: ${WB2A_API_KEY:-}
     volumes:
-      - auths:/app/auths
-      - data:/app/data
-      - keys:/run/wb2a
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:7863/livez"]
-      interval: 30s
-      timeout: 5s
-      start_period: 5s
-      retries: 3
+      - ./runtime/wb2api/auths:/app/auths
+      - ./runtime/wb2api/data:/app/data
+      - ./runtime/wb2api/keys:/run/wb2a
 
   console:
-    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-webui-${WB2A_VERSION:-1789520619}
+    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-webui-1789520619
     platform: linux/amd64
     restart: unless-stopped
     environment:
-      TZ: ${TZ:-Asia/Shanghai}
+      TZ: Asia/Shanghai
       WB2A_ADMIN_KEY: ${WB2A_ADMIN_KEY:-}
       WB2A_API_KEY: ${WB2A_API_KEY:-}
       WB2A_CORE_URL: http://core:7863
       WB2A_KEY_FILE: /run/wb2a/keys.json
-      WB2A_PUBLIC_ORIGIN: ${WB2A_PUBLIC_ORIGIN:-}
+      WB2A_PUBLIC_ORIGIN: ""
     ports:
-      - "${WB2A_BIND_ADDRESS:-0.0.0.0}:${WB2A_PORT:-7863}:7863"
+      - "0.0.0.0:7863:7863"
     volumes:
-      - keys:/run/wb2a:ro
+      - ./runtime/wb2api/keys:/run/wb2a:ro
     depends_on:
       core:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:7863/livez"]
-      interval: 30s
-      timeout: 5s
-      start_period: 5s
-      retries: 3
-
-volumes:
-  auths:
-    name: ${WB2A_AUTHS_VOLUME:-workbuddy2api_auths}
-  data:
-    name: ${WB2A_DATA_VOLUME:-workbuddy2api_data}
-  keys:
-    name: ${WB2A_KEYS_VOLUME:-workbuddy2api_keys}
+        condition: service_started

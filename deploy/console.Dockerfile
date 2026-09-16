@@ -16,5 +16,4 @@ COPY LICENSE /app/LICENSE
 ENV WB2A_CORE_URL=http://core:7863 WB2A_LISTEN=:7863
 USER app
 EXPOSE 7863
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD wget -qO- http://127.0.0.1:7863/livez || exit 1
 ENTRYPOINT ["/app/console"]

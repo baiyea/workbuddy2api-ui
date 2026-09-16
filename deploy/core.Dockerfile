@@ -20,12 +20,13 @@ RUN set -eu; \
 
 FROM alpine:3.20
 RUN test "$(apk --print-arch)" = x86_64 \
-    && apk add --no-cache bash ca-certificates python3 tzdata wget \
+    && apk add --no-cache bash ca-certificates python3 su-exec tzdata wget \
     && adduser -D -u 10001 app \
     && mkdir -p /app/auths /app/data /app/scripts /run/wb2a \
     && chown -R app:app /app /run/wb2a
 WORKDIR /app
 COPY deploy/default-config.json /app/config.json
+COPY --chmod=755 deploy/core-entrypoint.sh /usr/local/bin/wb2api-entrypoint.sh
 COPY LICENSE /app/LICENSE
 COPY --from=build /out/wb2api /app/wb2api
 COPY --from=build /out/signin /app/signin_bin
@@ -36,7 +37,7 @@ COPY --from=build /out/activity /app/activity_bin
 COPY --from=build /build/core/checkin.sh /build/core/login.sh /build/core/signin.sh /build/core/credit.sh /build/core/trial.sh /app/
 COPY --from=build /build/core/scripts/ /app/scripts/
 RUN sed -i 's/\r$//' /app/*.sh /app/scripts/*.py && chmod 755 /app/*.sh /app/scripts/*.py
-USER app
+USER root
 EXPOSE 7863
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s CMD wget -qO- http://127.0.0.1:7863/livez || exit 1
-ENTRYPOINT ["/app/wb2api", "-config", "/app/config.json"]
+ENTRYPOINT ["/usr/local/bin/wb2api-entrypoint.sh"]
+CMD ["/app/wb2api", "-config", "/app/config.json"]

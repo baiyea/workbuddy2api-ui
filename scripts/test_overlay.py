@@ -997,20 +997,21 @@ class AcceptanceScriptTests(unittest.TestCase):
         script = acceptance.read_text(encoding="utf-8")
         self.assertNotIn("http://host.docker.internal:7890", script)
         self.assertNotIn("WB2A_ACCEPTANCE_BUILD_PROXY", script)
-        self.assertIn('[[ -n "${HTTP_PROXY:-}" ]]', script)
-        self.assertIn('[[ -n "${HTTPS_PROXY:-}" ]]', script)
         self.assertEqual(2, script.count('build_images "$fresh_project" "$fresh_port"'))
         subprocess.run(["bash", "-n", str(acceptance)], check=True)
 
-        def first_build(proxy=None):
+        def first_build(proxy=None, build_proxy=None, host_proxy=""):
             with tempfile.TemporaryDirectory() as d:
                 temp = Path(d)
                 docker = temp / "docker"
                 log = temp / "docker.log"
+                client_env = temp / "client-env.log"
                 docker.write_text(
                     "#!/bin/sh\n"
                     "printf '%s\\n' \"$*\" >> \"$DOCKER_LOG\"\n"
-                    "case \" $* \" in *' build '*) exit 42;; esac\n"
+                    "case \" $* \" in *' build '*)\n"
+                    "  printf '%s\\n' \"${http_proxy:-}\" \"${https_proxy:-}\" > \"$DOCKER_ENV_LOG\"\n"
+                    "  exit 42;; esac\n"
                     "exit 0\n",
                     encoding="utf-8",
                 )
@@ -1018,11 +1019,18 @@ class AcceptanceScriptTests(unittest.TestCase):
                 env = os.environ.copy()
                 env["PATH"] = str(temp) + os.pathsep + env["PATH"]
                 env["DOCKER_LOG"] = str(log)
+                env["DOCKER_ENV_LOG"] = str(client_env)
+                env["http_proxy"] = env["https_proxy"] = host_proxy
                 env.pop("HTTP_PROXY", None)
                 env.pop("HTTPS_PROXY", None)
+                env.pop("WB2A_BUILD_HTTP_PROXY", None)
+                env.pop("WB2A_BUILD_HTTPS_PROXY", None)
                 if proxy:
                     env["HTTP_PROXY"] = proxy
                     env["HTTPS_PROXY"] = proxy
+                if build_proxy is not None:
+                    env["WB2A_BUILD_HTTP_PROXY"] = build_proxy
+                    env["WB2A_BUILD_HTTPS_PROXY"] = build_proxy
                 result = subprocess.run(
                     ["bash", str(acceptance), str(acceptance.parent.parent)],
                     env=env,
@@ -1032,6 +1040,7 @@ class AcceptanceScriptTests(unittest.TestCase):
                 lines = log.read_text(encoding="utf-8").splitlines() if log.exists() else []
                 builds = [line for line in lines if "build" in line]
                 self.assertTrue(builds, result.stderr.decode("utf-8", errors="replace"))
+                self.assertEqual(client_env.read_text().splitlines(), [host_proxy, host_proxy])
                 return builds[0]
 
         direct = first_build()
@@ -1040,6 +1049,14 @@ class AcceptanceScriptTests(unittest.TestCase):
         configured = first_build("http://host.docker.internal:7890")
         self.assertIn("--build-arg HTTP_PROXY=http://host.docker.internal:7890", configured)
         self.assertIn("--build-arg HTTPS_PROXY=http://host.docker.internal:7890", configured)
+        dedicated = first_build("http://127.0.0.1:7890", "http://host.docker.internal:7890")
+        self.assertIn("--build-arg HTTP_PROXY=http://host.docker.internal:7890", dedicated)
+        self.assertIn("--build-arg HTTPS_PROXY=http://host.docker.internal:7890", dedicated)
+        self.assertNotIn("127.0.0.1:7890", dedicated)
+        disabled = first_build("http://127.0.0.1:7890", "")
+        self.assertNotIn("HTTP_PROXY=", disabled)
+        self.assertNotIn("HTTPS_PROXY=", disabled)
+        first_build(build_proxy="http://host.docker.internal:7890", host_proxy="http://127.0.0.1:7890")
 
 
 if __name__ == "__main__":

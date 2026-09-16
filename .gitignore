@@ -1,4 +1,5 @@
 # Auth & secrets
+runtime/
 auths/
 data/
 *.key

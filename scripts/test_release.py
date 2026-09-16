@@ -61,7 +61,9 @@ class ReleaseTests(unittest.TestCase):
             if failure or registry_error or existing or concurrent or mismatched:
                 self.assertEqual(after, before, "failed publication must preserve Compose")
             else:
-                self.assertEqual(after.count("$" + "{WB2A_VERSION:-1789519600}"), 2)
+                for image in IMAGES:
+                    self.assertEqual(after.count(image), 1)
+                self.assertNotIn("WB2A_VERSION", after)
         return calls
 
     def test_bash_entry_works_outside_repository(self):

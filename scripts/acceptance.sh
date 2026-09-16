@@ -30,9 +30,6 @@ compose_for() {
   local base="$repo_root/docker-compose.build.yaml"
   if [[ "${WB2A_ACCEPTANCE_SKIP_BUILD:-}" == "true" ]]; then base="$repo_root/docker-compose.yml"; fi
   local compose_files=(-f "$base")
-  if [[ -n "${WB2A_ACCEPTANCE_CONFIG_FILE:-}" ]]; then
-    compose_files+=(-f "$repo_root/deploy/compose.config.yml")
-  fi
   WB2A_BIND_ADDRESS=127.0.0.1 \
   WB2A_PORT="$port" \
   WB2A_AUTHS_VOLUME="${project}_auths" \
@@ -58,25 +55,19 @@ assert all(i["Os"] == "linux" and i["Architecture"] == "amd64" for i in json.loa
 '
     return
   fi
-  if [[ -n "${HTTP_PROXY:-}" && -n "${HTTPS_PROXY:-}" ]]; then
-    compose_for "$project" "$port" build --pull \
-      --build-arg "HTTP_PROXY=$HTTP_PROXY" --build-arg "HTTPS_PROXY=$HTTPS_PROXY"
-  elif [[ -n "${HTTP_PROXY:-}" ]]; then
-    compose_for "$project" "$port" build --pull --build-arg "HTTP_PROXY=$HTTP_PROXY"
-  elif [[ -n "${HTTPS_PROXY:-}" ]]; then
-    compose_for "$project" "$port" build --pull --build-arg "HTTPS_PROXY=$HTTPS_PROXY"
-  else
-    compose_for "$project" "$port" build --pull
-  fi
+  local build_http_proxy="${WB2A_BUILD_HTTP_PROXY-${HTTP_PROXY:-}}"
+  local build_https_proxy="${WB2A_BUILD_HTTPS_PROXY-${HTTPS_PROXY:-}}"
+  local args=(--pull)
+  [[ -z "$build_http_proxy" ]] || args+=(--build-arg "HTTP_PROXY=$build_http_proxy")
+  [[ -z "$build_https_proxy" ]] || args+=(--build-arg "HTTPS_PROXY=$build_https_proxy")
+  compose_for "$project" "$port" build "${args[@]}"
 }
 
-# Production smoke copies Compose plus a test-only image override; no source mounts.
+# Production smoke only substitutes image refs and an isolated port in a copied file.
 standalone_compose() {
-  WB2A_BIND_ADDRESS=127.0.0.1 WB2A_PORT="$fresh_port" \
-  WB2A_AUTHS_VOLUME="${fresh_project}_auths" WB2A_DATA_VOLUME="${fresh_project}_data" \
-  WB2A_KEYS_VOLUME="${fresh_project}_keys" WB2A_ADMIN_KEY= WB2A_API_KEY= WB2A_PUBLIC_ORIGIN= \
+  WB2A_ADMIN_KEY= WB2A_API_KEY= \
   docker compose --env-file /dev/null --project-directory "$standalone" -p "$fresh_project" \
-    -f "$standalone/docker-compose.yml" -f "$standalone/images.json" "$@"
+    -f "$standalone/docker-compose.yml" "$@"
 }
 
 create_volumes() {
@@ -109,6 +100,11 @@ cleanup() {
   rm -f -- "$cookie_file"
   if [[ -n "$standalone" ]]; then
     standalone_compose down --remove-orphans >/dev/null 2>&1 || true
+    if [[ -d "$standalone/runtime" ]]; then
+      docker run --rm --network none --user 0:0 --entrypoint /bin/sh \
+        --mount "type=bind,src=$standalone/runtime,dst=/cleanup" "$core_image" \
+        -ec 'chown -R "$1:$2" /cleanup' sh "$(id -u)" "$(id -g)" >/dev/null 2>&1 || true
+    fi
     rm -rf -- "$standalone"
   fi
   if [[ "$acceptance_passed" == "true" && "${WB2A_ACCEPTANCE_KEEP:-}" == "true" ]]; then
@@ -125,14 +121,39 @@ trap cleanup EXIT
 
 create_volumes "$fresh_project"
 build_images "$fresh_project" "$fresh_port"
+# Exercise the packaged entrypoint, including failure before the command is run.
+docker run --rm --platform linux/amd64 --network none --entrypoint /bin/sh "$core_image" -ec '
+  touch /app/data/existing
+  chmod 644 /app/data/existing
+  chown 0:0 /app/auths /app/data /run/wb2a /app/data/existing
+  exec /usr/local/bin/wb2api-entrypoint.sh sh -ec '\''
+    test "$(id -u):$(id -g)" = 10001:10001
+    test "$$" = 1
+    for directory in /app/auths /app/data /run/wb2a; do
+      test "$(stat -c %u:%g:%a "$directory")" = 10001:10001:700
+      touch "$directory/writable"
+    done
+    test "$(stat -c %u:%g:%a /app/data/existing)" = 0:0:644
+  '\''
+'
+if docker run --rm --platform linux/amd64 --network none --read-only "$core_image" sh -c 'exit 0'; then
+  echo "permission initialization failure did not stop startup" >&2
+  exit 1
+fi
+docker run --rm --platform linux/amd64 --network none --user 10001:10001 "$core_image" sh -ec 'test "$(id -u)" = 10001'
 standalone="$(mktemp -d "${TMPDIR:-/tmp}/wb2a-image-smoke.XXXXXX")"
 cp "$repo_root/docker-compose.yml" "$standalone/docker-compose.yml"
 python3 -c '
-import json,sys
-with open(sys.argv[1], "w") as output:
-    json.dump({"services": {"core": {"image": sys.argv[2]}, "console": {"image": sys.argv[3]}}}, output)
-' "$standalone/images.json" "$core_image" "$console_image"
-standalone_compose up -d --wait --no-build --pull never
+import pathlib,re,sys
+path=pathlib.Path(sys.argv[1])
+text=path.read_text()
+for name, image in zip(("core", "webui"), sys.argv[2:4]):
+    text,count=re.subn(r"registry\.cn-hangzhou\.aliyuncs\.com/cateyes/go:wb2api-"+name+r"-[0-9]{10}", lambda _: image, text)
+    assert count == 1
+assert text.count("0.0.0.0:7863:7863") == 1
+path.write_text(text.replace("0.0.0.0:7863:7863", "127.0.0.1:"+sys.argv[4]+":7863"))
+' "$standalone/docker-compose.yml" "$core_image" "$console_image" "$fresh_port"
+standalone_compose up -d --no-build --pull never
 wait_live "http://127.0.0.1:$fresh_port/livez"
 [[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$fresh_port/healthz")" == "503" ]]
 standalone_compose exec -T core python3 -c '
@@ -144,6 +165,27 @@ assert "MIT License" in open("/app/LICENSE").read()
 standalone_compose exec -T console test -s /app/LICENSE
 [[ "$(standalone_compose exec -T core apk --print-arch)" == "x86_64" ]]
 [[ "$(standalone_compose exec -T console apk --print-arch)" == "x86_64" ]]
+docker inspect "$(standalone_compose ps -q core)" "$(standalone_compose ps -q console)" | python3 -c '
+import json,sys
+for container in json.load(sys.stdin):
+    assert not container["Config"].get("Healthcheck")
+    assert "Health" not in container["State"]
+    assert all(m["Type"] == "bind" and "/runtime/wb2api/" in m["Source"] for m in container["Mounts"])
+'
+standalone_compose exec -T --user 10001:10001 core sh -ec 'echo retained > /app/data/bind-smoke.txt'
+standalone_compose exec -T core python3 -c '
+from pathlib import Path
+status = dict(line.split(":", 1) for line in Path("/proc/1/status").read_text().splitlines())
+assert status["Uid"].split() == ["10001"] * 4
+assert status["Gid"].split() == ["10001"] * 4
+assert status["Name"].strip() == "wb2api"
+'
+bind_keys_digest="$(standalone_compose exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)"
+standalone_compose down --remove-orphans
+standalone_compose up -d --no-build --pull never
+wait_live "http://127.0.0.1:$fresh_port/livez"
+standalone_compose exec -T core grep -qx retained /app/data/bind-smoke.txt
+[[ "$bind_keys_digest" == "$(standalone_compose exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
 standalone_compose down --remove-orphans
 python3 -m unittest discover -s "$repo_root/deploy" -p test_compose.py -v
 missing_config="$repo_root/.build/acceptance-missing-$suffix.json"
@@ -159,7 +201,7 @@ compose_for "$fresh_project" "$fresh_port" up -d --wait --no-build
 [[ "$(compose_for "$fresh_project" "$fresh_port" port console 7863)" == "127.0.0.1:$fresh_port" ]]
 wait_live "http://127.0.0.1:$fresh_port/livez"
 [[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:$fresh_port/healthz")" == "503" ]]
-[[ "$(compose_for "$fresh_project" "$fresh_port" exec -T core id -u)" == "10001" ]]
+[[ "$(compose_for "$fresh_project" "$fresh_port" exec -T --user 10001:10001 core id -u)" == "10001" ]]
 [[ "$(compose_for "$fresh_project" "$fresh_port" exec -T console id -u)" == "10001" ]]
 
 mock_id="$(compose_for "$fresh_project" "$fresh_port" ps -q mock)"
@@ -198,7 +240,7 @@ curl --noproxy '*' -fsS -H "Origin: http://127.0.0.1:$fresh_port" -H 'Content-Ty
   --data '{"key":"cccccccccccccccccccccccccccccccc"}' "http://127.0.0.1:$fresh_port/admin/login" >/dev/null
 [[ "$(curl --noproxy '*' -sS -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer short-override' "http://127.0.0.1:$fresh_port/status")" == "200" ]]
 [[ "$fresh_digest" == "$(compose_for "$fresh_project" "$fresh_port" exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]
-compose_for "$fresh_project" "$fresh_port" exec -T core sh -c 'printf "%s\n" mock-account > /app/auths/preserved.txt; printf "%s\n" mock-state > /app/data/preserved.txt'
+compose_for "$fresh_project" "$fresh_port" exec -T --user 10001:10001 core sh -c 'printf "%s\n" mock-account > /app/auths/preserved.txt; printf "%s\n" mock-state > /app/data/preserved.txt'
 build_images "$fresh_project" "$fresh_port"
 compose_for "$fresh_project" "$fresh_port" up -d --force-recreate --wait --no-build
 [[ "$fresh_digest" == "$(compose_for "$fresh_project" "$fresh_port" exec -T core sha256sum /run/wb2a/keys.json | cut -d' ' -f1)" ]]

@@ -2,6 +2,7 @@ services:
   mock:
     image: ${WB2A_ACCEPTANCE_CORE_IMAGE:?set WB2A_ACCEPTANCE_CORE_IMAGE}
     platform: linux/amd64
+    user: "10001:10001"
     pull_policy: never
     entrypoint: ["python3", "/mock/mock_upstream.py"]
     restart: "no"
@@ -19,6 +20,22 @@ services:
     pull_policy: never
     restart: "no"
     networks: [mock]
+    volumes:
+      - auths:/app/auths
+      - data:/app/data
+      - keys:/run/wb2a
+      - type: bind
+        source: ${WB2A_CONFIG_FILE:?set test config path}
+        target: /app/config.json
+        read_only: true
+        bind:
+          create_host_path: false
+    healthcheck:
+      disable: false
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:7863/livez"]
+      interval: 1s
+      timeout: 1s
+      retries: 30
     depends_on:
       mock:
         condition: service_healthy
@@ -28,6 +45,21 @@ services:
     pull_policy: never
     restart: "no"
     networks: [mock, entry]
+    environment:
+      WB2A_PUBLIC_ORIGIN: ${WB2A_PUBLIC_ORIGIN:?set test origin}
+    ports: !override
+      - "127.0.0.1:${WB2A_PORT:?set test port}:7863"
+    volumes:
+      - keys:/run/wb2a:ro
+    depends_on:
+      core:
+        condition: service_healthy
+    healthcheck:
+      disable: false
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:7863/livez"]
+      interval: 1s
+      timeout: 1s
+      retries: 30
 
 networks:
   mock:
@@ -36,8 +68,11 @@ networks:
 
 volumes:
   auths:
+    name: ${WB2A_AUTHS_VOLUME:?set test auths volume}
     external: true
   data:
+    name: ${WB2A_DATA_VOLUME:?set test data volume}
     external: true
   keys:
+    name: ${WB2A_KEYS_VOLUME:?set test keys volume}
     external: true

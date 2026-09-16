@@ -30,26 +30,36 @@ class ProductionConfigTest(unittest.TestCase):
             directory = Path(temporary)
             shutil.copy2(ROOT / "docker-compose.yml", directory)
             config = self.config(directory=directory)
+        self.assertEqual(set(config["services"]), {"core", "console"})
         for name in ("core", "console"):
             service = config["services"][name]
             self.assertNotIn("build", service, "runtime must not build images")
             tag = "core" if name == "core" else "webui"
             self.assertRegex(service["image"], rf"^registry\.cn-hangzhou\.aliyuncs\.com/cateyes/go:wb2api-{tag}-[1-9][0-9]{{9}}$")
             self.assertEqual(service["platform"], "linux/amd64")
-            self.assertTrue(all(m["type"] == "volume" for m in service["volumes"]))
+            for mount in service["volumes"]:
+                self.assertEqual(mount["type"], "bind")
+                self.assertTrue(mount["source"].startswith(str(directory / "runtime/wb2api") + "/"))
+            self.assertNotIn("healthcheck", service)
             self.assertEqual(service["environment"]["WB2A_API_KEY"], "mock-shared-api")
         self.assertNotIn("ports", config["services"]["core"])
         self.assertEqual(len(config["services"]["console"]["ports"]), 1)
         self.assertEqual(config["services"]["core"]["image"].rsplit("-", 1)[1],
                          config["services"]["console"]["image"].rsplit("-", 1)[1])
 
-    def test_runtime_uses_fixed_repositories_and_one_version(self):
-        config = self.config(overrides={"WB2A_VERSION": "1789519600",
+        self.assertEqual(config["services"]["console"]["depends_on"]["core"]["condition"], "service_started")
+        self.assertNotIn("depends_on", config["services"]["core"])
+        self.assertTrue(config["services"]["console"]["volumes"][0]["read_only"])
+
+    def test_runtime_ignores_non_secret_environment(self):
+        baseline = self.config()
+        config = self.config(overrides={"WB2A_VERSION": "1789519600", "TZ": "UTC",
+                                      "WB2A_PORT": "19999", "WB2A_BIND_ADDRESS": "127.0.0.2",
+                                      "WB2A_AUTHS_VOLUME": "unwanted", "WB2A_CONFIG_FILE": "/unwanted.json",
+                                      "WB2A_PUBLIC_ORIGIN": "https://unwanted.test",
                                       "WB2A_CORE_IMAGE": "other/core:old",
                                       "WB2A_CONSOLE_IMAGE": "other/console:new"})
-        for name in ("core", "console"):
-            tag = "core" if name == "core" else "webui"
-            self.assertEqual(config["services"][name]["image"], f"registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-{tag}-1789519600")
+        self.assertEqual(config, baseline, "non-secret environment must not alter deployment")
 
     def test_source_build_entry_preserves_config_and_runtime_topology(self):
         build_file = ROOT / "docker-compose.build.yaml"
@@ -57,13 +67,14 @@ class ProductionConfigTest(unittest.TestCase):
         for selected in ("", str(ROOT / "deploy/acceptance-config.json")):
             with self.subTest(selected=selected):
                 config = self.config(selected, files=[build_file])
+                self.assertEqual(set(config["services"]), {"core", "console"})
                 for name in ("core", "console"):
                     self.assertEqual(config["services"][name]["build"]["dockerfile"], f"deploy/{name}.Dockerfile")
                     self.assertTrue(config["services"][name]["build"].get("pull"), "build must resolve target-platform base")
                 mounts = [m for m in config["services"]["core"]["volumes"] if m["target"] == "/app/config.json"]
                 self.assertEqual(len(mounts), 1, "production config selection is missing")
                 mount = mounts[0]
-                self.assertEqual(mount["source"], selected or str(ROOT / "deploy/default-config.json"))
+                self.assertEqual(mount["source"], str(ROOT / "deploy/default-config.json"))
                 self.assertTrue(Path(mount["source"]).is_file())
                 self.assertTrue(mount["read_only"])
                 self.assertFalse(mount.get("bind", {}).get("create_host_path", False))
@@ -79,8 +90,8 @@ class ProductionConfigTest(unittest.TestCase):
         self.assertEqual(len(mounts), 1)
         self.assertTrue(mounts[0]["read_only"])
         self.assertFalse(mounts[0].get("bind", {}).get("create_host_path", False))
-        with self.assertRaises(subprocess.CalledProcessError):
-            self.config(files=[ROOT / "docker-compose.yml", override])
+        self.assertEqual(mounts[0]["source"], str(ROOT / "runtime/wb2api/config.json"))
+        self.assertEqual(config, self.config(files=[ROOT / "docker-compose.yml", override]))
 
 
 if __name__ == "__main__":

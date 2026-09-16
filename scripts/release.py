@@ -36,10 +36,12 @@ def release(root, version=None):
         raise ValueError("timestamp must be 10 digits (Unix seconds)")
     compose = root / "docker-compose.yml"
     original = compose.read_text()
-    updated, count = re.subn(r"\$\{WB2A_VERSION:-[1-9][0-9]{9}\}",
-                            "${WB2A_VERSION:-" + version + "}", original)
-    if count != 2:
-        raise RuntimeError("Compose must contain exactly two timestamp defaults")
+    updated = original
+    for name in ("core", "webui"):
+        pattern = rf"({re.escape(REPOSITORY)}:wb2api-{name}-)[1-9][0-9]{{9}}(?=[\s\"']|$)"
+        updated, count = re.subn(pattern, lambda match: match[1] + version, updated)
+        if count != 1:
+            raise RuntimeError(f"Compose must contain exactly one fixed {name} image reference")
     revision = run(["git", "rev-parse", "HEAD"], root, True)
     if run(["git", "status", "--porcelain", "--", *UPDATE_PATHS], root, True):
         raise RuntimeError("commit source/build inputs before publishing")
@@ -94,7 +96,7 @@ def release(root, version=None):
             temporary.unlink(missing_ok=True)
     print("Published tested linux/amd64 images: " + ", ".join(images))
     print("Updated docker-compose.yml; review and commit it. No running deployment was changed.")
-    print(f"Deploy with WB2A_VERSION={version} docker compose up -d (no source/build needed).")
+    print("Copy the updated Compose to your server and run docker compose up -d (no source/build needed).")
 
 
 if __name__ == "__main__":

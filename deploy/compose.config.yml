@@ -3,7 +3,7 @@ services:
   core:
     volumes:
       - type: bind
-        source: ${WB2A_CONFIG_FILE:?set WB2A_CONFIG_FILE to an existing absolute JSON file path}
+        source: ./runtime/wb2api/config.json
         target: /app/config.json
         read_only: true
         bind:
