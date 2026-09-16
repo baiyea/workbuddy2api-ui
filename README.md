@@ -1,73 +1,114 @@
-# WorkBuddy2API Overlay
+# WorkBuddy2API
 
-这是一个面向个人自托管的 WorkBuddy2API 定制仓库：固定的上游源码保存在
-`upstream/`，新增能力放在 `extensions/` 和独立 `console/`，对上游文件的必要修改以
-`patches/series` 中的有序补丁应用。构建不会改写 `upstream/`。
+**将 WorkBuddy / CodeBuddy 反向代理为通用的 OpenAI 兼容 API。**
 
-上游来源固定为 [Sliverkiss/workbuddy2api](https://github.com/Sliverkiss/workbuddy2api)，
-具体 commit 和源码摘要见 `upstream.lock`。根目录 `LICENSE` 和 Git 历史保留原作者
-版权及 MIT 许可信息。
+把已授权账号的模型能力转换为兼容 OpenAI Chat Completions 的接口，让支持自定义 Base URL 的客户端和应用通过同一个网关调用。配套 Web 控制台负责账号授权、运行状态、对话测试和自动任务，Docker Compose 一条命令即可启动。
 
-## 启动
+> 本项目是非官方自托管网关。这里的“OpenAI 兼容”指模型列表与 Chat Completions 等已实现接口，不代表覆盖 OpenAI 的全部 API 或所有客户端功能。
 
-需要 Docker Engine 和 Docker Compose，目标服务器为 `linux/amd64`（Intel/AMD）。
-服务器只需本仓库的 `docker-compose.yml`；无需 `.env`、下载源码或安装构建工具：
+## 核心功能：用 OpenAI 接口调用 WorkBuddy
 
-```sh
+- **统一接入地址**：使用网关的 `/v1` 地址和 API Key 接入客户端，不向客户端分发上游账号凭据。
+- **模型列表与对话接口**：通过 `GET /v1/models` 获取模型 ID，通过 `POST /v1/chat/completions` 发起对话。
+- **流式回答**：支持 Chat Completions 流式输出，适合聊天客户端和自己的应用。
+- **多账号管理**：由网关维护账号池和冷却状态，网页可查看可用账号及调用情况。
+- **网页辅助配置**：控制台提供 Base URL、API Key 和调用示例，并可直接测试模型回答。
+
+![API 接入页面：Base URL、API Key 入口和调用示例](docs/superpowers/verification/2026-09-16-openai-api-access.jpg)
+
+*API 接入截图来自本地隔离演示环境，未展示密钥。图中的 17864 是预览端口，正式部署默认使用 7863。*
+
+### 客户端怎么填写
+
+选择客户端的 OpenAI 兼容接口或自定义服务商入口，填写：
+
+| 配置项 | 填写内容 |
+| --- | --- |
+| Base URL | `http://服务器地址:7863/v1`，公网部署建议使用自己的 HTTPS 域名 |
+| API Key | 在控制台“API 接入”页面查看，不是网页登录的管理密钥 |
+| 模型 | 从 `/v1/models` 获取的完整模型 ID；有 `cn:` 或 `global:` 前缀时需要保留 |
+
+模型列表可能包含静态候选；能否实际调用取决于账号版本、权限、额度和上游状态，以真实回答为准。
+
+### API 调用示例
+
+先查询模型列表：
+
+```bash
+curl http://127.0.0.1:7863/v1/models \
+  -H "Authorization: Bearer <你的 API Key>"
+```
+
+再使用列表中的模型 ID 发起流式对话：
+
+```bash
+curl -N http://127.0.0.1:7863/v1/chat/completions \
+  -H "Authorization: Bearer <你的 API Key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "<从模型列表选择的完整 ID>",
+    "messages": [{"role": "user", "content": "你好"}],
+    "stream": true
+  }'
+```
+
+以上是填写示例，请替换地址、密钥和模型 ID。
+
+## 一条命令启动
+
+准备一台已安装 Docker 和 Docker Compose 的 **Intel / AMD 64 位服务器（linux/amd64）**，将 [docker-compose.yml](docker-compose.yml) 保存到部署目录：
+
+```bash
 docker compose up -d
 docker compose logs console
 ```
 
-默认无需配置密钥，也不需要启动脚本：core 自动生成密钥，console 读取共享密钥文件。
-如需自定义，在 YAML 中取消密钥配置注释并填写，两个服务的同名密钥必须一致。
-只配置一项时保留该项、补齐另一项；重启复用持久化密钥，不会反写 YAML 或宿主机环境变量。
-已配置但无效的密钥（如管理密钥过短、两项相同）会明确报错，不会擅自替换。
+Compose 从阿里云仓库拉取成品镜像，**无需下载源码、构建镜像、准备 .env 或额外启动脚本**。私有镜像仓库需要先完成 Docker 登录。
 
-Compose 从阿里云仓库 `registry.cn-hangzhou.aliyuncs.com/cateyes/go` 拉取
-`wb2api-core-<时间戳>` 和 `wb2api-webui-<时间戳>`，不会构建。两个镜像使用相同时间戳。
-仓库若为私有，服务器需先执行 `docker login registry.cn-hangzhou.aliyuncs.com`。
-请使用发布脚本成功更新后的 Compose，其中的默认时间戳对应已验收并推送的镜像。
-只有 console 映射宿主机端口，
-固定访问 `http://服务器地址:7863/`；Compose 只有 core 和 console 两个服务。
-core 镜像内的启动脚本先以 root 将三个存储目录的所有者设为 10001、权限设为 700，
-不递归改写已有文件；失败立即退出，成功后以 `exec` 切换到 UID/GID 10001 运行程序。
-两个业务进程均以普通用户运行；core 的 `docker compose exec` 默认仍为 root，需要普通
-用户时显式加 `--user 10001:10001`。首次启动时 core
-生成彼此独立的管理、公共 API 和内部桥接密钥，console 日志只显示需要交给管理员的
-管理密钥，包括 YAML 中手动设置的值。输入该密钥后才能进入控制台。
-注意：能查看 console 日志的人也能获取管理登录密钥，请限制日志访问和转发范围；
-API Key 和内部桥接密钥不会写入启动日志。
+1. 打开 `http://服务器地址:7863/`，使用日志中的“管理密钥”登录。
+2. 进入“账号管理”，选择国内版或国际版，点击“浏览器授权”。
+3. 在上游页面完成登录、扫码或验证码，再回到控制台等待结果；国际版如要求地区信息，按提示选择真实注册地区。
+4. 授权成功后账号自动加载，无需重启。先在“对话测试”确认可用，再通过“API 接入”连接客户端。
 
-保留源码构建方式（需要完整仓库）：
+登录和人工验证需要你本人完成，程序不会绕过激活或验证码。
 
-```sh
-docker compose -f docker-compose.build.yaml up -d --build
-```
+## 配套 Web 控制台
 
-构建版复用运行版服务定义，使用本地 `:dev` 标签，同样构建 amd64。两个入口使用同一组
-存储目录，不应同时启动。Apple Silicon 可借助 Docker Desktop 模拟运行；不提供 ARM
-原生发布镜像。
+### 对话测试
 
-首次添加账号仍需人工操作：在「账号管理」选择国内版或国际版并发起浏览器授权，
-然后在上游页面完成登录、扫码或验证码；国际版如要求地区信息，还需在控制台选择真实
-注册地区。服务不会代输密码、验证码或绕过激活流程。授权保存成功后账号会热加载，无需
-重启。
+选择模型并发送问题，直接检查模型响应与流式显示。真实部署中的测试会消耗账号额度；页面内的对话刷新后清空。
 
-「自动任务」展示六类任务的实际开关、北京时间排程、运行状态和历史。第一版只允许查看
-和对全部符合条件账号立即执行；禁用任务不能从网页强行运行。只有上游明确返回的奖励才
-显示为已确认奖励，余额差额和缺失值不会当作到账金额。
+![对话测试页面：选择模型并查看流式回答](docs/superpowers/verification/2026-09-16-openai-chat-playground.jpg)
 
-## 数据与配置
+*截图使用模拟回答和演示模型列表，仅展示界面，不是某个真实模型当前可用的证明。*
 
-数据直接保存在 Compose 文件旁的三个目录，不再使用命名卷：
+### 账号与运行状态
 
-- `./runtime/wb2api/auths` → `/app/auths`：账号凭据；
-- `./runtime/wb2api/data` → `/app/data`：账号池状态和任务历史；
-- `./runtime/wb2api/keys` → `/run/wb2a`：管理、API、桥接密钥，console 只读挂载。
+“运行概览”展示账号总数、可用状态、冷却情况和当前请求；“账号管理”用于浏览器授权，并查看账号最近观测到的积分、调用成功与错误记录。
 
-普通重启和重建会复用这些目录，首次启动自动创建。不要删除或用空目录替代已有数据。
-`runtime/` 已被 Git 忽略，也不会进入镜像构建上下文；备份和搬迁时需要单独保存整个目录。
-Compose 的环境配置默认只保留时区，密钥注释按需启用；留空或不配置时自动生成并持久保存：
+### 自动任务
+
+集中查看签到、猫猫旅行、活跃上报、Token 保活、开学季、夜猫子六类任务的开关、北京时间排程和执行历史。可手动执行已启用任务，查看账号结果与脱敏日志摘要。
+
+![桌面端自动任务执行记录与详情](docs/superpowers/verification/2026-09-15-overlay-task-console-desktop.jpg)
+
+*截图来自隔离测试环境，包含模拟账号，不代表真实奖励到账。*
+
+任务是否可用、账号是否符合条件以及是否获得奖励，取决于上游平台与活动规则。保活等维护任务不等同于积分奖励；页面目前用于查看与执行，不提供修改排程或开关的功能。“立即执行”覆盖全部符合条件账号，不能强行运行已禁用任务。
+
+### 手机端查看
+
+控制台支持窄屏布局，方便在手机上查看状态和任务。
+
+![手机端自动任务页面](docs/superpowers/verification/2026-09-15-overlay-task-console-mobile.jpg)
+
+*手机端测试截图；示例任务时间和开关不是所有部署的默认配置。*
+
+## 密钥与数据
+
+默认自动生成管理密钥、API Key 和内部通信密钥，重启后复用。管理密钥用于登录网页，API Key 用于接口调用，两者不同。
+
+如需自定义，在 Compose 的 **core 和 console 两个服务中**填写并取消相应注释，同名密钥保持一致：
 
 ```yaml
 environment:
@@ -76,174 +117,29 @@ environment:
   # WB2A_API_KEY: ""
 ```
 
-自动生成的基础密钥保存在 `runtime/wb2api/keys/keys.json`，不会生成 `.env`。
-环境变量只覆盖当前生效值，不改写持久化基础密钥；移除覆盖后恢复使用基础密钥。
-备份时请同时保存实际部署的 YAML 和 `runtime/`。填写真实密钥后不要公开或提交该 YAML。
-Compose 不从 `.env` 或宿主环境传入密钥，直接在 YAML 中按需配置即可。
+不配置或留空的项使用自动生成的值。手动配置不改写基础密钥，取消配置后恢复基础值；默认 Compose 不从 `.env` 读取密钥。
 
-镜像完整标签、端口、时区和挂载目录均在 Compose 中写固定值，不读取
-`WB2A_VERSION`、`WB2A_PORT` 或存储路径环境变量。需要调整时直接编辑 Compose。
-core 模式、容器监听端口、内部路径和 console 到 core 的连接参数均内置在镜像中。
-公网部署应由 HTTPS 反向代理转发到 console，并在 console 的 `environment` 中添加
-`WB2A_PUBLIC_ORIGIN`，设为浏览器实际
-访问的完整 origin（不能带路径）。管理密钥至少 32 字节；公共 API Key 须非空且与管理密钥不同。
-两个服务必须使用同一组 `WB2A_ADMIN_KEY`/`WB2A_API_KEY` 覆盖，不能只在 core 的
-`config.json` 中设置一个不同 API Key。
+运行数据保存在部署目录中的 `runtime/wb2api/`：
 
-成品镜像内置默认空配置，无需宿主配置文件。源码构建版固定只读挂载
-`./deploy/default-config.json`，不读取 `WB2A_CONFIG_FILE`。
+| 子目录 | 内容 |
+| --- | --- |
+| `auths/` | 已授权账号凭据 |
+| `data/` | 账号状态与任务历史 |
+| `keys/` | 自动生成的密钥 |
 
-需要自定义配置时，将 JSON 保存到 `./runtime/wb2api/config.json`，额外取得
-`deploy/compose.config.yml` 并显式启用只读挂载（路径相对第一个 Compose 文件）：
+普通重启和容器重建不会清空这些目录。备份时保存整个目录和实际使用的 Compose 文件，不要公开上传凭据或备份。
 
-```sh
-docker compose -f docker-compose.yml -f deploy/compose.config.yml up -d
-```
+## 使用边界
 
-默认部署仍只需一个 Compose 文件；额外文件仅用于自定义配置。原 JSON 只读挂载到
-`/app/config.json`，不会写进镜像或改写；缺失路径、目录或非法 JSON 拒绝启动。后续操作
-同一自定义配置部署须保留相同 `-f` 参数。API Key 覆盖仍必须由两个服务共享。
+- **保护密钥**：console 启动日志会显示管理密钥，不显示 API 或内部通信密钥。不要公开分享日志或含真实密钥的 YAML。
+- **公网使用 HTTPS**：通过反向代理连接 console，并在 console 的 `environment` 中添加 `WB2A_PUBLIC_ORIGIN: "https://你的域名"`，不要带路径。
+- **积分仅供观察**：待确认不等于零，余额差额不等于奖励；仅将上游明确返回的奖励展示为已确认。
+- **遵守平台规则**：仅使用本人授权账号，不向未授权用户开放，不绕过平台验证。模型、额度、活动及服务可用性受上游规则影响。
 
-新镜像和 Compose 均不定义 Docker 健康检查。console 在 core 启动后启动，并等待密钥文件。
-`/livez`、`/healthz` 接口仍可手动诊断：空账号时分别返回 200、503，不会自动定时访问。
+## 开发与来源
 
-## 验证与源码维护
+本项目基于 [Sliverkiss/workbuddy2api](https://github.com/Sliverkiss/workbuddy2api)，在保留上游来源和许可的基础上增加独立 Web 控制台及 Docker 部署能力。
 
-完整本地检查（不发布镜像）：
+架构、开发、测试、上游更新和镜像发布说明见 [AGENTS.md](AGENTS.md)。源码构建入口保留在 [docker-compose.build.yaml](docker-compose.build.yaml)。
 
-```sh
-python3 -m unittest discover -s scripts -p 'test_*.py' -v
-python3 -m unittest discover -s deploy -p 'test_*.py' -v
-bash scripts/check.sh
-docker compose config --quiet
-docker compose -f docker-compose.build.yaml build
-bash scripts/acceptance.sh
-git diff --check
-```
-
-`scripts/check.sh` 在新的物化目录运行 Go 测试、vet、竞态测试以及 console、Node、Python
-测试。`scripts/acceptance.sh` 先用仅有 Compose 的临时目录验证镜像启动，再检查隔离 mock
-项目和有标签的临时卷，不读取本机已登录
-账号，也不执行真实 OAuth、模型消费或领奖。
-
-如果当前 Docker 主机只有显式代理才能构建，应由操作者在命令中传入，不要写成仓库
-默认值。例如本机 Docker Desktop 可使用：
-
-```sh
-docker compose -f docker-compose.build.yaml build \
-  --build-arg HTTP_PROXY=http://host.docker.internal:7890 \
-  --build-arg HTTPS_PROXY=http://host.docker.internal:7890
-WB2A_BUILD_HTTP_PROXY=http://host.docker.internal:7890 \
-WB2A_BUILD_HTTPS_PROXY=http://host.docker.internal:7890 \
-  bash scripts/acceptance.sh
-```
-
-## 手动更新上游
-
-更新必须显式指定 ref。工具在临时候选目录应用当前扩展/补丁并完成检查和隔离验收；成功
-只修改 `upstream/` 和 `upstream.lock`，不会提交、推送、发布镜像或部署：
-
-```sh
-python3 scripts/overlay.py update --ref COMMIT_OR_TAG
-git diff -- upstream upstream.lock
-git diff -- patches extensions deploy console scripts
-git add upstream upstream.lock
-git commit -m "build: update pinned upstream"
-```
-
-先审阅候选 diff 和提交，再由操作者明确从源码部署，或按下一节发布一个新镜像版本：
-
-```sh
-docker compose config --quiet
-docker compose -f docker-compose.build.yaml up -d --build
-```
-
-更新失败时当前快照、锁文件和运行实例保持不变，诊断候选会保留。成功更新的旧
-`upstream/` 与锁文件保存在忽略的 `.upstream-update-backup/`，但正式回退仍应通过 Git
-生成可审阅提交；如果扩展或补丁也变更，必须回退同一组合：
-
-```sh
-git revert --no-commit UPSTREAM_UPDATE_COMMIT
-git diff
-git commit -m "revert: restore previous upstream combination"
-docker compose -f docker-compose.build.yaml up -d --build
-```
-
-回退继续复用现有 auths/data/keys 目录，不删除已有数据。若相关源码有未提交改动，更新
-入口会拒绝覆盖；先提交或另行保存，不要强制清理。
-
-## 手动发布成品镜像
-
-只在发布电脑执行，需要 Bash、Docker Buildx、Python 3、Go、Node、curl。
-先登录阿里云镜像仓库，确保账号有 `cateyes/go` 的推送权限；不要把密码或令牌写进项目：
-
-```sh
-docker login registry.cn-hangzhou.aliyuncs.com
-bash scripts/release.sh
-```
-
-Bash 入口复用 `scripts/release.py`，每次运行自动生成 Unix 秒级时间戳，两个镜像共用。
-也可显式传入一个未使用的时间戳：`bash scripts/release.sh 1789519503`。
-脚本要求构建相关文件已提交，执行回归检查、交叉编译、架构检查和隔离验收后才推送。
-两个镜像都推送成功、回拉并核对镜像 ID 后，才原子更新 `docker-compose.yml` 中两个完整
-镜像标签里的时间戳。请审阅并提交该文件，
-再把它复制到服务器。脚本不会部署、推送 Git 或修改上游，也不会修改服务器密钥。
-
-发布构建仍需拉取 Dockerfile 中的 `golang`/`alpine` 基础镜像；更换成品仓库不会改变
-基础镜像来源。构建会重新解析基础镜像并在镜像内验证 x86_64，防止 ARM 缓存混入。
-需要本机 Docker 构建代理时：
-
-```sh
-WB2A_BUILD_HTTP_PROXY=http://host.docker.internal:7890 \
-WB2A_BUILD_HTTPS_PROXY=http://host.docker.internal:7890 bash scripts/release.sh
-```
-
-这两个变量只传入 Docker 构建步骤，不覆盖主机的 `HTTP_PROXY`/`HTTPS_PROXY`，避免影响
-仓库查询与推送。Docker 后台拉取基础镜像所用代理仍由 Docker 自身配置管理。
-
-脚本在开始和推送前均通过 Docker 检查标签是否已存在；鉴权或网络失败不会被当作标签
-不存在。请串行发布，不要让多个发布者共用同一时间戳；检查与推送不是原子操作，严格的
-并发防覆盖还需要仓库端提供不可变标签策略。脚本不修改仓库权限或标签策略。
-不维护浮动 `latest`。后续每次重新运行脚本生成新时间戳，部署时执行：
-
-```sh
-docker compose pull
-docker compose up -d
-```
-
-两个镜像推送不是原子操作：任一步失败时不切换服务器，不自动删标签；查明原因后使用
-新时间戳重新发布。只有两个镜像都能回拉且匹配本次验收镜像才更新 Compose；该检查使用
-发布者的 Docker 登录状态，不代表匿名可拉取。免登录部署需将仓库设为公开。
-回退时把 Compose 中两个完整镜像标签改回同一已发布旧时间戳再执行上述命令，继续复用原目录；
-自定义配置仍需原 `-f` 参数。
-镜像只包含程序、默认配置和许可，不包含本机账号、密钥或数据卷。
-
-## 开发目录
-
-```text
-upstream/    固定、可校验的上游普通源码快照
-extensions/  注入 core 的新增文件和测试
-patches/     对既有上游文件的有序补丁及维护说明
-console/     独立管理页面、会话和代理服务
-deploy/      两个镜像、Compose 验收和迁移工具
-scripts/     overlay、检查和隔离验收入口
-```
-
-需要查看物化后的 core 时，使用一个尚不存在的输出路径：
-
-```sh
-python3 scripts/overlay.py prepare --output .build/core-review
-go -C .build/core-review test ./...
-```
-
-不要直接修改 `upstream/`，不要把真实 `.env`、`config.json`、`auths/`、`data/` 或密钥
-提交进仓库。
-
-## 安全、合规与许可
-
-本项目是非官方个人网关，仅应使用本人授权账号并遵守目标平台服务条款及所在地法律。
-不得共享凭据、绕过验证或将服务暴露给未授权用户。使用、账号、数据、上游条款和服务
-中断风险由部署者自行承担。
-
-本仓库按根目录 [MIT License](LICENSE) 提供。再分发源码或二进制时须保留许可证、原作者
-版权声明，并注明上游来源 `https://github.com/Sliverkiss/workbuddy2api`。
+遵循 [MIT License](LICENSE)，再分发时请保留原作者版权声明与许可。
