@@ -79,17 +79,15 @@ environment:
 自动生成的基础密钥保存在 `runtime/wb2api/keys/keys.json`，不会生成 `.env`。
 环境变量只覆盖当前生效值，不改写持久化基础密钥；移除覆盖后恢复使用基础密钥。
 备份时请同时保存实际部署的 YAML 和 `runtime/`。填写真实密钥后不要公开或提交该 YAML。
-升级注意：新版 Compose 不再从 `.env` 或宿主环境传入密钥。旧部署若使用 `.env` 自定义密钥，
-请先将原值填入 core 和 console 的对应 YAML 配置，否则会恢复使用持久化的基础密钥。
-精简版 Compose 必须搭配本次发布的新镜像，不能仅删除旧部署的环境参数。
+Compose 不从 `.env` 或宿主环境传入密钥，直接在 YAML 中按需配置即可。
 
-镜像完整标签、端口、时区和挂载目录均在 Compose 中写固定值，不读取旧的
+镜像完整标签、端口、时区和挂载目录均在 Compose 中写固定值，不读取
 `WB2A_VERSION`、`WB2A_PORT` 或存储路径环境变量。需要调整时直接编辑 Compose。
 core 模式、容器监听端口、内部路径和 console 到 core 的连接参数均内置在镜像中。
 公网部署应由 HTTPS 反向代理转发到 console，并在 console 的 `environment` 中添加
 `WB2A_PUBLIC_ORIGIN`，设为浏览器实际
-访问的完整 origin（不能带路径）。管理密钥至少 32 个字符；公共 API Key 可沿用原非空
-值。两个服务必须使用同一组 `WB2A_ADMIN_KEY`/`WB2A_API_KEY` 覆盖，不能只在 core 的
+访问的完整 origin（不能带路径）。管理密钥至少 32 字节；公共 API Key 须非空且与管理密钥不同。
+两个服务必须使用同一组 `WB2A_ADMIN_KEY`/`WB2A_API_KEY` 覆盖，不能只在 core 的
 `config.json` 中设置一个不同 API Key。
 
 成品镜像内置默认空配置，无需宿主配置文件。源码构建版固定只读挂载
@@ -108,31 +106,6 @@ docker compose -f docker-compose.yml -f deploy/compose.config.yml up -d
 
 新镜像和 Compose 均不定义 Docker 健康检查。console 在 core 启动后启动，并等待密钥文件。
 `/livez`、`/healthz` 接口仍可手动诊断：空账号时分别返回 200、503，不会自动定时访问。
-当前 Compose 已固定到通过验收的 `1789523951` 镜像，包含权限初始化脚本且无内置健康检查。
-旧标签 `1789520619` 不支持此启动方式，不能直接配合删除 init 的 Compose 用于全新部署。
-
-## 旧部署迁移
-
-先只读解析旧容器实际使用的挂载，不能根据项目名猜卷名：
-
-```sh
-python3 deploy/migrate.py inspect --container OLD_CONTAINER > /tmp/wb2a-migration.json
-python3 deploy/migrate.py backup \
-  --manifest /tmp/wb2a-migration.json \
-  --output /ABSOLUTE/NEW/BACKUP/DIRECTORY
-```
-
-运行中备份会明确标为非最终一致。正式切换前应确认维护窗口、停止已核实的旧实例（不删
-卷），再生成并校验最终一致性备份。**旧命名卷不会自动迁移到新目录**，原 `.env` 中的
-卷名也不再生效。应按备份清单另行迁移 auths/data/keys 到 `runtime/wb2api` 的对应目录，
-保留文件内容和 UID 10001 的读写权限；或者先在 Compose 中明确保留旧挂载，不能直接
-启动空目录替代原数据。宿主端口直接改 Compose；有旧自定义配置时按上一节显式挂载。
-若旧 `api_key` 与持久密钥不同，必须显式设置共享
-`WB2A_API_KEY`；不要删掉配置来绕过冲突。挂载、备份或密钥发生冲突时必须停止，
-不能生成空数据继续。
-
-旧 `console-keys.json` 保持原字节不变；新布局会复用原管理/API Key 并新增桥接密钥。
-网页会话和进行中的 OAuth 流程在重建后失效，已保存账号不会因此丢失。
 
 ## 验证与源码维护
 
