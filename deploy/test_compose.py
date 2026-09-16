@@ -33,19 +33,23 @@ class ProductionConfigTest(unittest.TestCase):
         for name in ("core", "console"):
             service = config["services"][name]
             self.assertNotIn("build", service, "runtime must not build images")
-            self.assertEqual(service["image"], f"baiyea/workbuddy2api-{name}:0.1.0")
+            tag = "core" if name == "core" else "webui"
+            self.assertRegex(service["image"], rf"^registry\.cn-hangzhou\.aliyuncs\.com/cateyes/go:wb2api-{tag}-[1-9][0-9]{{9}}$")
             self.assertEqual(service["platform"], "linux/amd64")
             self.assertTrue(all(m["type"] == "volume" for m in service["volumes"]))
             self.assertEqual(service["environment"]["WB2A_API_KEY"], "mock-shared-api")
         self.assertNotIn("ports", config["services"]["core"])
         self.assertEqual(len(config["services"]["console"]["ports"]), 1)
+        self.assertEqual(config["services"]["core"]["image"].rsplit("-", 1)[1],
+                         config["services"]["console"]["image"].rsplit("-", 1)[1])
 
     def test_runtime_uses_fixed_repositories_and_one_version(self):
-        config = self.config(overrides={"WB2A_VERSION": "0.2.0",
+        config = self.config(overrides={"WB2A_VERSION": "1789519600",
                                       "WB2A_CORE_IMAGE": "other/core:old",
                                       "WB2A_CONSOLE_IMAGE": "other/console:new"})
         for name in ("core", "console"):
-            self.assertEqual(config["services"][name]["image"], f"baiyea/workbuddy2api-{name}:0.2.0")
+            tag = "core" if name == "core" else "webui"
+            self.assertEqual(config["services"][name]["image"], f"registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-{tag}-1789519600")
 
     def test_source_build_entry_preserves_config_and_runtime_topology(self):
         build_file = ROOT / "docker-compose.build.yaml"

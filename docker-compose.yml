@@ -1,6 +1,6 @@
 services:
   core:
-    image: baiyea/workbuddy2api-core:${WB2A_VERSION:-0.1.0}
+    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-core-${WB2A_VERSION:-1789519503}
     platform: linux/amd64
     restart: unless-stopped
     environment:
@@ -23,7 +23,7 @@ services:
       retries: 3
 
   console:
-    image: baiyea/workbuddy2api-console:${WB2A_VERSION:-0.1.0}
+    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-webui-${WB2A_VERSION:-1789519503}
     platform: linux/amd64
     restart: unless-stopped
     environment:

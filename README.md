@@ -18,8 +18,10 @@ docker compose up -d
 docker compose logs console
 ```
 
-Compose 从 Docker Hub 拉取公开镜像 `baiyea/workbuddy2api-core:0.1.0` 和
-`baiyea/workbuddy2api-console:0.1.0`，不会构建。首次拉取需要能访问 Docker Hub，无需登录。
+Compose 从阿里云仓库 `registry.cn-hangzhou.aliyuncs.com/cateyes/go` 拉取
+`wb2api-core-<时间戳>` 和 `wb2api-webui-<时间戳>`，不会构建。两个镜像使用相同时间戳。
+仓库若为私有，服务器需先执行 `docker login registry.cn-hangzhou.aliyuncs.com`。
+首次发布前的 `1789519503` 是命名示例，不代表本项目已完成发布；请使用成功发布后的 Compose。
 只有 console 映射宿主机端口，
 默认访问 `http://服务器地址:7863/`；两个服务都以 UID 10001 运行。首次启动时 core
 生成彼此独立的管理、公共 API 和内部桥接密钥，console 日志只显示需要交给管理员的
@@ -57,7 +59,8 @@ docker compose -f docker-compose.build.yaml up -d --build
 
 ```dotenv
 WB2A_PORT=7863
-WB2A_VERSION=0.1.0
+# 可选：固定到已发布的时间戳；不设置则使用 Compose 默认值
+# WB2A_VERSION=1789519503
 WB2A_BIND_ADDRESS=0.0.0.0
 WB2A_PUBLIC_ORIGIN=
 WB2A_ADMIN_KEY=
@@ -178,30 +181,34 @@ docker compose -f docker-compose.build.yaml up -d --build
 
 ## 手动发布成品镜像
 
-只在发布电脑执行，需要 Docker Buildx、Python 3、Go、Node、curl，以及已登录的
-Docker Hub `baiyea` 账号。不要把密码或令牌写进项目：
+只在发布电脑执行，需要 Bash、Docker Buildx、Python 3、Go、Node、curl。
+先登录阿里云镜像仓库，确保账号有 `cateyes/go` 的推送权限；不要把密码或令牌写进项目：
 
 ```sh
-docker login -u baiyea
-python3 scripts/release.py 0.1.0
+docker login registry.cn-hangzhou.aliyuncs.com
+bash scripts/release.sh
 ```
 
-发布脚本要求构建相关文件已提交，执行回归检查、交叉编译、镜像架构检查和隔离验收后，
-才推送两个同版本的公开镜像；不会部署、推送 Git 或修改上游。发布构建会重新解析基础
-镜像，镜像内也验证 x86_64，防止 ARM 本地缓存混入。需要本机 Docker 构建代理时：
+Bash 入口复用 `scripts/release.py`，每次运行自动生成 Unix 秒级时间戳，两个镜像共用。
+也可显式传入一个未使用的时间戳：`bash scripts/release.sh 1789519503`。
+脚本要求构建相关文件已提交，执行回归检查、交叉编译、架构检查和隔离验收后才推送。
+两个镜像都推送成功、回拉并核对镜像 ID 后，才原子更新 `docker-compose.yml` 中的两个默认
+时间戳；请审阅并提交该文件，再把它复制到服务器。脚本不会部署、推送 Git 或修改上游，
+也不会修改服务器 `.env`；若其中固定了 `WB2A_VERSION`，需自行更新或移除这个覆盖值。
+
+发布构建仍需拉取 Dockerfile 中的 `golang`/`alpine` 基础镜像；更换成品仓库不会改变
+基础镜像来源。构建会重新解析基础镜像并在镜像内验证 x86_64，防止 ARM 缓存混入。
+需要本机 Docker 构建代理时：
 
 ```sh
 HTTP_PROXY=http://host.docker.internal:7890 \
-HTTPS_PROXY=http://host.docker.internal:7890 python3 scripts/release.py 0.1.0
+HTTPS_PROXY=http://host.docker.internal:7890 bash scripts/release.sh
 ```
 
-发布前，在 Docker Hub 创建两个公开仓库，并在各自 Settings → General → Tag mutability
-中选择 **All tags are immutable**（[官方说明](https://docs.docker.com/docker-hub/repos/manage/hub-images/immutable-tags/)）。
-脚本在开始和推送前均检查版本是否已存在，但检查与推送不是原子操作；只有仓库端的不可变
-标签能阻止并发发布覆盖版本。未开启时不要发布；脚本不会自动修改或验证该账号设置。
-
-不维护浮动 `latest`。后续使用新版本号；将运行 Compose 的默认
-版本同步到新版本，或在服务器 `.env` 设置 `WB2A_VERSION` 后执行：
+脚本在开始和推送前均通过 Docker 检查标签是否已存在；鉴权或网络失败不会被当作标签
+不存在。请串行发布，不要让多个发布者共用同一时间戳；检查与推送不是原子操作，严格的
+并发防覆盖还需要仓库端提供不可变标签策略。脚本不修改仓库权限或标签策略。
+不维护浮动 `latest`。后续每次重新运行脚本生成新时间戳，部署时执行：
 
 ```sh
 docker compose pull
@@ -209,8 +216,10 @@ docker compose up -d
 ```
 
 两个镜像推送不是原子操作：任一步失败时不切换服务器，不自动删标签；查明原因后使用
-新版本重新发布。只有两个镜像都公开可拉取才算发布完成。回退时把 `WB2A_VERSION`
-改回已发布旧版本再执行上述命令，继续复用原数据卷；自定义配置仍需原 `-f` 参数。
+新时间戳重新发布。只有两个镜像都能回拉且匹配本次验收镜像才更新 Compose；该检查使用
+发布者的 Docker 登录状态，不代表匿名可拉取。免登录部署需将仓库设为公开。
+回退时把 `WB2A_VERSION` 改回已发布旧时间戳再执行上述命令，继续复用原数据卷；
+自定义配置仍需原 `-f` 参数。
 镜像只包含程序、默认配置和许可，不包含本机账号、密钥或数据卷。
 
 ## 开发目录
