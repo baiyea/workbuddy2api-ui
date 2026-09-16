@@ -18,7 +18,7 @@ test('malformed SSE cancels the live request and restores controls', async () =>
   let signal;
   const ctx = {
     document: {getElementById:get, querySelectorAll:()=>[], createElement:element},
-    location:{origin:'http://console.test'}, AbortController, TextDecoder,
+    location:{origin:'http://console.test'}, AbortController, TextDecoder, Option:function(text,value){return {textContent:text,value};},
     setInterval(){}, clearTimeout(){},
     fetch:async (url, options) => {
       if (url !== '/admin/chat') throw new Error('not used');
@@ -82,10 +82,11 @@ function taskFixture(fetch, cryptoImpl={randomUUID:()=> '11111111-2222-4333-8444
   function element(tag='div') {
     return {tagName:tag.toUpperCase(),value:'',type:'',hidden:false,disabled:false,textContent:'',className:'',children:[],dataset:{},handlers:{},
       addEventListener(name,fn){this.handlers[name]=fn;},append(...children){this.children.push(...children);},appendChild(child){this.children.push(child);return child;},
-      replaceChildren(...children){this.children=children;},querySelector(){return null;},scrollIntoView(){},select(){}};
+      replaceChildren(...children){this.children=children;},setAttribute(name,value){this[name]=value;},insertBefore(child){this.children.unshift(child);},querySelector(){return null;},scrollIntoView(){},select(){}};
   }
   const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
-  const ctx=vm.createContext({document:{getElementById:get,querySelectorAll:()=>[],createElement:element,hidden:false,handlers:{},addEventListener(name,fn){this.handlers[name]=fn;}},
+  const protocolButtons=['access-openai','access-anthropic','chat-openai','chat-anthropic'].map(id=>{const button=get(id);button.dataset.protocol=id.split('-')[1];return button;});
+  const ctx=vm.createContext({document:{getElementById:get,querySelectorAll:selector=>selector==='[data-protocol]'?protocolButtons:[],createElement:element,hidden:false,handlers:{},addEventListener(name,fn){this.handlers[name]=fn;}},
     location:{origin:'http://console.test'},AbortController,TextDecoder,TextEncoder,Option:function(text,value){return {textContent:text,value};},
     setInterval(){},clearTimeout(){},setTimeout(){},fetch,crypto:cryptoImpl,navigator:{clipboard:{writeText:async()=>{}}}});
   vm.runInContext(readFileSync(__dirname+'/web/app.js','utf8'),ctx);
@@ -401,4 +402,134 @@ test('a current-session 401 still clears local authentication', async () => {
   assert.equal(get('api-key').value,'');
   assert.equal(get('console-view').hidden,true);
   assert.equal(get('login-view').hidden,false);
+});
+
+function chatFixture(chunks, status=200) {
+  const requests=[];
+  const fixture=taskFixture(async (url,options)=>{
+    if(url==='/admin/session'||url==='/admin/status')return new Promise(()=>{});
+    requests.push({url,...options});
+    let index=0;
+    return {ok:status===200,status,json:async()=>({error:{message:'安全错误'}}),body:{getReader:()=>({read:async()=>index<chunks.length?{value:chunks[index++],done:false}:{done:true}})}};
+  });
+  fixture.get('model').value='global:claude-sonnet-4.6';
+  fixture.get('access-model').value='global:claude-sonnet-4.6';
+  fixture.get('max-tokens').value='1024';
+  fixture.submit=()=>{fixture.get('prompt').value='你好';return fixture.get('chat-form').handlers.submit({preventDefault(){}});};
+  return {...fixture,requests};
+}
+const sse=(...parts)=>new TextEncoder().encode(parts.map(part=>'data: '+(typeof part==='string'?part:JSON.stringify(part))+'\r\n\r\n').join(''));
+const textDelta={type:'content_block_delta',delta:{type:'text_delta',text:'你好世界'}};
+const stopMessage={type:'message_stop'};
+
+test('protocol buttons synchronize, preserve same-protocol history and generate safe real-model access examples', async()=>{
+  const {ctx,get}=taskFixture(()=>new Promise(()=>{}));
+  assert.equal(get('base-url').value,'http://console.test/v1');
+  assert.equal(get('api-endpoint').value,'http://console.test/v1/chat/completions');
+  assert.equal(get('copy-example').disabled,true);
+  assert.equal(get('go-chat').disabled,true);
+  vm.runInContext("modelList=[{id:'global:real-model'}];history=[{role:'user',content:'old'}]",ctx);
+  get('access-model').value='global:real-model';get('api-key').value='never-copy-this-secret';
+  get('access-anthropic').handlers.click();
+  assert.equal(vm.runInContext('history.length',ctx),0);
+  assert.equal(get('base-url').value,'http://console.test');
+  assert.equal(get('api-endpoint').value,'http://console.test/v1/messages');
+  assert.match(get('api-example').textContent,/anthropic-version: 2023-06-01/);
+  assert.match(get('api-example').textContent,/global:real-model/);
+  assert.doesNotMatch(get('api-example').textContent,/never-copy-this-secret/);
+  assert.equal(get('effort').hidden,true);assert.equal(get('max-tokens').hidden,false);
+  assert.equal(get('chat-anthropic')['aria-pressed'],'true');
+  const conversation=vm.runInContext('conversation',ctx);
+  vm.runInContext("history=[{role:'user',content:'keep'}]",ctx);
+  get('chat-anthropic').handlers.click();assert.equal(vm.runInContext('history.length',ctx),1);
+  assert.equal(vm.runInContext('conversation',ctx),conversation);
+  let copied;ctx.navigator.clipboard.writeText=async value=>{copied=value;};
+  await get('copy-example').handlers.click();assert.equal(copied,get('api-example').textContent);
+  get('go-chat').handlers.click();assert.equal(vm.runInContext('page',ctx),'chat');assert.equal(get('model').value,'global:real-model');
+  get('prompt').value='private draft';get('usage').textContent='private stream error';
+  vm.runInContext('signedOut()',ctx);assert.equal(vm.runInContext('protocol',ctx),'openai');assert.equal(get('api-key').value,'');assert.equal(get('prompt').value,'');assert.equal(get('usage').textContent,'用量将在上游返回后显示');
+});
+
+test('Anthropic fragmented UTF8 stream uses management envelope and preserves real usage and multi-turn text', async()=>{
+  const bytes=sse(textDelta,{type:'message_delta',usage:{input_tokens:0,output_tokens:2}},stopMessage);
+  const {ctx,get,requests,submit}=chatFixture(Array.from(bytes,byte=>new Uint8Array([byte])));
+  vm.runInContext("setProtocol('anthropic')",ctx);get('effort').value='high';get('max-tokens').value='9000';
+  await submit();
+  assert.equal(requests[0].url,'/admin/messages');
+  const body=JSON.parse(requests[0].body);
+  assert.ok(body.conversation_id.startsWith('web-'));
+  assert.deepEqual(body.request,{model:'global:claude-sonnet-4.6',max_tokens:9000,messages:[{role:'user',content:'你好'}],stream:true});
+  assert.equal(vm.runInContext('history[1].content',ctx),'你好世界');assert.match(get('usage').textContent,/输入 0 · 输出 2/);
+  await submit();assert.equal(JSON.parse(requests[1].body).request.messages.length,3);
+});
+
+test('Anthropic unknown usage, stream error and premature EOF never invent completion or usage', async()=>{
+  for(const [parts,success,usageText] of [
+    [[textDelta,{type:'message_delta',usage:{input_tokens:null,output_tokens:null}},stopMessage],true,'上游未返回用量'],
+    [[textDelta,{type:'message_delta',usage:{input_tokens:null,output_tokens:0}},stopMessage],true,'输入 — · 输出 0'],
+    [[textDelta,{type:'error',error:{message:'安全的上游错误'}}],false,'安全的上游错误'],
+    [[textDelta],false,'响应提前中断'],
+    [[textDelta,'[DONE]'],false,'响应提前中断']]) {
+    const {ctx,get,requests,submit}=chatFixture([sse(...parts)]);vm.runInContext("setProtocol('anthropic')",ctx);await submit();
+    assert.equal(vm.runInContext('history.length',ctx),success?2:0);assert.ok(get('usage').textContent.includes(usageText));assert.ok(requests[0].signal.aborted);
+    assert.equal(get('effort').disabled,true);assert.equal(get('model').disabled,false);
+  }
+});
+
+test('Anthropic validates only safe positive integers; OpenAI retains reasoning, tools and DONE behavior', async()=>{
+  for(const value of ['','0','-1','1.5','9007199254740992']) {
+    const {ctx,get,requests,submit}=chatFixture([]);vm.runInContext("setProtocol('anthropic')",ctx);get('max-tokens').value=value;await submit();assert.equal(requests.length,0,value);assert.match(get('notice').textContent,/正整数/);
+  }
+  const {ctx,get,requests,submit}=chatFixture([sse({choices:[{delta:{content:'answer',reasoning_content:'reason',tool_calls:[{index:0,function:{name:'tool',arguments:'{}'}}]}}]},'[DONE]')]);
+  get('max-tokens').value='invalid';get('effort').value='high';await submit();
+  assert.equal(requests[0].url,'/admin/chat');assert.equal(JSON.parse(requests[0].body).reasoning_effort,'high');assert.equal(vm.runInContext('history[1].content',ctx),'answer');assert.match(get('messages').children[1].children.at(-1).textContent,/仅展示，不执行/);
+});
+
+test('active requests lock both protocols and models, ignore refresh, and stop without success history', async()=>{
+  let finishRead,signal;
+  const {ctx,get}=taskFixture(async(url,options)=>{
+    if(url==='/admin/session'||url==='/admin/status')return new Promise(()=>{});
+    if(url==='/admin/models')return {ok:true,status:200,json:async()=>({data:[{id:'replacement'}]})};
+    signal=options.signal;return {ok:true,status:200,body:{getReader:()=>({read:()=>new Promise(resolve=>{finishRead=resolve;})})}};
+  });
+  vm.runInContext("modelList=[{id:'old',reasoning_supported_efforts:['high']}];setProtocol('anthropic')",ctx);
+  get('model').value='old';get('access-model').value='old';get('max-tokens').value='1024';get('prompt').value='hello';
+  const pending=get('chat-form').handlers.submit({preventDefault(){}});await new Promise(resolve=>setImmediate(resolve));
+  for(const id of ['model','access-model','clear-chat','chat-openai','access-anthropic'])assert.equal(get(id).disabled,true,id);
+  get('chat-openai').handlers.click();assert.equal(vm.runInContext('protocol',ctx),'anthropic');
+  await vm.runInContext('refreshModels()',ctx);assert.equal(get('model').value,'old');assert.equal(get('access-model').value,'old');
+  get('stop-chat').handlers.click();assert.ok(signal.aborted);finishRead({done:true});await pending;
+  assert.equal(vm.runInContext('history.length',ctx),0);assert.equal(get('usage').textContent,'已停止生成');
+  get('chat-openai').handlers.click();assert.equal(get('effort').disabled,false);
+});
+
+test('Anthropic authentication expiry resets protocol and browser secrets', async()=>{
+  const {ctx,get,submit}=chatFixture([],401);vm.runInContext("setProtocol('anthropic')",ctx);get('api-key').value='private';await submit();
+  assert.equal(vm.runInContext('protocol',ctx),'openai');assert.equal(vm.runInContext('history.length',ctx),0);assert.equal(get('api-key').value,'');assert.equal(get('console-view').hidden,true);
+});
+
+test('an empty Anthropic text response does not fabricate a tool call in history', async()=>{
+  const {ctx,submit}=chatFixture([sse(stopMessage)]);vm.runInContext("setProtocol('anthropic')",ctx);await submit();
+  assert.equal(vm.runInContext('history[1].content',ctx),'');
+});
+
+test('refresh populates both model selects from server data, preserves choices and disables empty access', async()=>{
+  let models=[{id:'global:first'},{id:'global:second'}];
+  const {ctx,get}=taskFixture(url=>url==='/admin/models'?Promise.resolve({ok:true,status:200,json:async()=>({data:models})}):new Promise(()=>{}));
+  vm.runInContext("accounts=[{realm:'global'}]",ctx);
+  await vm.runInContext('refreshModels()',ctx);
+  assert.deepEqual(get('access-model').children.map(option=>option.value),models.map(model=>model.id));
+  get('access-model').value='global:second';get('access-model').handlers.change();
+  assert.match(get('api-example').textContent,/global:second/);
+  await vm.runInContext('refreshModels()',ctx);assert.equal(get('access-model').value,'global:second');assert.equal(get('model').value,'global:first');
+  models=[];await vm.runInContext('refreshModels()',ctx);assert.equal(get('copy-example').disabled,true);assert.equal(get('go-chat').disabled,true);
+});
+
+test('access curl quotes JSON model strings without executing shell metacharacters',()=>{
+  const {ctx,get}=taskFixture(()=>new Promise(()=>{}));
+  const model='global:quote\'$(not-executed)"';ctx.actualModel=model;
+  vm.runInContext('modelList=[{id:actualModel}]',ctx);get('access-model').value=model;vm.runInContext('renderAccess()',ctx);
+  const quoted=get('api-example').textContent.split("  -d '")[1].slice(0,-1);
+  assert.equal(JSON.parse(quoted.replace(/'\\''/g,"'")).model,model);
+  assert.ok(quoted.includes("'\\''"));
 });

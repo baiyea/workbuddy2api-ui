@@ -122,6 +122,22 @@ func TestAdminBrowserPreview(t *testing.T) {
 				}
 			}
 			fmt.Fprint(w, "data: {\"choices\":[{\"index\":0,\"delta\":{},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":5,\"completion_tokens\":20,\"total_tokens\":25}}\n\ndata: [DONE]\n\n")
+		case r.URL.Path == "/internal/v1/messages":
+			inFlight.Add(1)
+			defer inFlight.Add(-1)
+			w.Header().Set("Content-Type", "text/event-stream")
+			fmt.Fprint(w, "event: message_start\ndata: {\"type\":\"message_start\",\"message\":{\"id\":\"msg_mock\",\"type\":\"message\",\"role\":\"assistant\",\"model\":\"mock-model\",\"content\":[],\"stop_reason\":null,\"stop_sequence\":null,\"usage\":{\"input_tokens\":null,\"output_tokens\":null}}}\n\nevent: content_block_start\ndata: {\"type\":\"content_block_start\",\"index\":0,\"content_block\":{\"type\":\"text\",\"text\":\"\"}}\n\n")
+			for _, part := range []string{"你好！", "这是 Anthropic 协议的模拟回答。", "文本与流式交互已连通。"} {
+				fmt.Fprintf(w, "event: content_block_delta\ndata: {\"type\":\"content_block_delta\",\"index\":0,\"delta\":{\"type\":\"text_delta\",\"text\":%q}}\n\n", part)
+				w.(http.Flusher).Flush()
+				select {
+				case <-r.Context().Done():
+					t.Log("mock messages canceled: browser disconnect propagated to core")
+					return
+				case <-time.After(3 * time.Second):
+				}
+			}
+			fmt.Fprint(w, "event: content_block_stop\ndata: {\"type\":\"content_block_stop\",\"index\":0}\n\nevent: message_delta\ndata: {\"type\":\"message_delta\",\"delta\":{\"stop_reason\":\"end_turn\",\"stop_sequence\":null},\"usage\":{\"input_tokens\":null,\"output_tokens\":null}}\n\nevent: message_stop\ndata: {\"type\":\"message_stop\"}\n\n")
 		case r.Method == "GET" && r.URL.Path == "/internal/v1/tasks":
 			mu.Lock()
 			defer mu.Unlock()

@@ -1,6 +1,7 @@
 const $ = (id) => document.getElementById(id);
 let csrf = '', modelList = [], accounts = [], history = [], conversation = newConversation(), activeRequest, flowID, flowTimer;
 let page = 'overview', sessionGeneration = 0;
+let protocol = 'openai';
 let taskState = {items:[],active_run:null,latest_runs:[]}, taskHistory = [], taskBefore = null, taskStarting = false, taskPollTimer, taskRenderKey, detailController, detailGeneration = 0;
 let selectedTaskRun, historyGeneration = 0, historyLoading = false, taskHistoryKey;
 const taskIntents = new Map(), taskReads = new Set();
@@ -25,21 +26,23 @@ function signedOut() {
  sessionGeneration++;
  csrf = ''; activeRequest?.abort(); clearTimeout(flowTimer); flowID = undefined; history = []; conversation = newConversation(); stopTaskReads(); taskIntents.clear(); taskState={items:[],active_run:null,latest_runs:[]};taskHistory=[];taskBefore=null;taskStarting=false;taskRenderKey=undefined;
  $('messages').replaceChildren();$('task-list').replaceChildren();$('task-history-body').replaceChildren();$('task-detail').hidden=true;$('task-accounts').textContent='';$('task-log').textContent=''; $('api-key').value = ''; $('api-key').type = 'password'; $('admin-key').value = ''; $('console-view').hidden = true; $('login-view').hidden = false;
+ protocol='openai';$('prompt').value='';$('max-tokens').value='1024';$('usage').textContent='用量将在上游返回后显示';renderAccess();
 }
 async function signedIn(session) {
  csrf = session.csrf; $('admin-key').value = ''; $('login-view').hidden = true; $('console-view').hidden = false;
  $('realm').querySelector('[value="global"]').disabled = !session.global_enabled;
  await refreshStatus(); await refreshModels();
 }
-document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
- if (page === 'tasks' && button.dataset.view !== 'tasks') stopTaskReads(true);
- page = button.dataset.view;
+function showPage(value) {
+ if (page === 'tasks' && value !== 'tasks') stopTaskReads(true);
+ page = value;
  document.querySelectorAll('[data-page]').forEach(el => el.hidden = el.dataset.page !== page);
  document.querySelectorAll('.nav').forEach(el => el.classList.toggle('active', el.dataset.view === page));
  $('breadcrumb-name').textContent = {overview:'运行概览',accounts:'账号管理',tasks:'自动任务',chat:'对话测试',access:'API 接入'}[page];
  if (page !== 'access') { $('api-key').value = ''; $('api-key').type = 'password'; }
  if (page === 'tasks') loadTaskPage();
-}));
+}
+document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.view)));
 $('login-form').addEventListener('submit', async event => {
  event.preventDefault(); const button = event.submitter; button.disabled = true; $('login-error').textContent = '';
  try { const session = await jsonAPI('login', {key:$('admin-key').value}); await signedIn(session); } catch(error) { $('login-error').textContent = error.message; } finally { button.disabled = false; }
@@ -66,15 +69,17 @@ function renderAccounts(data) {
 async function refreshStatus() { try { renderAccounts(await jsonAPI('status')); } catch(e) { notice(e.message); } }
 async function refreshModels() {
  try {
-  const previous=$('model').value; modelList=(await jsonAPI('models')).data||[]; $('model').replaceChildren();
-  for (const model of modelList) { const option=new Option(model.id,model.id);$('model').append(option); }
+  const models=(await jsonAPI('models')).data||[];if(activeRequest)return;
+  const previous=$('model').value,previousAccess=$('access-model').value;modelList=models;$('model').replaceChildren();$('access-model').replaceChildren();
+  for (const model of modelList) { $('model').append(new Option(model.id,model.id));$('access-model').append(new Option(model.id,model.id)); }
   if (modelList.some(m=>m.id===previous)) $('model').value=previous;
   else {const available=modelList.find(m=>accounts.some(a=>m.id.startsWith(`${a.realm||'cn'}:`)));if(available)$('model').value=available.id;}
-  updateEfforts();
+  $('access-model').value=modelList.some(m=>m.id===previousAccess)?previousAccess:$('model').value;
+  updateEfforts();renderAccess();
  } catch(e) { notice(e.message); }
 }
 function updateModelHint() { const realm=$('model').value.startsWith('global:')?'global':'cn'; $('model-hint').textContent=accounts.some(a=>(a.realm||'cn')===realm&&!a.disabled)?'模型列表可能包含静态候选；是否可调用以实际回答为准。':'当前没有此版本的已启用账号，请先添加对应账号。'; }
-function updateEfforts() { const model=modelList.find(m=>m.id===$('model').value);$('effort').replaceChildren(new Option('默认',''));for(const e of model?.reasoning_supported_efforts||[])$('effort').append(new Option(e,e));$('effort').disabled=!model?.reasoning_supported_efforts?.length;updateModelHint(); }
+function updateEfforts() { const model=modelList.find(m=>m.id===$('model').value),previous=$('effort').value;$('effort').replaceChildren(new Option('默认',''));for(const e of model?.reasoning_supported_efforts||[])$('effort').append(new Option(e,e));$('effort').value=model?.reasoning_supported_efforts?.includes(previous)?previous:'';$('effort').disabled=!!activeRequest||protocol==='anthropic'||!model?.reasoning_supported_efforts?.length;updateModelHint(); }
 $('model').addEventListener('change',updateEfforts);
 $('refresh').addEventListener('click',async()=>{await refreshStatus();await refreshModels();});
 setInterval(()=>{if(csrf&&!document.hidden)refreshStatus();},15000);
@@ -216,22 +221,63 @@ function message(role,text){
  el.append(label,content);$('messages').append(el);el.scrollIntoView({block:'nearest'});return{el,content};
 }
 function clearChat(){history=[];conversation=newConversation();$('messages').replaceChildren();$('usage').textContent='用量将在上游返回后显示';}
+function setProtocol(value){
+ if(activeRequest||!['openai','anthropic'].includes(value)||value===protocol)return;
+ protocol=value;clearChat();updateEfforts();renderAccess();
+}
+function renderAccess(){
+ const anthropic=protocol==='anthropic',model=$('access-model').value;
+ document.querySelectorAll('[data-protocol]').forEach(button=>{button.setAttribute('aria-pressed',String(button.dataset.protocol===protocol));button.disabled=!!activeRequest;});
+ $('effort').hidden=$('effort-label').hidden=anthropic;
+ $('max-tokens').hidden=$('max-tokens-label').hidden=!anthropic;
+ $('base-url').value=location.origin+(anthropic?'':'/v1');
+ $('api-endpoint').value=location.origin+(anthropic?'/v1/messages':'/v1/chat/completions');
+ $('api-auth').textContent=anthropic?'x-api-key · anthropic-version: 2023-06-01':'Authorization: Bearer <API Key>';
+ $('protocol-support').textContent=anthropic?'Anthropic · 文本兼容':'OpenAI · Chat Completions';
+ $('protocol-note').textContent=anthropic?'Base URL 使用站点根地址，SDK 会追加 /v1/messages。支持文本、多轮和流式回答；暂不支持图片、工具、thinking，也不承诺 Claude Code 兼容。':'Base URL 包含 /v1，使用兼容 Chat Completions 的客户端连接。';
+ const available=modelList.some(item=>item.id===model);
+ $('copy-example').disabled=!available||!!activeRequest;$('go-chat').disabled=!available||!!activeRequest;
+ if(!available){$('api-example').textContent='暂无可选模型，请先刷新模型列表。';return;}
+ const body={model,...(anthropic?{max_tokens:1024}:{}),messages:[{role:'user',content:'你好'}],stream:true};
+ const auth=anthropic?'  -H "x-api-key: <你的 API Key>" \\\n  -H "anthropic-version: 2023-06-01"':'  -H "Authorization: Bearer <你的 API Key>"';
+ const json=JSON.stringify(body,null,2).replace(/'/g,"'\\''");
+ $('api-example').textContent=`curl ${$('api-endpoint').value} \\\n${auth} \\\n  -H "Content-Type: application/json" \\\n  -d '${json}'`;
+}
+document.querySelectorAll('[data-protocol]').forEach(button=>button.addEventListener('click',()=>setProtocol(button.dataset.protocol)));
+$('access-model').addEventListener('change',renderAccess);
+$('copy-example').addEventListener('click',async()=>{if($('copy-example').disabled)return;try{await navigator.clipboard.writeText($('api-example').textContent);notice('调用示例已复制，请替换 API Key 占位符');}catch{notice('浏览器不允许自动复制，请手动复制下方示例');}});
+$('go-chat').addEventListener('click',()=>{if(activeRequest||$('go-chat').disabled)return;$('model').value=$('access-model').value;updateEfforts();showPage('chat');});
+function chatControls(){
+ for(const id of ['model','access-model','clear-chat','send-chat','max-tokens'])$(id).disabled=!!activeRequest;
+ $('stop-chat').hidden=!activeRequest;
+ renderAccess();
+}
 $('clear-chat').addEventListener('click',()=>{if(activeRequest)return;clearChat();});
 $('stop-chat').addEventListener('click',()=>activeRequest?.abort());
 $('chat-form').addEventListener('submit',async event=>{
  event.preventDefault();if(activeRequest)return;const text=$('prompt').value.trim();if(!text)return;
+ const requestProtocol=protocol,generation=sessionGeneration;
+ if(requestProtocol==='anthropic'&&(!Number.isSafeInteger(Number($('max-tokens').value))||Number($('max-tokens').value)<=0)){notice('最大输出 tokens 必须是安全的正整数');return;}
  notice('');message('user',text);$('prompt').value='';const answer=message('assistant','正在等待模型…');
- const controller=new AbortController();activeRequest=controller;$('send-chat').disabled=true;$('stop-chat').hidden=false;$('clear-chat').disabled=true;
+ const controller=new AbortController();activeRequest=controller;chatControls();$('effort').disabled=true;
  let content='',reasoning='',details,reasonText,usage,finished=false;const tools=new Map();const outgoing=[...history,{role:'user',content:text}];
  try{
   const body={model:$('model').value,messages:outgoing,stream:true,conversationId:conversation};if($('effort').value)body.reasoning_effort=$('effort').value;
-  const response=await api('chat',body,controller.signal);
+  const anthropicBody={model:$('model').value,max_tokens:Number($('max-tokens').value),messages:outgoing,stream:true};
+  const response=requestProtocol==='anthropic'?await api('messages',{conversation_id:conversation,request:anthropicBody},controller.signal):await api('chat',body,controller.signal);
   if(!response.ok){const err=await response.json();throw new Error(err.error?.message||err.error||`HTTP ${response.status}`);}
   const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='';
   const processFrame=frame=>{
    const payload=frame.split('\n').filter(l=>l.startsWith('data:')).map(l=>l.slice(5).trimStart()).join('\n');if(!payload)return;
-   if(payload==='[DONE]'){finished=true;return;}
+   if(payload==='[DONE]'){if(requestProtocol==='openai')finished=true;return;}
    const part=JSON.parse(payload);if(part.error)throw new Error(part.error.message||'上游流式响应发生错误');
+   if(requestProtocol==='anthropic'){
+    if(part.type==='error')throw new Error('上游流式响应发生错误');
+    if(part.type==='content_block_delta'&&part.delta?.type==='text_delta'){content+=part.delta.text||'';answer.content.textContent=content;}
+    if(part.type==='message_delta'&&part.usage)usage=part.usage;
+    if(part.type==='message_stop')finished=true;
+    $('messages').scrollTop=$('messages').scrollHeight;return;
+   }
    const delta=part.choices?.[0]?.delta||{};content+=delta.content||'';
    if(delta.reasoning_content){reasoning+=delta.reasoning_content;if(!details){details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='查看推理内容';reasonText=document.createElement('pre');details.append(summary,reasonText);answer.el.insertBefore(details,answer.content);}reasonText.textContent=reasoning;}
    for(const call of delta.tool_calls||[]){const prev=tools.get(call.index)||{name:'',arguments:''};prev.name+=call.function?.name||'';prev.arguments+=call.function?.arguments||'';tools.set(call.index,prev);}
@@ -240,16 +286,15 @@ $('chat-form').addEventListener('submit',async event=>{
    if(part.usage)usage=part.usage;
    $('messages').scrollTop=$('messages').scrollHeight;
   };
-  while(true){const{value,done}=await reader.read();buffer+=done?decoder.decode():decoder.decode(value,{stream:true});buffer=buffer.replace(/\r\n/g,'\n');let split;while((split=buffer.indexOf('\n\n'))>=0){processFrame(buffer.slice(0,split));buffer=buffer.slice(split+2);}if(done){if(buffer.trim())processFrame(buffer);break;}}
+  while(true){const{value,done}=await reader.read();if(controller.signal.aborted){const error=new Error('已停止生成');error.name='AbortError';throw error;}buffer+=done?decoder.decode():decoder.decode(value,{stream:true});buffer=buffer.replace(/\r\n/g,'\n');let split;while((split=buffer.indexOf('\n\n'))>=0){processFrame(buffer.slice(0,split));buffer=buffer.slice(split+2);}if(done){if(buffer.trim())processFrame(buffer);break;}}
   if(!finished)throw new Error('响应提前中断，可重新发送问题');
   if(!content&&!tools.size)answer.content.textContent='模型未返回文本内容。';
-  history=[...outgoing,{role:'assistant',content:content||'[本轮返回了工具调用，控制台未执行工具]'}];
-  $('usage').textContent=usage?`输入 ${usage.prompt_tokens??'—'} · 输出 ${usage.completion_tokens??'—'} · 总计 ${usage.total_tokens??'—'} tokens`:'上游未返回用量';
- }catch(e){const msg=e.name==='AbortError'?'已停止生成':e.message;answer.content.textContent=(content?content+'\n\n':'')+msg;$('usage').textContent=msg;}
- finally{controller.abort();activeRequest=undefined;$('send-chat').disabled=false;$('stop-chat').hidden=true;$('clear-chat').disabled=false;refreshStatus();}
+  history=[...outgoing,{role:'assistant',content:content||(requestProtocol==='openai'?'[本轮返回了工具调用，控制台未执行工具]':'')}];
+  $('usage').textContent=requestProtocol==='anthropic'?(usage?.input_tokens!=null||usage?.output_tokens!=null?`输入 ${usage.input_tokens??'—'} · 输出 ${usage.output_tokens??'—'} tokens`:'上游未返回用量'):(usage?`输入 ${usage.prompt_tokens??'—'} · 输出 ${usage.completion_tokens??'—'} · 总计 ${usage.total_tokens??'—'} tokens`:'上游未返回用量');
+ }catch(e){if(generation===sessionGeneration){const msg=e.name==='AbortError'?'已停止生成':e.message;answer.content.textContent=(content?content+'\n\n':'')+msg;$('usage').textContent=msg;}}
+ finally{controller.abort();activeRequest=undefined;chatControls();updateEfforts();if(generation===sessionGeneration)refreshStatus();}
 });
-$('base-url').value=location.origin+'/v1';
-$('api-example').textContent=`curl ${location.origin}/v1/chat/completions \\\n  -H "Authorization: Bearer <你的 API Key>" \\\n  -H "Content-Type: application/json" \\\n  -d '{"model":"cn:glm-5.2","messages":[{"role":"user","content":"你好"}]}'`;
+renderAccess();
 $('reveal-key').addEventListener('click',async()=>{try{$('api-key').value=(await jsonAPI('access',{})).api_key;$('api-key').type='text';}catch(e){notice(e.message);}});
 $('copy-key').addEventListener('click',async()=>{const generation=sessionGeneration;try{if(!$('api-key').value)$('api-key').value=(await jsonAPI('access',{})).api_key;await navigator.clipboard.writeText($('api-key').value);if(generation===sessionGeneration)notice('API Key 已复制');}catch{if(generation!==sessionGeneration)return;$('api-key').type='text';$('api-key').select();notice('浏览器不允许自动复制，请手动复制选中的密钥');}});
 jsonAPI('session').then(signedIn).catch(()=>{});
