@@ -10,9 +10,16 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"sort"
 	"strings"
 	"unicode/utf8"
 )
+
+// supportedFields is the top-level request key set the text subset accepts; anything else is
+// reported by name so clients can correct the request without guessing.
+var supportedFields = map[string]struct{}{
+	"model": {}, "max_tokens": {}, "system": {}, "stream": {}, "messages": {},
+}
 
 type textBlock struct {
 	Type string `json:"type"`
@@ -122,6 +129,27 @@ func textContent(raw json.RawMessage) (string, error) {
 	return out.String(), nil
 }
 
+// unsupportedField reports the first top-level key outside the supported set, so a rejected
+// request names the offending field instead of failing with a generic parse error. Unknown
+// fields are located after the body is known to be UTF-8 text.
+func unsupportedField(raw []byte) (string, bool) {
+	var fields map[string]json.RawMessage
+	if json.Unmarshal(raw, &fields) != nil {
+		return "", false
+	}
+	names := make([]string, 0, len(fields))
+	for name := range fields {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		if _, supported := supportedFields[name]; !supported {
+			return name, true
+		}
+	}
+	return "", false
+}
+
 func writeError(w http.ResponseWriter, code int, message string) {
 	typ := "api_error"
 	switch code {
@@ -159,9 +187,20 @@ func New(next http.Handler, apiKey string, maxBodyBytes int64) http.Handler {
 			writeError(w, 401, "API Key 无效")
 			return
 		}
-		_, beta := r.Header[http.CanonicalHeaderKey("anthropic-beta")]
-		if len(r.Header.Values("anthropic-version")) != 1 || r.Header.Get("anthropic-version") != "2023-06-01" || beta || r.URL.RawQuery != "" || r.URL.ForceQuery || r.Header.Get("Content-Encoding") != "" {
-			writeError(w, 400, "版本、beta、查询参数或编码不受支持")
+		if len(r.Header.Values("anthropic-version")) != 1 || r.Header.Get("anthropic-version") != "2023-06-01" {
+			writeError(w, 400, "anthropic-version 必须恰为 2023-06-01，且只能出现一次")
+			return
+		}
+		if _, beta := r.Header[http.CanonicalHeaderKey("anthropic-beta")]; beta {
+			writeError(w, 400, "anthropic-beta 请求头不受支持：本接口只实现 anthropic-version 2023-06-01 的文本子集，出现该头即拒绝。无条件附带 anthropic-beta 的客户端需先在客户端侧移除")
+			return
+		}
+		if r.URL.RawQuery != "" || r.URL.ForceQuery {
+			writeError(w, 400, "不支持查询参数")
+			return
+		}
+		if r.Header.Get("Content-Encoding") != "" {
+			writeError(w, 400, "不支持 Content-Encoding 压缩请求体")
 			return
 		}
 		raw, err := io.ReadAll(io.LimitReader(r.Body, maxBodyBytes+1))
@@ -170,8 +209,28 @@ func New(next http.Handler, apiKey string, maxBodyBytes int64) http.Handler {
 			return
 		}
 		var input requestData
-		if err != nil || !utf8.Valid(raw) || strictJSON(raw, &input) != nil || input.Model == nil || strings.TrimSpace(*input.Model) == "" || input.MaxTokens == nil || *input.MaxTokens <= 0 || len(input.Messages) == 0 {
+		if err != nil || !utf8.Valid(raw) {
+			writeError(w, 400, "请求体必须是 UTF-8 编码的单个 JSON 对象")
+			return
+		}
+		if strictJSON(raw, &input) != nil {
+			if name, ok := unsupportedField(raw); ok {
+				writeError(w, 400, "不支持字段 "+name+"：仅支持 model、max_tokens、system、stream、messages")
+				return
+			}
 			writeError(w, 400, "请求字段无效，仅支持普通文本消息")
+			return
+		}
+		if input.Model == nil || strings.TrimSpace(*input.Model) == "" {
+			writeError(w, 400, "model 缺失或为空")
+			return
+		}
+		if input.MaxTokens == nil || *input.MaxTokens <= 0 {
+			writeError(w, 400, "max_tokens 必须是正整数")
+			return
+		}
+		if len(input.Messages) == 0 {
+			writeError(w, 400, "messages 不能为空")
 			return
 		}
 		stream := false
