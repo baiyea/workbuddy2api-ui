@@ -1,6 +1,6 @@
 # WorkBuddy2API
 
-**将 WorkBuddy / CodeBuddy 反向代理为通用的 OpenAI 兼容 API。**
+**将 WorkBuddy / CodeBuddy 反向代理为通用的 OpenAI/Anthropic协议兼容 API。**
 
 把已授权账号的模型能力转换为兼容 OpenAI Chat Completions 的接口，让支持自定义 Base URL 的客户端和应用通过同一个网关调用。配套 Web 控制台负责账号授权、运行状态、对话测试和自动任务，Docker Compose 一条命令即可启动。
 
