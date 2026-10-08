@@ -1,6 +1,6 @@
 services:
   core:
-    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-core-1789550372
+    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-core-1791446794
     platform: linux/amd64
     restart: unless-stopped
     environment:
@@ -14,7 +14,7 @@ services:
       - ./runtime/wb2api/keys:/run/wb2a
 
   console:
-    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-webui-1789550372
+    image: registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-webui-1791446794
     platform: linux/amd64
     restart: unless-stopped
     environment:
