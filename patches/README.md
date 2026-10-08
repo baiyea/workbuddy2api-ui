@@ -1,5 +1,8 @@
 # Upstream patches
 
+> 注意：上游 Sliverkiss/workbuddy2api 仓库已删除。本仓库自行维护该冻结基线与补丁，
+> `overlay.py update` 不可用；新增能力优先放 `extensions/`，修改既有文件通过补丁。
+
 Baseline: Sliverkiss/workbuddy2api commit
 `c576b489fa22e3c156e960ee6336c4e653a0d95c`. Apply only through
 `python3 scripts/overlay.py prepare --output ABS_NEW_DIRECTORY`; never edit

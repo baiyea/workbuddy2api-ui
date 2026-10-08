@@ -11,6 +11,9 @@ import tempfile
 from pathlib import Path, PurePosixPath
 
 
+# 上游仓库（Sliverkiss/workbuddy2api）已被删除，upstream/ 现为本仓库自行维护的冻结基线。
+# prepare 与 identity 只读取本地快照，构建、测试、发布都不依赖远端；update --ref 仍指向
+# 该已归档地址，因此不可用，不要依赖它来更新上游。
 CANONICAL_REPOSITORY = "https://github.com/Sliverkiss/workbuddy2api"
 UPDATE_PATHS = (
     "upstream",

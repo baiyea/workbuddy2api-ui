@@ -58,6 +58,8 @@ console（独立 Go 服务，内嵌 HTML/CSS/JavaScript）
 
 唯一上游为 `https://github.com/Sliverkiss/workbuddy2api`。实际版本以 `upstream.lock` 为准，不在多份文档中重复写死 commit。
 
+上游仓库已删除，`upstream/` 现作为本仓库自行维护的冻结快照；构建、测试和发布只读取本地快照，`overlay.py update` 不再可用。
+
 `scripts/overlay.py prepare` 的步骤：校验源码摘要 → 复制快照到新目录 → 复制扩展文件 → 按 `patches/series` 执行 `git apply --check` 并应用补丁。不会改写 `upstream/`。
 
 1. 新文件和测试放到 `extensions/` 的对应相对路径；不能通过扩展覆盖已有上游文件。
