@@ -185,6 +185,89 @@ func TestRejectInvalidRequestsBeforeNext(t *testing.T) {
 	}
 }
 
+// assertMessageFragment asserts the error envelope carries the status-derived type and a message
+// containing fragment, so a rejected request stays diagnosable from the response alone.
+func assertMessageFragment(t *testing.T, w *httptest.ResponseRecorder, status int, fragment string) {
+	t.Helper()
+	var body struct {
+		Type  string `json:"type"`
+		Error struct {
+			Type    string `json:"type"`
+			Message string `json:"message"`
+		} `json:"error"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &body); err != nil {
+		t.Fatalf("error is not JSON: %s", w.Body)
+	}
+	want := "api_error"
+	switch status {
+	case 401:
+		want = "authentication_error"
+	case 400, 405:
+		want = "invalid_request_error"
+	case 413:
+		want = "request_too_large"
+	case 429:
+		want = "rate_limit_error"
+	}
+	if body.Type != "error" || body.Error.Type != want || !strings.Contains(body.Error.Message, fragment) {
+		t.Fatalf("error envelope %q does not report %q", w.Body, fragment)
+	}
+}
+
+// TestRejectsNameTheOffendingHeaderOrField pins the diagnostic contract: each distinct rejection
+// reason must name the header or body field it was caused by, because previously four unrelated
+// causes shared one message and unknown body fields shared another.
+func TestRejectsNameTheOffendingHeaderOrField(t *testing.T) {
+	base := `{"model":"global:mock","max_tokens":32,"messages":[{"role":"user","content":"hi"}]}`
+	field := func(name, value string) string {
+		var body map[string]json.RawMessage
+		json.Unmarshal([]byte(base), &body)
+		body[name] = json.RawMessage(value)
+		raw, _ := json.Marshal(body)
+		return string(raw)
+	}
+	tests := []struct {
+		name, body, fragment string
+		edit                 func(*http.Request)
+	}{
+		{name: "beta header", edit: func(r *http.Request) { r.Header.Set("anthropic-beta", "tools") }, fragment: "anthropic-beta"},
+		{name: "empty beta header", edit: func(r *http.Request) { r.Header.Set("anthropic-beta", "") }, fragment: "anthropic-beta"},
+		{name: "missing version", edit: func(r *http.Request) { r.Header.Del("anthropic-version") }, fragment: "anthropic-version"},
+		{name: "wrong version", edit: func(r *http.Request) { r.Header.Set("anthropic-version", "2099-01-01") }, fragment: "anthropic-version"},
+		{name: "query", edit: func(r *http.Request) { r.URL.RawQuery = "ignored=1" }, fragment: "查询参数"},
+		{name: "compressed", edit: func(r *http.Request) { r.Header.Set("Content-Encoding", "gzip") }, fragment: "Content-Encoding"},
+		{name: "unsupported field tools", body: field("tools", `[]`), fragment: "tools"},
+		{name: "unsupported field temperature", body: field("temperature", `0.5`), fragment: "temperature"},
+		{name: "unsupported field null tools", body: field("tools", `null`), fragment: "tools"},
+		{name: "unsupported field conversationId", body: field("conversationId", `"spoofed"`), fragment: "conversationId"},
+		{name: "missing model", body: field("model", `null`), fragment: "model"},
+		{name: "blank model", body: field("model", `"  "`), fragment: "model"},
+		{name: "null max_tokens", body: field("max_tokens", `null`), fragment: "max_tokens"},
+		{name: "zero max_tokens", body: field("max_tokens", `0`), fragment: "max_tokens"},
+		{name: "empty messages", body: field("messages", `[]`), fragment: "messages"},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			body := tc.body
+			if body == "" {
+				body = base
+			}
+			r := request(body)
+			if tc.edit != nil {
+				tc.edit(r)
+			}
+			next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { io.WriteString(w, textResponse) })
+			w := httptest.NewRecorder()
+			New(next, "fixture-api", 8<<20).ServeHTTP(w, r)
+			if w.Code != 400 {
+				t.Fatalf("status=%d body=%s", w.Code, w.Body)
+			}
+			assertMessageFragment(t, w, 400, tc.fragment)
+		})
+	}
+}
+
 func assertError(t *testing.T, w *httptest.ResponseRecorder, status int) {
 	t.Helper()
 	var body struct {
