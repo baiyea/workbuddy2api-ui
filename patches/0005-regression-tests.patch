@@ -79,3 +79,22 @@ index 7c64457..bed9712 100644
  
  	var buf bytes.Buffer
  	log.SetOutput(&buf)
+diff --git a/internal/pool/pool_test.go b/internal/pool/pool_test.go
+--- a/internal/pool/pool_test.go
++++ b/internal/pool/pool_test.go
+@@ -1095,8 +1095,13 @@
+ 	if d := row.Until.Sub(reset); d < -time.Second || d > time.Second {
+ 		t.Errorf("row.until=%v want ~%v", row.Until, reset)
+ 	}
+-	// ResetAt 是未经 6004 截断的上游重置墙钟（35m < soft_rate_max 2h，因此未被截断）。
+-	if d := row.ResetAt.Sub(reset); d < -time.Second || d > time.Second {
++	// reset_at is omitted when it equals until; retain the timestamp assertion
++	// for either representation, independent of the host clock resolution.
++	resetAt := row.ResetAt
++	if resetAt.IsZero() {
++		resetAt = row.Until
++	}
++	if d := resetAt.Sub(reset); d < -time.Second || d > time.Second {
+ 		t.Errorf("reset_at=%v want ~%v", row.ResetAt, reset)
+ 	}
+ }

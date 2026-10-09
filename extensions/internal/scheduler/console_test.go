@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -304,7 +305,9 @@ func TestScriptUsesPrivateCNReadonlySnapshots(t *testing.T) {
 			}
 		}
 		info, err := os.Stat(snapshotDir)
-		if err != nil || info.Mode().Perm() != 0700 {
+		// Windows inherits the user's temporary-directory ACL; POSIX mode bits
+		// are only meaningful on Unix. Keep the snapshot content/cleanup checks.
+		if err != nil || !info.IsDir() || (runtime.GOOS != "windows" && info.Mode().Perm() != 0700) {
 			t.Fatalf("snapshot mode %v %v", info, err)
 		}
 		files, _ := filepath.Glob(filepath.Join(snapshotDir, "workbuddy-*.json"))
@@ -327,9 +330,9 @@ func TestScriptUsesPrivateCNReadonlySnapshots(t *testing.T) {
 			}
 			seen[a.UID] = true
 			prefix[filepath.Base(path)[10:18]] = true
-			info, _ := os.Stat(path)
-			if info.Mode().Perm() != 0600 {
-				t.Fatal(info.Mode())
+			info, err := os.Stat(path)
+			if err != nil || !info.Mode().IsRegular() || (runtime.GOOS != "windows" && info.Mode().Perm() != 0600) {
+				t.Fatalf("snapshot file %v %v", info, err)
 			}
 			fmt.Fprintf(f.output, "WB2A_TASK_EVENT {\"uid\":%q,\"status\":\"success\",\"detail\":\"reward_claimed\",\"reward\":7}\n", a.UID)
 		}
