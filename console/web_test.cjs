@@ -536,3 +536,72 @@ test('access curl quotes JSON model strings without executing shell metacharacte
   assert.equal(JSON.parse(quoted.replace(/'\\''/g,"'")).model,model);
   assert.ok(quoted.includes("'\\''"));
 });
+
+
+function desktopFixture(url, sessionStatus=401) {
+  const elements=new Map(), requests=[];
+  const element=()=>({value:'',type:'password',hidden:false,disabled:false,textContent:'',handlers:{},
+    addEventListener(name,fn){this.handlers[name]=fn;},replaceChildren(){},append(){},querySelector(){return {disabled:false};}});
+  const get=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);};
+  const location=new URL(url), replacements=[];
+  const ctx=vm.createContext({URL,location,document:{getElementById:get,querySelectorAll:()=>[]},
+    history:{state:{keep:true},replaceState(state,title,path){replacements.push(path);location.href=new URL(path,location).href;}},
+    localStorage:{setItem(){throw new Error('must not persist credentials');}},
+    setInterval(){},clearTimeout(){},fetch:async(path,options)=>{
+      requests.push({path,...options});
+      if(path==='/admin/session')return {status:sessionStatus,ok:sessionStatus===200,json:async()=>({csrf:'existing-csrf',global_enabled:false})};
+      if(path==='/admin/login')return {status:401,ok:false,json:async()=>({error:'invalid key'})};
+      return {status:200,ok:true,json:async()=>({accounts:[],data:[]})};
+    }});
+  const html=readFileSync(__dirname+'/web/index.html','utf8');
+  for(const match of html.matchAll(/<script[^>]*src="([^"]+)"[^>]*><\/script>/g)) {
+    vm.runInContext(readFileSync(__dirname+'/web'+match[1],'utf8'),ctx);
+  }
+  return {get,ctx,requests,location,replacements};
+}
+
+test('desktop URL key is decoded and scrubbed before waiting for session without automatic login',async()=>{
+  const fixture=desktopFixture('http://127.0.0.1:7863/?keep=one&admin_key=a%2Bb%2Fc%3D%E9%92%A5%E5%8C%99&keep=two#accounts');
+  assert.equal(fixture.location.href,'http://127.0.0.1:7863/?keep=one&keep=two#accounts');
+  await new Promise(setImmediate);
+  assert.equal(fixture.get('admin-key').value,'a+b/c=钥匙');
+  assert.equal(fixture.get('admin-key').type,'password');
+  assert.equal(fixture.requests.some(request=>request.method==='POST'),false);
+  assert.equal(fixture.ctx.takeDesktopAdminKey?.()||'','');
+});
+
+test('non-loopback pages discard URL credentials without prefill',async()=>{
+  for(const host of ['console.example','127.0.0.1.evil.test','192.168.1.2']) {
+    const fixture=desktopFixture('http://'+host+'/?admin_key=secret&admin_key=another#keep');
+    assert.equal(fixture.location.search,'');
+    await new Promise(setImmediate);
+    assert.equal(fixture.get('admin-key').value,'');
+    assert.equal(fixture.location.hash,'#keep');
+  }
+});
+
+test('desktop key is one-shot across login failure, logout and existing sessions',async()=>{
+  const fixture=desktopFixture('http://localhost:7863/?admin_key=one-shot');
+  await new Promise(setImmediate);
+  assert.equal(fixture.get('admin-key').value,'one-shot');
+  await fixture.get('login-form').handlers.submit({preventDefault(){},submitter:{}});
+  const request=fixture.requests.find(request=>request.path==='/admin/login');
+  assert.deepEqual(JSON.parse(request.body),{key:'one-shot'});
+  assert.equal(fixture.get('admin-key').value,'');
+  vm.runInContext('signedOut()',fixture.ctx);
+  assert.equal(fixture.get('admin-key').value,'');
+  assert.equal(fixture.ctx.takeDesktopAdminKey?.()||'','');
+  const existing=desktopFixture('http://[::1]:7863/?admin_key=discard',200);
+  await new Promise(setImmediate);
+  assert.equal(existing.get('admin-key').value,'');
+  assert.equal(existing.get('login-view').hidden,true);
+  assert.equal(existing.ctx.takeDesktopAdminKey?.()||'','');
+});
+
+test('normal manual login keeps its existing retry behavior without a desktop key',async()=>{
+  const fixture=desktopFixture('http://console.example/');
+  await new Promise(setImmediate);
+  fixture.get('admin-key').value='manual-key';
+  await fixture.get('login-form').handlers.submit({preventDefault(){},submitter:{}});
+  assert.equal(fixture.get('admin-key').value,'manual-key');
+});

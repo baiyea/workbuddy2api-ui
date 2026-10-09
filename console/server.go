@@ -9,6 +9,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"html/template"
 	"io"
 	"io/fs"
 	"net"
@@ -28,6 +29,7 @@ type Config struct {
 	APIKey       string // Only exposed by the authenticated, CSRF-protected access endpoint.
 	BridgeKey    string
 	PublicOrigin string
+	Desktop      bool
 }
 type adminSession struct {
 	csrf, owner string
@@ -70,8 +72,16 @@ func NewServer(cfg Config) (http.Handler, error) {
 		return nil, err
 	}
 	fileServer := http.FileServer(http.FS(assets))
-	h.mux.Handle("GET /{$}", fileServer)
-	for _, name := range []string{"app.js", "style.css"} {
+	index, err := template.ParseFS(webFiles, "web/index.html")
+	if err != nil {
+		return nil, err
+	}
+	h.mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		// Only the deployment mode reaches the template, never configuration secrets.
+		_ = index.Execute(w, struct{ Desktop bool }{cfg.Desktop})
+	})
+	for _, name := range []string{"app.js", "desktop-key.js", "style.css"} {
 		h.mux.Handle("GET /"+name, fileServer)
 	}
 	h.mux.HandleFunc("GET /livez", func(w http.ResponseWriter, r *http.Request) {

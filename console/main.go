@@ -1,13 +1,18 @@
 package main
 
 import (
+	"bufio"
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -92,13 +97,13 @@ func configFromEnv() (Config, string, error) {
 	}
 	keyFile := os.Getenv("WB2A_KEY_FILE")
 	if keyFile == "" {
-		return Config{CoreURL: target, AdminKey: os.Getenv("WB2A_ADMIN_KEY"), APIKey: os.Getenv("WB2A_API_KEY"), BridgeKey: os.Getenv("WB2A_BRIDGE_KEY"), PublicOrigin: os.Getenv("WB2A_PUBLIC_ORIGIN")}, listen, nil
+		return Config{Desktop: os.Getenv("WB2A_DESKTOP") == "true", CoreURL: target, AdminKey: os.Getenv("WB2A_ADMIN_KEY"), APIKey: os.Getenv("WB2A_API_KEY"), BridgeKey: os.Getenv("WB2A_BRIDGE_KEY"), PublicOrigin: os.Getenv("WB2A_PUBLIC_ORIGIN")}, listen, nil
 	}
 	keys, err := readDeploymentKeys(keyFile, 30*time.Second, os.Getenv("WB2A_ADMIN_KEY"), os.Getenv("WB2A_API_KEY"))
 	if err != nil {
 		return Config{}, "", err
 	}
-	return Config{CoreURL: target, AdminKey: keys.AdminKey, APIKey: keys.APIKey, BridgeKey: keys.BridgeKey, PublicOrigin: os.Getenv("WB2A_PUBLIC_ORIGIN")}, listen, nil
+	return Config{Desktop: os.Getenv("WB2A_DESKTOP") == "true", CoreURL: target, AdminKey: keys.AdminKey, APIKey: keys.APIKey, BridgeKey: keys.BridgeKey, PublicOrigin: os.Getenv("WB2A_PUBLIC_ORIGIN")}, listen, nil
 }
 func main() {
 	cfg, listen, err := configFromEnv()
@@ -112,5 +117,44 @@ func main() {
 	log.Printf("[console] 管理密钥（仅交给管理员）: %s", cfg.AdminKey)
 	server := &http.Server{Addr: listen, Handler: h, ReadHeaderTimeout: 10 * time.Second, IdleTimeout: 60 * time.Second}
 	log.Printf("console listening on %s", listen)
-	log.Fatal(server.ListenAndServe())
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	if cfg.Desktop {
+		go func() {
+			scanner := bufio.NewScanner(os.Stdin)
+			for scanner.Scan() {
+				if scanner.Text() == "shutdown" {
+					break
+				}
+			}
+			stop()
+		}()
+	}
+	if err := serveConsole(ctx, server); err != nil {
+		log.Fatal(err)
+	}
+}
+
+// The desktop parent owns stdin. EOF also stops the service if the parent exits.
+func serveConsole(ctx context.Context, server *http.Server) error {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	server.BaseContext = func(net.Listener) context.Context { return ctx }
+	stopped := make(chan struct{})
+	go func() {
+		defer close(stopped)
+		<-ctx.Done()
+		timeout, stop := context.WithTimeout(context.Background(), 5*time.Second)
+		defer stop()
+		if err := server.Shutdown(timeout); err != nil {
+			_ = server.Close()
+		}
+	}()
+	err := server.ListenAndServe()
+	cancel()
+	<-stopped
+	if errors.Is(err, http.ErrServerClosed) {
+		return nil
+	}
+	return err
 }

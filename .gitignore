@@ -21,6 +21,10 @@ config.json
 *.tmp
 __pycache__/
 .build/
+desktop/target/
+desktop/node_modules/
+desktop/resources/
+desktop/gen/
 .upstream-update-backup/
 .upstream-update-new/
 .upstream-update-journal.json

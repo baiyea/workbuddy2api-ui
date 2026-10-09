@@ -218,6 +218,45 @@ class ExportSnapshotTests(unittest.TestCase):
 
 
 class MaterializeTests(unittest.TestCase):
+    def test_windows_checkout_preserves_snapshot_digest_and_rejects_content_changes(self):
+        with tempfile.TemporaryDirectory() as d:
+            repo, checkout = Path(d) / 'repo', Path(d) / 'checkout'
+            repo.mkdir()
+            make_overlay_root(repo)
+            script = repo / 'upstream/run.sh'
+            script.write_bytes(b'#!/bin/sh\nexit 0\n')
+            script.chmod(0o755)
+            (repo / 'patches/series').write_bytes(b'edit.patch\n')
+            (repo / 'patches/edit.patch').write_bytes(b'--- a/base.txt\n+++ b/base.txt\n@@ -1 +1 @@\n-old\n+new\n')
+            lock = json.loads((repo / 'upstream.lock').read_text())
+            lock['source_sha256'] = source_digest(repo / 'upstream', file_modes={
+                'base.txt': '100644', 'run.sh': '100755',
+            })
+            (repo / 'upstream.lock').write_text(json.dumps(lock))
+            attributes = Path(__file__).resolve().parents[1] / '.gitattributes'
+            (repo / '.gitattributes').write_bytes(attributes.read_bytes() if attributes.exists() else b'')
+            run_git(repo, 'init', '-q')
+            run_git(repo, 'add', '.')
+            run_git(repo, 'update-index', '--chmod=+x', 'upstream/run.sh')
+            run_git(repo, '-c', 'user.name=Test', '-c', 'user.email=test@example.invalid', 'commit', '-qm', 'fixture')
+            run_git(Path(d), 'clone', '-q', '-c', 'core.autocrlf=true', str(repo), str(checkout))
+            # Windows checkout lacks POSIX execution bits even though the index retains them.
+            for path in (checkout / 'upstream').rglob('*'):
+                if path.is_file():
+                    path.chmod(0o644)
+            with mock.patch('overlay.sys.platform', 'win32'):
+                materialize(checkout, Path(d) / 'result')
+                self.assertEqual((Path(d) / 'result/run.sh').read_bytes(), script.read_bytes())
+                self.assertEqual((Path(d) / 'result/base.txt').read_bytes(), b'new\n')
+                (checkout / 'upstream/run.sh').write_bytes(b'#!/bin/sh\nexit 1\n')
+                with self.assertRaisesRegex(ValueError, 'source digest'):
+                    materialize(checkout, Path(d) / 'tampered')
+                self.assertFalse((Path(d) / 'tampered').exists())
+                (checkout / 'upstream/run.sh').write_bytes(script.read_bytes())
+                run_git(checkout, 'update-index', '--chmod=-x', 'upstream/run.sh')
+                with self.assertRaisesRegex(ValueError, 'source digest'):
+                    materialize(checkout, Path(d) / 'changed-mode')
+
     def test_materialize_applies_extension_and_ordered_patch(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "python_version": "3.12.15",
+  "release": "20261003",
+  "source": "https://github.com/astral-sh/python-build-standalone/releases/tag/20261003",
+  "targets": {
+    "aarch64-apple-darwin": {
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261003/cpython-3.12.15%2B20261003-aarch64-apple-darwin-install_only.tar.gz",
+      "sha256": "316a463172740e71d8dca1f2730784e325f3f720941137b5d674d5801a632213"
+    },
+    "x86_64-apple-darwin": {
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261003/cpython-3.12.15%2B20261003-x86_64-apple-darwin-install_only.tar.gz",
+      "sha256": "a8fd7a91852f19b6d959793ef41fad048631ccb2a334a9ecdf573255298f7978"
+    },
+    "x86_64-pc-windows-msvc": {
+      "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261003/cpython-3.12.15%2B20261003-x86_64-pc-windows-msvc-install_only.tar.gz",
+      "sha256": "4b6f0beebbb695a0f3ea237b8c3eaa5bd424f47a7bc25b2fbe3a43390c770f08"
+    }
+  },
+  "certifi": {
+    "version": "2026.7.22",
+    "url": "https://files.pythonhosted.org/packages/0b/a7/71ac2cff56fec219ed242bb11b8efb69fcc4bec75db06fb7bfe35de520e6/certifi-2026.7.22-py3-none-any.whl",
+    "sha256": "62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775"
+  },
+  "licenses": {
+    "url": "https://codeload.github.com/astral-sh/python-build-standalone/tar.gz/5e46737f6480fc315ebfea83866910cbfcc772f0",
+    "sha256": "2c4bc5e43a0276046f080f40f0bd9586b10f2a6aa1714c592557f57ef0821e0c",
+    "root": "python-build-standalone-5e46737f6480fc315ebfea83866910cbfcc772f0"
+  }
+}

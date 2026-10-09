@@ -69,11 +69,17 @@ def _tree_entries(root, ignore=None):
     return sorted(entries, key=lambda entry: entry[0])
 
 
-def source_digest(source: Path, ignore=None) -> str:
-    records = [
-        [relative, mode, hashlib.sha256(content).hexdigest()]
-        for relative, mode, content, _ in _tree_entries(Path(source), ignore=ignore)
-    ]
+def source_digest(source: Path, ignore=None, file_modes=None) -> str:
+    records = []
+    for relative, mode, content, _ in _tree_entries(Path(source), ignore=ignore):
+        if file_modes is not None:
+            tracked = file_modes.get(relative)
+            if tracked not in ("100644", "100755", "120000"):
+                raise ValueError(f"snapshot file is not tracked: {relative}")
+            if (tracked == "120000") != (mode == "120000"):
+                raise ValueError(f"snapshot file type differs from Git: {relative}")
+            mode = tracked
+        records.append([relative, mode, hashlib.sha256(content).hexdigest()])
     payload = json.dumps(records, ensure_ascii=False, separators=(",", ":")).encode()
     return hashlib.sha256(payload).hexdigest()
 
@@ -88,6 +94,21 @@ def _run_git(repo, *args, input=None, env=None):
         env=env,
         check=True,
     ).stdout
+
+
+def _tracked_file_modes(source):
+    # NTFS does not carry POSIX executable bits. Read modes from the index,
+    # but source_digest still hashes the actual working-tree bytes.
+    modes = {}
+    for record in _run_git(source, "ls-files", "--stage", "-z", "--", ".").split(b"\0"):
+        if not record:
+            continue
+        metadata, raw_path = record.split(b"\t", 1)
+        mode, _, stage = metadata.decode().split()
+        if stage != "0":
+            raise ValueError("snapshot contains unresolved Git conflicts")
+        modes[raw_path.decode("utf-8", errors="surrogateescape")] = mode
+    return modes
 
 
 def _relative_git_path(raw):
@@ -257,7 +278,8 @@ def materialize(root: Path, dest: Path) -> None:
         raise FileExistsError(dest)
     lock = _read_lock(root)
     upstream = root / "upstream"
-    if source_digest(upstream) != lock["source_sha256"]:
+    modes = _tracked_file_modes(upstream) if sys.platform == "win32" else None
+    if source_digest(upstream, file_modes=modes) != lock["source_sha256"]:
         raise ValueError("upstream source digest does not match upstream.lock")
     patches = _read_series(root)
     if (root / "extensions").exists():

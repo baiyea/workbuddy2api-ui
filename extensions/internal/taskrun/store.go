@@ -14,6 +14,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"workbuddy2api/internal/durablefs"
 	"workbuddy2api/internal/scheduler"
 )
 
@@ -88,6 +89,11 @@ func OpenStore(path string, now time.Time) (*Store, error) {
 		if r.RequestID != "" {
 			requests[r.RequestID] = true
 		}
+	}
+	// Windows read handles do not share delete access. Close the validated
+	// source before recovery atomically replaces it; the defer covers errors.
+	if err := f.Close(); err != nil {
+		return nil, err
 	}
 	s.runs = h.Runs
 	for _, r := range h.Runs {
@@ -279,15 +285,7 @@ func writeHistory(path string, data []byte) error {
 	if err != nil {
 		return err
 	}
-	if err = os.Rename(f.Name(), path); err != nil {
-		return err
-	}
-	d, err := os.Open(dir)
-	if err != nil {
-		return err
-	}
-	defer d.Close()
-	return d.Sync()
+	return durablefs.Publish(f.Name(), path, true)
 }
 func (s *Store) Get(id string) (Run, bool) {
 	s.mu.Lock()

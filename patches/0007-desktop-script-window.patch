@@ -1,0 +1,14 @@
+diff --git a/internal/scheduler/school.go b/internal/scheduler/school.go
+--- a/internal/scheduler/school.go
++++ b/internal/scheduler/school.go
+@@ -60,7 +60,9 @@
+ // newScriptCmd 构建脚本子进程。包级变量便于测试注入 fake（installFakeExec 覆盖）。
+ // 工作目录由调用方 SetDir 显式设置仓库根。
+ var newScriptCmd = func(ctx context.Context, program string, args ...string) scriptRunner {
+-	return &scriptCmd{cmd: exec.CommandContext(ctx, program, args...)}
++	command := exec.CommandContext(ctx, program, args...)
++	configureDesktopScript(command)
++	return &scriptCmd{cmd: command}
+ }
+ 
+ // pythonCmd 返回执行 scripts/*.py 的解释器名。

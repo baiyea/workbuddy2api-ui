@@ -7,7 +7,7 @@ Baseline: Sliverkiss/workbuddy2api commit
 `c576b489fa22e3c156e960ee6336c4e653a0d95c`. Apply only through
 `python3 scripts/overlay.py prepare --output ABS_NEW_DIRECTORY`; never edit
 `upstream/`. New source and tests live in `extensions/`, not in these patches.
-`series` is the explicit application order: 0001, 0002, 0003, 0004, 0005.
+`series` is the explicit application order: 0001, 0002, 0003, 0004, 0005, 0006.
 For a deliberate upstream candidate, run
 `python3 scripts/overlay.py update --ref COMMIT_OR_TAG`; it keeps the current
 snapshot and lock until the candidate passes `scripts/check.sh` and isolated
@@ -52,3 +52,47 @@ leaves the opt-in callback installed but skipping execution, and passes TaskErro
 to the bridge without stopping the public handler. Task 7 owns HTTP task routes
 and their 503 mapping. Remove this part of 0003 only when upstream provides an
 equivalent durable single-runner hook, including fail-closed scheduled execution.
+
+## 0006-desktop-lifecycle
+
+`cmd/server/main.go` obtains its lifecycle through the extension hook, retains
+SIGINT/SIGTERM handling, and awaits HTTP/task shutdown before returning.
+`WB2A_DESKTOP=true` additionally cancels on parent stdin EOF, read failure, or
+`shutdown\n` (CRLF accepted). Other lines do not execute commands. The launcher
+must pipe stdin, wait at least 5 seconds plus filesystem flush time, then enforce
+its process-group/Windows Job Object cleanup deadline. Plain Docker/source mode
+does not watch stdin.
+
+Task shutdown cancels dispatch, waits within the 5-second shared HTTP/task
+budget, and persists an interrupted record before exiting if a legacy RPC ignores
+cancellation. Late completion cannot replace that interruption. Persistence errors
+are returned and logged; no successful flush is claimed after failure.
+
+The `durablefs` extension publishes already-synced same-directory temporary files:
+Unix keeps link-without-replacement/rename plus directory fsync; Windows uses
+`MoveFileEx` with `MOVEFILE_WRITE_THROUGH` and explicit replacement only for history.
+It never removes the destination before publication or ignores arbitrary errors.
+Windows file permissions inherit the application-data directory ACL; POSIX mode
+bits alone cannot impose an ACL.
+
+Verify with `go test -race ./cmd/server ./internal/taskrun ./internal/durablefs`
+and `GOOS=windows GOARCH=amd64 go build ./cmd/server` in a fresh overlay; actual
+Windows filesystem behavior also requires the native Windows test job. Remove
+0006 only when the base provides equivalent parent lifecycle and bounded durable
+shutdown hooks.
+
+
+## 0007-desktop-script-window
+
+`internal/scheduler/school.go` configures each newly created Python command through
+an OS-specific extension. Only Windows with `WB2A_DESKTOP=true` sets `HideWindow`
+and `CREATE_NO_WINDOW`, preventing scheduled Python tasks from opening console
+windows. The existing context, arguments, standard streams and task lifecycle are
+unchanged. Other platforms and non-desktop modes retain native process defaults.
+
+Verify with `go test -race ./internal/scheduler` in a fresh overlay, and compile
+Windows tests with `GOOS=windows GOARCH=amd64 go test -c ./internal/scheduler`.
+Run `TestDesktopScriptHasNoConsoleWindow` on Windows; cross-compilation alone does
+not verify native window behavior. Remove this patch when the base command
+factory provides the same desktop-only Windows process flags and these tests pass
+without the hook.

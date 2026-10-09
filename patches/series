@@ -4,3 +4,5 @@
 0003-core-wiring.patch
 0004-scheduler-observation.patch
 0005-regression-tests.patch
+0006-desktop-lifecycle.patch
+0007-desktop-script-window.patch

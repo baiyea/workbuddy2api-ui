@@ -2,6 +2,9 @@ package main
 
 import (
 	"bytes"
+	"net"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -155,5 +158,102 @@ func TestEnvironmentConfigWithoutKeyFilePreservesSourceMode(t *testing.T) {
 	}
 	if cfg.AdminKey != strings.Repeat("a", 32) || cfg.APIKey != "source-api" || cfg.BridgeKey != strings.Repeat("b", 32) {
 		t.Fatalf("source environment mode changed: %+v", cfg)
+	}
+}
+
+func TestDesktopPageUsesLocalInstructionsOnlyWhenEnabled(t *testing.T) {
+	for _, mode := range []string{"", "false", "true"} {
+		t.Run(mode, func(t *testing.T) {
+			t.Setenv("WB2A_DESKTOP", mode)
+			t.Setenv("WB2A_KEY_FILE", "")
+			t.Setenv("WB2A_ADMIN_KEY", strings.Repeat("a", 32))
+			t.Setenv("WB2A_API_KEY", "api")
+			t.Setenv("WB2A_BRIDGE_KEY", strings.Repeat("b", 32))
+			t.Setenv("WB2A_PUBLIC_ORIGIN", "")
+			cfg, _, err := configFromEnv()
+			if err != nil {
+				t.Fatal(err)
+			}
+			h, err := NewServer(cfg)
+			if err != nil {
+				t.Fatal(err)
+			}
+			w := httptest.NewRecorder()
+			h.ServeHTTP(w, httptest.NewRequest("GET", "http://127.0.0.1/?admin_key=never-echo", nil))
+			body := w.Body.String()
+			if w.Code != 200 || strings.Contains(body, "never-echo") {
+				t.Fatal("unsafe page response")
+			}
+			if got := strings.Contains(body, "docker compose logs console"); got != (mode != "true") {
+				t.Fatalf("mode %q Docker help shown=%v", mode, got)
+			}
+			if mode == "true" && !strings.Contains(body, "托盘") {
+				t.Fatal("desktop help does not explain tray")
+			}
+		})
+	}
+}
+
+func TestDesktopParentPipeStopsConsole(t *testing.T) {
+	for _, command := range []string{"", "ignored\nshutdown\n"} {
+		t.Run(command, func(t *testing.T) {
+			listener, err := net.Listen("tcp", "127.0.0.1:0")
+			if err != nil {
+				t.Fatal(err)
+			}
+			addr := listener.Addr().String()
+			listener.Close()
+			cmd := exec.Command(os.Args[0], "-test.run=^TestConsoleLogProcess$")
+			cmd.Env = append(os.Environ(), "WB2A_LOG_TEST=1", "WB2A_DESKTOP=true", "WB2A_LISTEN="+addr, "WB2A_KEY_FILE=", "WB2A_ADMIN_KEY="+strings.Repeat("a", 32), "WB2A_API_KEY=api", "WB2A_BRIDGE_KEY="+strings.Repeat("b", 32), "WB2A_PUBLIC_ORIGIN=")
+			pipe, err := cmd.StdinPipe()
+			if err != nil {
+				t.Fatal(err)
+			}
+			var output bytes.Buffer
+			cmd.Stdout = &output
+			cmd.Stderr = &output
+			if err = cmd.Start(); err != nil {
+				t.Fatal(err)
+			}
+			defer cmd.Process.Kill()
+			client := &http.Client{Timeout: 100 * time.Millisecond}
+			ready := false
+			for deadline := time.Now().Add(5 * time.Second); time.Now().Before(deadline); {
+				response, err := client.Get("http://" + addr + "/livez")
+				if err == nil {
+					response.Body.Close()
+					ready = response.StatusCode == 200
+					if ready {
+						break
+					}
+				}
+				time.Sleep(10 * time.Millisecond)
+			}
+			if !ready {
+				t.Fatal("console did not become ready")
+			}
+			if command == "" {
+				pipe.Close()
+			} else {
+				pipe.Write([]byte(command))
+				defer pipe.Close()
+			}
+			done := make(chan error, 1)
+			go func() { done <- cmd.Wait() }()
+			select {
+			case err := <-done:
+				if err != nil {
+					t.Fatalf("shutdown failed: %v %s", err, &output)
+				}
+			case <-time.After(2 * time.Second):
+				cmd.Process.Kill()
+				<-done
+				t.Fatal("console ignored parent shutdown")
+			}
+			if response, err := client.Get("http://" + addr + "/livez"); err == nil {
+				response.Body.Close()
+				t.Fatal("HTTP still running")
+			}
+		})
 	}
 }

@@ -1,0 +1,59 @@
+diff --git a/cmd/server/main.go b/cmd/server/main.go
+--- a/cmd/server/main.go
++++ b/cmd/server/main.go
+@@ -8,8 +8,6 @@
+ 	"log"
+ 	"net/http"
+ 	"os"
+-	"os/signal"
+-	"syscall"
+ 	"time"
+ 
+ 	"workbuddy2api/internal/auth"
+@@ -193,7 +191,7 @@
+ 		GlobalEnabled: cfg.Global.Enabled,
+ 	})
+ 
+-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
++	ctx, stop := coreLifecycle()
+ 	defer stop()
+ 	tasks, history, taskErr := newCoreTasks(ctx, cfg, sch)
+ 	coreHandler, err := wrapCore(ctx, cfg, p, up, sch, h, tasks, history, taskErr)
+@@ -214,12 +212,27 @@
+ 		// （长流式生成合法时长可达数分钟，全局 WriteTimeout 会误杀在途 SSE）。
+ 		IdleTimeout: 120 * time.Second,
+ 	}
++	shutdownDone := make(chan struct{})
+ 	go func() {
++		defer close(shutdownDone)
+ 		<-ctx.Done()
+-		p.Flush() // 信号触发：先落盘再做优雅停机
+ 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+ 		defer cancel()
+-		_ = srv.Shutdown(shutdownCtx)
++		// Close the listener immediately, then await both HTTP and task cleanup.
++		httpDone := make(chan struct{})
++		go func() {
++			defer close(httpDone)
++			if err := srv.Shutdown(shutdownCtx); err != nil {
++				_ = srv.Close()
++			}
++		}()
++		if tasks != nil {
++			if err := tasks.Shutdown(shutdownCtx); err != nil {
++				log.Print("task_shutdown_incomplete")
++			}
++		}
++		<-httpDone
++		p.Flush()
+ 	}()
+ 
+ 	if cfg.Global.Enabled {
+@@ -232,5 +245,7 @@
+ 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+ 		log.Fatalf("http: %v", err)
+ 	}
++	stop()
++	<-shutdownDone
+ 	log.Printf("bye")
+ }

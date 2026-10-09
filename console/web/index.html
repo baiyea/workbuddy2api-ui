@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WorkBuddy · 控制台</title><link rel="stylesheet" href="/style.css"><script type="module" src="/app.js"></script></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="/desktop-key.js"></script><title>WorkBuddy · 控制台</title><link rel="stylesheet" href="/style.css"><script type="module" src="/app.js"></script></head>
 <body>
 <main id="login-view" class="login-wrap">
  <section class="login-card">
@@ -9,8 +9,8 @@
   <p class="muted">一个轻量的模型网关。管理账号、观察运行状态，并直接测试模型回答。</p>
   <form id="login-form"><label for="admin-key">管理密钥</label><input id="admin-key" type="password" autocomplete="current-password" required placeholder="输入此服务器的管理密钥"><button class="primary full" type="submit">进入控制台 <span>↗</span></button></form>
   <p id="login-error" class="error" role="alert"></p>
-  <details><summary>第一次使用？</summary><p>在服务器上查看容器日志，找到「管理密钥」后输入。自动生成和手动设置的管理密钥都会显示在日志中，请勿公开分享日志。</p><code>docker compose logs console</code><p>这是控制台密钥，不是上游账号密码。</p></details>
- </section><p class="login-footer">自托管 · 凭据保存在你的服务器</p>
+  <details><summary>第一次使用？</summary>{{if .Desktop}}<p>从桌面托盘打开控制台，管理密钥会自动填入。点击「进入控制台」完成登录；需要重新填入时，请再次从托盘打开。</p>{{else}}<p>在服务器上查看容器日志，找到「管理密钥」后输入。自动生成和手动设置的管理密钥都会显示在日志中，请勿公开分享日志。</p><code>docker compose logs console</code>{{end}}<p>这是控制台密钥，不是上游账号密码。</p></details>
+ </section><p class="login-footer">{{if .Desktop}}桌面运行 · 凭据保存在本机{{else}}自托管 · 凭据保存在你的服务器{{end}}</p>
 </main>
 <div id="console-view" class="shell" hidden>
  <aside class="sidebar"><div class="brand"><span class="brand-icon">W</span> WorkBuddy</div><p class="sidebar-label">WORKSPACE CONSOLE</p>
@@ -22,7 +22,7 @@
   <section class="page" data-page="overview"><div class="page-heading"><div><p class="eyebrow">OVERVIEW</p><h1>一切，从连接开始。</h1><p class="muted">账号和模型的运行状况，尽在这里。</p></div><button id="refresh" class="secondary">↻ 刷新状态</button></div>
    <div class="metrics"><article><span>账号总数</span><strong id="count-total">—</strong><small>已连接到当前网关</small></article><article><span>可用账号</span><strong id="count-healthy">—</strong><small>按账号池最近状态</small></article><article><span>冷却 / 禁用</span><strong id="count-limited">—</strong><small>暂时不可用的账号</small></article><article><span>进行中的请求</span><strong id="count-flight">—</strong><small>当前并发占用</small></article></div>
    <article class="welcome"><div class="welcome-mark">↗</div><div><p class="eyebrow">READY WHEN YOU ARE</p><h2 id="welcome-title">添加第一个账号</h2><p id="welcome-text">在浏览器中完成授权，网关会自动保存并加载账号。</p><button data-view="accounts" class="primary">管理账号 →</button><button data-view="chat" class="secondary">测试一个回答</button></div></article>
-   <div class="info-grid"><article class="panel"><h3>你的数据，在你的服务器</h3><p>账号凭据与网关状态保存在持久化数据卷中。普通容器重启与重建不会清除它们。</p></article><article class="panel"><h3>状态不是一次真实调用</h3><p>账号可用性、积分和模型列表来自最近观测。打开对话测试，确认模型当前是否能响应。</p></article></div>
+   <div class="info-grid"><article class="panel">{{if .Desktop}}<h3>你的数据，保存在本机</h3><p>账号凭据与网关状态保存在本机应用数据目录。关闭浏览器不会停止服务；使用托盘退出应用。</p>{{else}}<h3>你的数据，在你的服务器</h3><p>账号凭据与网关状态保存在持久化数据卷中。普通容器重启与重建不会清除它们。</p>{{end}}</article><article class="panel"><h3>状态不是一次真实调用</h3><p>账号可用性、积分和模型列表来自最近观测。打开对话测试，确认模型当前是否能响应。</p></article></div>
   </section>
   <section class="page" data-page="accounts" hidden><div class="page-heading"><div><p class="eyebrow">ACCOUNTS</p><h1>连接你的模型账号</h1><p class="muted">授权成功后立即加载，无需重启网关。</p></div></div>
    <article class="panel"><form id="add-account" class="inline-form"><label for="realm">账号版本</label><select id="realm"><option value="cn">国内版 CodeBuddy</option><option value="global">国际版 WorkBuddy</option></select><button class="primary" type="submit">＋ 浏览器授权</button></form><p class="muted small">登录、扫码或验证码由你在上游页面完成。当前页面会自动等待结果。</p>

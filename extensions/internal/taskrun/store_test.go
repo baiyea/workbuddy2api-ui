@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -242,7 +243,7 @@ func TestStoreRetentionPaginationAndUTF8(t *testing.T) {
 		t.Fatal("unsafe log truncation")
 	}
 	info, err := os.Stat(s.path)
-	if err != nil || info.Mode().Perm() != 0600 {
+	if err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0600) {
 		t.Fatal("history permissions")
 	}
 }

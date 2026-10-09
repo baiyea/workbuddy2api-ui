@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">wb2api-desktop 托盘交互示意</title>
+  <desc id="desc">应用常驻 macOS 菜单栏或 Windows 系统托盘。通过打开控制台菜单进入默认浏览器，管理密钥预填后手动登录。关闭网页继续后台运行，托盘退出停止服务与任务。本图是交互示意，非实机截图。</desc>
+  <defs>
+    <symbol id="icon" viewBox="0 0 512 512"><rect x="8" y="8" width="496" height="496" rx="112" fill="#167362"/><path d="M102 148 L166 362 L256 238 L346 362 L410 148" fill="none" stroke="#fff" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  </defs>
+  <rect width="1200" height="700" rx="24" fill="#f4f7f7"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif" fill="#183a34">
+    <text x="40" y="57" font-size="30" font-weight="700">wb2api-desktop：托盘常驻，浏览器操作</text>
+    <text x="40" y="93" font-size="19" fill="#526a65">自带 core、Web 控制台与任务环境 · 无需 Docker · 仅供本机使用</text>
+
+    <rect x="40" y="124" width="448" height="428" rx="18" fill="#fff" stroke="#d5e2df"/>
+    <text x="64" y="161" font-size="22" font-weight="600">应用常驻系统托盘</text>
+    <text x="64" y="195" font-size="16" fill="#526a65">macOS · 顶部菜单栏</text>
+    <rect x="64" y="208" width="400" height="40" rx="9" fill="#e9eeef"/>
+    <text x="81" y="234" font-size="15" fill="#687c77">访达　文件　编辑　显示</text>
+    <circle cx="386" cy="228" r="5" fill="#809690"/>
+    <use href="#icon" x="420" y="214" width="28" height="28"/>
+    <text x="64" y="284" font-size="16" fill="#526a65">Windows · 底部通知区域</text>
+    <rect x="64" y="297" width="400" height="44" rx="9" fill="#e9eeef"/>
+    <path d="M83 310h8v8h-8zm10 0h8v8h-8zm-10 10h8v8h-8zm10 0h8v8h-8z" fill="#547b9c"/>
+    <rect x="115" y="307" width="125" height="24" rx="12" fill="#fff"/>
+    <path d="M372 322l5-5 5 5" fill="none" stroke="#687c77" stroke-width="2"/>
+    <circle cx="398" cy="319" r="5" fill="#809690"/>
+    <use href="#icon" x="420" y="305" width="28" height="28"/>
+    <path d="M434 345v13" stroke="#b0c8c1" stroke-width="2" stroke-dasharray="3 3"/>
+
+    <rect x="130" y="363" width="314" height="165" rx="12" fill="#fcfdfd" stroke="#c9d8d3"/>
+    <text x="149" y="396" font-size="17" fill="#697d77">运行中 · 仅本机访问</text>
+    <rect x="140" y="411" width="294" height="43" rx="7" fill="#e1f2ec"/>
+    <text x="158" y="439" font-size="19" font-weight="600" fill="#126450">打开控制台</text>
+    <path d="M405 426l6 6-6 6" stroke="#167362" stroke-width="2" fill="none"/>
+    <line x1="143" y1="466" x2="431" y2="466" stroke="#dbe5e1"/>
+    <text x="158" y="501" font-size="18">退出 wb2api-desktop</text>
+
+    <path d="M506 350h114m-12-9 12 9-12 9" fill="none" stroke="#167362" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="564" y="322" text-anchor="middle" font-size="18" fill="#167362">打开网页</text>
+    <text x="564" y="382" text-anchor="middle" font-size="14" fill="#697d77">默认浏览器</text>
+
+    <text x="648" y="158" font-size="22" font-weight="600">在浏览器中登录和管理</text>
+    <rect x="646" y="180" width="510" height="334" rx="15" fill="#fff" stroke="#c9d8d3"/>
+    <path d="M661 180h480a15 15 0 0 1 15 15v36H646v-36a15 15 0 0 1 15-15" fill="#e9eeef"/>
+    <circle cx="667" cy="205" r="5" fill="#df8c85"/><circle cx="684" cy="205" r="5" fill="#dcb972"/><circle cx="701" cy="205" r="5" fill="#8ab9a1"/>
+    <rect x="727" y="192" width="401" height="27" rx="6" fill="#fff"/>
+    <text x="743" y="211" font-size="15" fill="#526a65">127.0.0.1:7863/</text>
+    <text x="682" y="276" font-size="23" font-weight="600">登录控制台</text>
+    <text x="682" y="311" font-size="16" fill="#526a65">管理密钥</text>
+    <rect x="682" y="324" width="438" height="48" rx="8" fill="#f7faf9" stroke="#bdd1c9"/>
+    <text x="699" y="355" font-size="24" letter-spacing="3" fill="#54786b">••••••••••••••••</text>
+    <rect x="682" y="391" width="438" height="46" rx="8" fill="#167362"/>
+    <text x="901" y="421" text-anchor="middle" font-size="19" font-weight="600" fill="#fff">登录</text>
+    <text x="901" y="479" text-anchor="middle" font-size="18" fill="#526a65">密钥自动填入，点击登录即可</text>
+    <text x="901" y="547" text-anchor="middle" font-size="16" fill="#697d77">读取密钥后，页面会清除 URL 中的密钥参数</text>
+
+    <rect x="40" y="582" width="546" height="72" rx="12" fill="#e7f2ed"/>
+    <text x="63" y="611" font-size="19" font-weight="600">关闭网页</text>
+    <text x="63" y="639" font-size="17" fill="#526a65">托盘和后台服务继续运行</text>
+    <rect x="608" y="582" width="548" height="72" rx="12" fill="#e8edf2"/>
+    <text x="631" y="611" font-size="19" font-weight="600">从托盘退出</text>
+    <text x="631" y="639" font-size="17" fill="#526a65">停止服务与运行中的任务，保留数据</text>
+    <text x="1156" y="682" text-anchor="end" font-size="14" fill="#73877e">交互示意 · 非实机截图</text>
+  </g>
+</svg>

@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -42,10 +43,10 @@ func TestInitializeKeysMigratesLegacyWithoutRotation(t *testing.T) {
 		t.Fatalf("legacy key file changed: %v", err)
 	}
 	info, err := os.Stat(filepath.Join(keyDir, "keys.json"))
-	if err != nil || info.Mode().Perm() != 0600 {
+	if err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0600) {
 		t.Fatalf("key file mode: %v %v", info, err)
 	}
-	if info, err = os.Stat(keyDir); err != nil || info.Mode().Perm() != 0700 {
+	if info, err = os.Stat(keyDir); err != nil || (runtime.GOOS != "windows" && info.Mode().Perm() != 0700) {
 		t.Fatalf("key directory mode: %v %v", info, err)
 	}
 }

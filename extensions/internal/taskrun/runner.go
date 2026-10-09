@@ -13,13 +13,15 @@ import (
 )
 
 type Runner struct {
-	mu      sync.Mutex
-	ctx     context.Context
-	store   *Store
-	catalog func(time.Time) []scheduler.TaskInfo
-	execute func(context.Context, string) (scheduler.TaskResult, error)
-	active  *Run
-	done    chan struct{}
+	mu            sync.Mutex
+	ctx           context.Context
+	cancel        context.CancelFunc
+	completionErr error
+	store         *Store
+	catalog       func(time.Time) []scheduler.TaskInfo
+	execute       func(context.Context, string) (scheduler.TaskResult, error)
+	active        *Run
+	done          chan struct{}
 }
 type BusyError struct{ RunID string }
 
@@ -30,7 +32,8 @@ var ErrUnknownTask = errors.New("unknown task")
 var ErrRequestConflict = errors.New("request id belongs to another task")
 
 func NewRunner(ctx context.Context, store *Store, catalog func(time.Time) []scheduler.TaskInfo, execute func(context.Context, string) (scheduler.TaskResult, error)) *Runner {
-	return &Runner{ctx: ctx, store: store, catalog: catalog, execute: execute}
+	ctx, cancel := context.WithCancel(ctx)
+	return &Runner{ctx: ctx, cancel: cancel, store: store, catalog: catalog, execute: execute}
 }
 func (r *Runner) checkTask(id string) error {
 	if !knownTask(id) {
@@ -81,6 +84,7 @@ func (r *Runner) start(taskID, source, requestID string, at []time.Time) (Run, e
 		return Run{}, err
 	}
 	// ponytail: background tasks are globally serial; use per-account scheduling only if throughput requires it
+	r.completionErr = nil
 	r.active = &run
 	r.done = make(chan struct{})
 	go r.run(taskID)
@@ -157,6 +161,11 @@ func (r *Runner) run(taskID string) {
 		}
 		r.mu.Lock()
 		defer r.mu.Unlock()
+		if r.active == nil { // Shutdown already persisted the interrupted record.
+			close(r.done)
+			r.done = nil
+			return
+		}
 		run := cloneRun(*r.active)
 		finished := time.Now().UTC()
 		if finished.Before(run.StartedAt) {
@@ -180,7 +189,8 @@ func (r *Runner) run(taskID string) {
 			run.Status = "interrupted"
 			run.Log = "task_cancelled: result unknown\n" + run.Log
 		}
-		if err := r.store.Put(run, finished); err != nil {
+		r.completionErr = r.store.Put(run, finished)
+		if r.completionErr != nil {
 			log.Printf("task_completion_write_failed run_id=%s", run.ID)
 		}
 		r.active = nil
@@ -224,4 +234,38 @@ func (r *Runner) Active() *Run {
 	}
 	copy := cloneRun(*r.active)
 	return &copy
+}
+
+// Shutdown cancels dispatch and waits for a terminal record. Some legacy RPCs
+// ignore cancellation, so at the deadline we persist an interrupted result
+// before the process exits; a late RPC must not overwrite that result.
+func (r *Runner) Shutdown(ctx context.Context) error {
+	r.cancel()
+	r.mu.Lock()
+	done := r.done
+	r.mu.Unlock()
+	if done != nil {
+		select {
+		case <-done:
+		case <-ctx.Done():
+			r.mu.Lock()
+			defer r.mu.Unlock()
+			if r.active == nil {
+				return r.completionErr
+			}
+			run := cloneRun(*r.active)
+			now := time.Now().UTC()
+			if now.Before(run.StartedAt) {
+				now = run.StartedAt
+			}
+			run.Status, run.FinishedAt, run.DurationMS = "interrupted", &now, nil
+			run.Log = "shutdown_deadline: business finish time and result unknown\n" + run.Log
+			r.completionErr = r.store.Put(run, now)
+			r.active = nil
+			return errors.Join(ctx.Err(), r.completionErr)
+		}
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return r.completionErr
 }

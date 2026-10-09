@@ -17,6 +17,7 @@ import (
 
 	"workbuddy2api/internal/anthropic"
 	"workbuddy2api/internal/bridge"
+	"workbuddy2api/internal/durablefs"
 	"workbuddy2api/internal/pool"
 	"workbuddy2api/internal/scheduler"
 	"workbuddy2api/internal/taskrun"
@@ -107,18 +108,7 @@ func writeKeys(path string, keys deploymentKeys) error {
 	if err != nil {
 		return err
 	}
-	if err := os.Link(tmp, path); err != nil {
-		return err
-	}
-	if err := os.Remove(tmp); err != nil {
-		return err
-	}
-	d, err := os.Open(dir)
-	if err != nil {
-		return err
-	}
-	defer d.Close()
-	return d.Sync()
+	return durablefs.Publish(tmp, path, false)
 }
 
 func initializeKeys(dataDir, keyDir, adminOverride, apiOverride string) (deploymentKeys, error) {

@@ -1,0 +1,148 @@
+name: Desktop Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.platform }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-2022
+            target: x86_64-pc-windows-msvc
+            platform: windows-x64
+            bundle: nsis
+            extension: exe
+          - runner: macos-15
+            target: aarch64-apple-darwin
+            platform: macos-arm64
+            bundle: dmg
+            extension: dmg
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+            platform: macos-x64
+            bundle: dmg
+            extension: dmg
+    defaults:
+      run:
+        shell: bash
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
+      RUST_VERSION: '1.97.1'
+      MACOSX_DEPLOYMENT_TARGET: '12.0'
+      CARGO_INCREMENTAL: '0'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Validate and apply tag version
+        id: version
+        run: |
+          version=$(python desktop/scripts/release_version.py --tag "$RELEASE_TAG")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: '1.26.0'
+          cache-dependency-path: |
+            upstream/go.sum
+            console/go.sum
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - name: Set up Rust
+        run: |
+          rustup toolchain install "$RUST_VERSION" --profile minimal --component rustfmt,clippy
+          rustup default "$RUST_VERSION"
+          rustup target add '${{ matrix.target }}'
+      - name: Check preparation and release helpers
+        run: python -m unittest discover -s desktop/scripts -p 'test_*.py' -v
+      - name: Test native core and console
+        run: |
+          python scripts/overlay.py prepare --output .build/ci-core
+          go -C .build/ci-core test ./...
+          go -C console test ./...
+          node --test console/web_test.cjs
+      - name: Prepare self-contained runtime
+        run: python desktop/scripts/prepare.py --target '${{ matrix.target }}'
+      - name: Test desktop lifecycle with native runtime
+        run: |
+          cargo fmt --manifest-path desktop/Cargo.toml --check
+          cargo clippy --manifest-path desktop/Cargo.toml --locked --all-targets -- -D warnings
+          cargo test --manifest-path desktop/Cargo.toml --locked --all-targets
+          cargo test --manifest-path desktop/Cargo.toml --locked --test runtime -- --ignored
+      - name: Build installer
+        run: |
+          npm --prefix desktop ci
+          npm --prefix desktop run build
+      - name: Upload installer
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: desktop-${{ matrix.platform }}
+          path: desktop/target/${{ matrix.target }}/release/bundle/${{ matrix.bundle }}/wb2api-desktop-${{ matrix.platform }}-${{ steps.version.outputs.version }}.${{ matrix.extension }}
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+  release:
+    name: Publish complete release
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          pattern: desktop-*
+          path: dist
+          merge-multiple: true
+      - name: Verify all installers and generate checksums
+        shell: bash
+        working-directory: dist
+        run: |
+          version="${RELEASE_TAG#v}"
+          files=("wb2api-desktop-windows-x64-$version.exe"
+                 "wb2api-desktop-macos-arm64-$version.dmg"
+                 "wb2api-desktop-macos-x64-$version.dmg")
+          for file in "${files[@]}"; do test -s "$file"; done
+          sha256sum "${files[@]}" > SHA256SUMS.txt
+      - name: Upload draft assets, then publish
+        shell: bash
+        run: |
+          if draft=$(gh release view "$RELEASE_TAG" --json isDraft --jq '.isDraft'); then
+            if [[ "$draft" != true ]]; then
+              echo 'Release already published; use a new version tag instead of replacing its assets.' >&2
+              exit 1
+            fi
+          else
+            flags=()
+            if [[ "$RELEASE_TAG" == *-* ]]; then flags+=(--prerelease); fi
+            gh release create "$RELEASE_TAG" --verify-tag --draft --generate-notes \
+              --title "wb2api-desktop $RELEASE_TAG" \
+              --notes 'Windows x64 / macOS arm64 / macOS x64 原生自包含安装包。当前构建未配置 Windows 代码签名或 Apple Developer ID 签名与公证。' \
+              "${flags[@]}"
+          fi
+          gh release upload "$RELEASE_TAG" dist/* --clobber
+          gh release edit "$RELEASE_TAG" --draft=false

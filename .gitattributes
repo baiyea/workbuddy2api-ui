@@ -1,0 +1,3 @@
+# Preserve the frozen snapshot and patch bytes under Windows core.autocrlf.
+/upstream/** -text
+/patches/** -text

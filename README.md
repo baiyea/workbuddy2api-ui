@@ -1,171 +1,158 @@
-# WorkBuddy2API
+<div align="center">
 
-**将 WorkBuddy / CodeBuddy 反向代理为通用的 OpenAI/Anthropic协议兼容 API。**
+# WB2api
 
-把已授权账号的模型能力转换为兼容 OpenAI Chat Completions 的接口，让支持自定义 Base URL 的客户端和应用通过同一个网关调用。配套 Web 控制台负责账号授权、运行状态、对话测试和自动任务，Docker Compose 一条命令即可启动。
+### 让 WorkBuddy 用到更多地方
 
-> 本项目是非官方自托管网关。这里的“OpenAI 兼容”指模型列表与 Chat Completions 等已实现接口，不代表覆盖 OpenAI 的全部 API 或所有客户端功能。
+**将 WorkBuddy 反向代理为通用的 OpenAI / Anthropic 协议兼容 API，自动获取积分，多账号轮换**
 
-## 核心功能：用 OpenAI 接口调用 WorkBuddy
+**可供 Deepseek Harness Desktop、Claude Code、Claude Desktop、Codex、Gemini CLI、Grok Build、OpenCode、OpenClaw、Hermes Agent、Pi、MiniMax Code、ZCode 工具使用**
 
-- **统一接入地址**：使用网关的 `/v1` 地址和 API Key 接入客户端，不向客户端分发上游账号凭据。
-- **模型列表与对话接口**：通过 `GET /v1/models` 获取模型 ID，通过 `POST /v1/chat/completions` 发起对话。
-- **流式回答**：支持 Chat Completions 流式输出，适合聊天客户端和自己的应用。
-- **Anthropic 文本兼容**：同一个 API Key 和模型列表也可通过 `POST /v1/messages` 调用，支持普通与流式文本对话。
-- **多账号管理**：由网关维护账号池和冷却状态，网页可查看可用账号及调用情况。
-- **网页辅助配置**：控制台提供 Base URL、API Key 和调用示例，并可直接测试模型回答。
+**[下载安装](#下载安装) · [快速开始](#快速开始) · [功能特性](#功能特性)**
 
-![API 接入页面：Base URL、API Key 入口和调用示例](docs/superpowers/verification/2026-09-16-openai-api-access.jpg)
+</div>
 
-*API 接入截图来自本地隔离演示环境，未展示密钥。图中的 17864 是预览端口，正式部署默认使用 7863。*
+## 为什么选择 wb2api？
 
-### 客户端怎么填写
+已经有了 WorkBuddy 账号，想把模型用到自己习惯的 AI 应用里？每天还要记得签到、查看活动、检查账号状态？
 
-选择客户端的 OpenAI 兼容接口或自定义服务商入口，填写：
+**wb2api 把这些事放到一个地方：授权账号、接入应用，剩下的日常任务让后台按计划执行。**
 
-| 配置项 | 填写内容 |
+- **让账号能力多一个出口。** 提供 OpenAI 兼容接口与 Anthropic 文本接口，为支持自定义服务地址的应用提供接入方式。
+- **少一点重复操作。** 签到、猫猫旅行、活跃上报等任务集中运行，不用每天挨个手动点；结果和积分记录在网页里查看。
+- **桌面使用更省心。** `wb2api-desktop` 自带运行环境，启动后打开浏览器即可操作，无需另装 Docker、Python 或 Node.js。
+- **多个账号，一个入口。** 统一查看账号状态、管理授权、连接应用，账号和运行记录保存在自己的电脑或服务器上。
+
+平时在自己电脑上用，选桌面端；希望服务持续在线，选 Docker 服务端。两种方式共用同一套功能。
+
+## 界面预览
+
+<table>
+  <tr>
+    <td width="50%" align="center" valign="bottom">
+      <a href="docs/superpowers/verification/wb2api-desktop-tray-diagram.png">
+        <img src="docs/superpowers/verification/wb2api-desktop-tray-diagram.png" alt="桌面托盘交互示意" width="100%">
+      </a>
+      <br>
+      <strong>桌面托盘</strong>
+    </td>
+    <td width="50%" align="center" valign="bottom">
+      <a href="docs/superpowers/verification/2026-10-09-api-access.png">
+        <img src="docs/superpowers/verification/2026-10-09-api-access.png" alt="API 接入页面" width="100%">
+      </a>
+      <br>
+      <strong>通用API输出</strong>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center" valign="bottom">
+      <a href="docs/superpowers/verification/2026-10-09-chat-playground.png">
+        <img src="docs/superpowers/verification/2026-10-09-chat-playground.png" alt="对话测试页面" width="100%">
+      </a>
+      <br>
+      <strong>在线对话</strong>
+    </td>
+    <td width="50%" align="center" valign="bottom">
+      <a href="docs/superpowers/verification/2026-10-09-auto-tasks.png">
+        <img src="docs/superpowers/verification/2026-10-09-auto-tasks.png" alt="自动任务执行记录与详情" width="100%">
+      </a>
+      <br>
+      <strong>获取积分（自动签到、完成任务）</strong>
+    </td>
+  </tr>
+</table>
+
+*点击图片可查看大图。托盘图为交互示意，其余为当前界面截图。*
+
+## 下载安装
+
+### 在自己的电脑上使用
+
+<a href="https://github.com/baiyea/workbuddy2api-ui/releases">下载地址</a>
+安装后常驻系统托盘，网页和API接口只在本机开放。
+
+| 你的电脑 | 对应安装包 |
 | --- | --- |
-| Base URL | `http://服务器地址:7863/v1`，公网部署建议使用自己的 HTTPS 域名 |
-| API Key | 在控制台“API 接入”页面查看，不是网页登录的管理密钥 |
-| 模型 | 从 `/v1/models` 获取的完整模型 ID；有 `cn:` 或 `global:` 前缀时需要保留 |
+| Apple Silicon Mac，macOS 12 或更新版本 | `wb2api-desktop-macos-arm64-<版本号>.dmg` |
+| Intel Mac，macOS 12 或更新版本 | `wb2api-desktop-macos-x64-<版本号>.dmg` |
+| Windows x64 | `wb2api-desktop-windows-x64-<版本号>.exe` |
 
-模型列表可能包含静态候选；能否实际调用取决于账号版本、权限、额度和上游状态，以真实回答为准。
+目前桌面端处于**开发预览阶段**：macOS 已完成开发打包，尚未正式签名公证；Windows 安装包与真机验证仍在准备。当前没有正式发布的安装包下载入口。
 
-### API 调用示例
+→ [查看桌面端获取、构建及使用说明](desktop/README.md)
 
-先查询模型列表：
+### 在自己的服务器上使用
 
-```bash
-curl http://127.0.0.1:7863/v1/models \
-  -H "Authorization: Bearer <你的 API Key>"
-```
-
-再使用列表中的模型 ID 发起流式对话：
-
-```bash
-curl -N http://127.0.0.1:7863/v1/chat/completions \
-  -H "Authorization: Bearer <你的 API Key>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "<从模型列表选择的完整 ID>",
-    "messages": [{"role": "user", "content": "你好"}],
-    "stream": true
-  }'
-```
-
-以上是填写示例，请替换地址、密钥和模型 ID。
-
-### Anthropic 文本接口
-
-在控制台“API 接入”切换到 **Anthropic**，查看地址和示例；“前往对话测试”会带上所选协议与模型。官方 Python SDK 的 Base URL 填服务根地址 `http://服务器地址:7863`，SDK 会追加 `/v1/messages`，不要再追加 `/v1`。
-
-```bash
-curl -N http://127.0.0.1:7863/v1/messages \
-  -H "x-api-key: <你的 API Key>" \
-  -H "anthropic-version: 2023-06-01" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "<从模型列表选择的完整 ID，保留 cn: 或 global: 前缀>",
-    "max_tokens": 1024,
-    "messages": [{"role": "user", "content": "你好"}],
-    "stream": true
-  }'
-```
-
-`max_tokens` 必须是正整数；删除 `stream` 或设为 `false` 可获取普通 JSON 响应。支持 user/assistant 多轮消息、字符串或纯文本内容块，以及可选 `system`；不支持工具、图像、文件、扩展思考、缓存、beta、采样参数等高级字段，未支持字段会明确报错。
-
-仅传递上游实际返回的用量，未知 token 数返回 `null`，不会估算或填 0。这与原生 API 的整数用量字段有差异，严格要求整数的客户端可能不兼容。已验证的 SDK 基线为 Python 3.12 + `anthropic==0.67.0`，不代表所有版本或客户端可用，也不代表完整支持 Claude Code；模型能力仍由 WorkBuddy / CodeBuddy 上游决定。
-
-![Anthropic 文本接入页面](docs/superpowers/verification/anthropic-access-desktop-mock.jpg)
-
-*截图来自隔离 mock 页面，未展示真实密钥，不代表真实模型调用验收。*
-
-## 一条命令启动
-
-准备一台已安装 Docker 和 Docker Compose 的 **Intel / AMD 64 位服务器（linux/amd64）**，将 [docker-compose.yml](docker-compose.yml) 保存到部署目录：
+已有安装 Docker 和 Docker Compose 的 Linux x64 服务器，可以保存 [docker-compose.yml](docker-compose.yml) 后运行：
 
 ```bash
 docker compose up -d
 docker compose logs console
 ```
 
-Compose 从阿里云仓库拉取成品镜像，**无需下载源码、构建镜像、准备 .env 或额外启动脚本**。私有镜像仓库需要先完成 Docker 登录。
+打开 `http://服务器地址:7863/`，用docker日志里的管理密钥登录。
 
-1. 打开 `http://服务器地址:7863/`，使用日志中的“管理密钥”登录。
-2. 进入“账号管理”，选择国内版或国际版，点击“浏览器授权”。
-3. 在上游页面完成登录、扫码或验证码，再回到控制台等待结果；国际版如要求地区信息，按提示选择真实注册地区。
-4. 授权成功后账号自动加载，无需重启。先在“对话测试”确认可用，再通过“API 接入”连接客户端。
+## 快速开始
 
-登录和人工验证需要你本人完成，程序不会绕过激活或验证码。
+### 基本使用
 
-## 配套 Web 控制台
+**第一步：打开控制台。**
 
-### 对话测试
+启动桌面端后，默认浏览器会自动打开，管理密钥也会自动填好。点击登录即可进入；Docker 用户通过服务器地址登录。
 
-选择 OpenAI 或 Anthropic 协议、模型并发送问题，直接检查模型响应与流式显示。Anthropic 模式可设置最大输出 tokens，默认 1024；切换协议会清空当前测试对话，生成中可停止。真实部署中的测试会消耗账号额度；页面内的对话刷新后清空。
+**第二步：添加自己的账号。**
 
-![对话测试页面：选择模型并查看流式回答](docs/superpowers/verification/2026-09-16-openai-chat-playground.jpg)
+进入“账号管理”，选择国内版 CodeBuddy 或国际版 WorkBuddy，点击“浏览器授权”。在上游页面完成登录、扫码或验证码，授权成功后账号会自动加载。
 
-*截图使用模拟回答和演示模型列表，仅展示界面，不是某个真实模型当前可用的证明。*
+**第三步：试一个回答，再接入应用。**
 
-### 账号与运行状态
+先到“对话测试”选择模型、发一条消息，确认账号可以使用。再到“API 接入”，将页面提供的地址、API Key 和模型名称填入目标应用。
 
-“运行概览”展示账号总数、可用状态、冷却情况和当前请求；“账号管理”用于浏览器授权，并查看账号最近观测到的积分、调用成功与错误记录。
-
-### 自动任务
-
-集中查看签到、猫猫旅行、活跃上报、Token 保活、开学季、夜猫子六类任务的开关、北京时间排程和执行历史。可手动执行已启用任务，查看账号结果与脱敏日志摘要。
-
-![桌面端自动任务执行记录与详情](docs/superpowers/verification/2026-09-15-overlay-task-console-desktop.jpg)
-
-*截图来自隔离测试环境，包含模拟账号，不代表真实奖励到账。*
-
-任务是否可用、账号是否符合条件以及是否获得奖励，取决于上游平台与活动规则。保活等维护任务不等同于积分奖励；页面目前用于查看与执行，不提供修改排程或开关的功能。“立即执行”覆盖全部符合条件账号，不能强行运行已禁用任务。
-
-### 手机端查看
-
-控制台支持窄屏布局，方便在手机上查看状态和任务。
-
-![手机端自动任务页面](docs/superpowers/verification/2026-09-15-overlay-task-console-mobile.jpg)
-
-*手机端测试截图；示例任务时间和开关不是所有部署的默认配置。*
-
-## 密钥与数据
-
-默认自动生成管理密钥、API Key 和内部通信密钥，重启后复用。管理密钥用于登录网页，API Key 用于接口调用，两者不同。
-
-如需自定义，在 Compose 的 **core 和 console 两个服务中**填写并取消相应注释，同名密钥保持一致：
-
-```yaml
-environment:
-  TZ: Asia/Shanghai
-  # WB2A_ADMIN_KEY: "" # 至少 32 字节，且与 API Key 不同
-  # WB2A_API_KEY: ""
-```
-
-不配置或留空的项使用自动生成的值。手动配置不改写基础密钥，取消配置后恢复基础值；默认 Compose 不从 `.env` 读取密钥。
-
-运行数据保存在部署目录中的 `runtime/wb2api/`：
-
-| 子目录 | 内容 |
+| 需要填写的内容 | 从哪里获取 |
 | --- | --- |
-| `auths/` | 已授权账号凭据 |
-| `data/` | 账号状态与任务历史 |
-| `keys/` | 自动生成的密钥 |
+| 服务地址（Base URL） | 控制台“API 接入”；桌面端的 OpenAI 地址为 `http://127.0.0.1:7863/v1` |
+| API Key | 同一页面查看，与网页登录用的管理密钥不同 |
+| 模型名称 | 使用控制台显示的完整模型名称 |
 
-普通重启和容器重建不会清空这些目录。备份时保存整个目录和实际使用的 Compose 文件，不要公开上传凭据或备份。
+**我常用的 AI 工具能接入吗？**
 
-## 使用边界
+先看它是否支持自定义服务地址，以及所需功能是否与本项目已实现的接口匹配。Claude Code、Codex、OpenCode 等编程助手还有工具调用等要求，不能仅凭协议名称判断完整兼容。当前主要提供模型列表、聊天与流式回答，以及 Anthropic 文本对话；更多工具的接入效果欢迎反馈实测结果。
 
-- **保护密钥**：console 启动日志会显示管理密钥，不显示 API 或内部通信密钥。不要公开分享日志或含真实密钥的 YAML。
-- **公网使用 HTTPS**：通过反向代理连接 console，并在 console 的 `environment` 中添加 `WB2A_PUBLIC_ORIGIN: "https://你的域名"`，不要带路径。
-- **积分仅供观察**：待确认不等于零，余额差额不等于奖励；仅将上游明确返回的奖励展示为已确认。
-- **遵守平台规则**：仅使用本人授权账号，不向未授权用户开放，不绕过平台验证。模型、额度、活动及服务可用性受上游规则影响。
+### 自动获取积分
 
-## 开发与来源
+**让签到等日常任务按时执行，少一些每天手动操作的麻烦。**
 
-本项目基于 [Sliverkiss/workbuddy2api](https://github.com/Sliverkiss/workbuddy2api)，在保留上游来源和许可的基础上增加独立 Web 控制台及 Docker 部署能力。
+1. 完成账号授权后，打开“自动任务”，查看已有任务的启用状态和执行时间。
+2. 保持应用或服务运行，已启用任务会按计划执行；需要立即尝试时，点击对应任务的“立即执行”。
+3. 在执行历史中查看结果、失败原因和上游明确返回的奖励，方便了解哪些任务已经完成。
 
-架构、开发、测试、上游更新和镜像发布说明见 [AGENTS.md](AGENTS.md)。源码构建入口保留在 [docker-compose.build.yaml](docker-compose.build.yaml)。
+支持签到、猫猫旅行、活跃上报、Token 保活、开学季、夜猫子六类任务。其中有日常维护任务，也有受活动时间与账号条件限制的任务；**自动执行不等于保证获得积分，实际奖励以上游返回为准。** 页面可查看排程并手动运行，暂不提供修改排程和开关的功能。
 
-遵循 [MIT License](LICENSE)，再分发时请保留原作者版权声明与许可。
+桌面端关闭网页后仍会运行；从托盘退出应用、电脑休眠或关机后，任务无法继续按时执行。希望持续运行，可以选择 Docker 服务端。
+
+## 功能特性
+
+| 功能 | 你可以用它做什么 |
+| --- | --- |
+| 统一 API 入口 | 将账号的模型能力接入符合接口要求的应用和脚本 |
+| 多账号管理 | 在一个页面里完成授权，查看各账号的可用状态 |
+| 网页对话测试 | 接入其他应用前，先确认模型是否可用、回答是否正常 |
+| 六类自动任务 | 按已有排程运行任务，减少重复操作 |
+| 执行记录与积分观察 | 查看任务结果，区分已确认奖励和待确认状态 |
+| 桌面端与 Docker 服务端 | 根据本机使用或服务器运行的需要选择安装方式 |
+
+wb2api 是非官方开源项目，请使用本人授权的账号并遵守上游平台规则。模型、额度与活动是否可用，取决于账号和上游服务；请妥善保管密钥，不要公开分享账号数据或带密钥的日志。
+
+## 贡献、开发与来源
+
+觉得好用，欢迎给项目一个 Star，也欢迎分享你的使用体验。
+
+发现问题或想支持新的使用场景，可以提交 Issue；欢迎贡献代码、完善文档，或分享已验证的客户端配置。反馈时请附上系统版本、操作步骤和脱敏后的错误信息，方便定位问题。
+
+本项目基于 [Sliverkiss/workbuddy2api](https://github.com/Sliverkiss/workbuddy2api)，在保留原作者版权与许可的基础上，增加 Web 控制台、原生桌面端、任务记录等能力。
+
+想参与开发，可查看 [开发指南](AGENTS.md)；桌面端相关说明见 [desktop/](desktop/README.md)。
+
+## License
+
+遵循 [MIT License](LICENSE)。欢迎使用、修改与再分发，请保留原作者版权声明和许可。

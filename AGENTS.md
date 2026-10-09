@@ -1,6 +1,6 @@
 # AI 开发指南
 
-本文面向在本仓库工作的 AI 编程助手，维护架构、开发、验证、上游更新与镜像发布约定。`README.md` 面向使用者，主打 **将 WorkBuddy / CodeBuddy 反向代理为 OpenAI 兼容 API**；Web 控制台是配套能力，不要把 README 写成开发手册。
+本文面向在本仓库工作的 AI 编程助手，维护架构、开发、验证、上游更新与镜像发布约定。`README.md` 面向使用者，主打 **将 WorkBuddy / CodeBuddy 反向代理为 OpenAI / Anthropic 兼容 API**；Web 控制台是配套能力，不要把 README 写成开发手册。
 
 ## 优先遵守
 
@@ -11,6 +11,7 @@
 - 保留相对目录挂载、源码构建入口和 `linux/amd64` 发布架构，不新增 Docker 健康检查。
 - 修改前检查 `git status --short`，保留用户已有改动；不能为通过验证而重置工作区、清空数据或覆盖真实配置。
 - 更新上游、发布镜像、推送 Git、重启实际服务分别需要对应授权。发布镜像不等于部署授权。
+- Superpowers 产生的文档或其他中间物，必须存放于目录 docs/superpowers 
 
 ## 架构
 
@@ -216,6 +217,17 @@ bash scripts/release.sh
 ```
 
 `WB2A_BUILD_*` 也适用于 `scripts/acceptance.sh`，仅传入构建步骤。不要把此地址设置为宿主 HTTP_PROXY/HTTPS_PROXY，或硬编码为项目默认值；Docker 后台拉基础镜像的代理由 Docker 自身管理。
+
+## 原生桌面运行器
+
+- 客户端源码、锁文件、资源准备与构建入口均在 `desktop/`；Windows x64、macOS arm64/x64 使用原生 Go 服务和随包 Python，与服务器 Docker 交付独立。
+- `python3 desktop/scripts/prepare.py` 从冻结快照物化并构建资源，在构建期校验锁定依赖 SHA-256；应用运行时不下载环境。跨目标资源准备不代表对应平台运行验收。
+- 安装后的应用名固定为 `wb2api-desktop`；`npm --prefix desktop run build` 读取已准备资源的目标与 Tauri 版本，生成 `wb2api-desktop-{windows|macos}-{x64|arm64}-{版本号}.*`。交付构建使用此命令，底层 `tauri build` 不负责统一文件名。
+- Tauri 只创建托盘，监听 `127.0.0.1`，console 使用 7863，core 使用动态内部端口。账号、历史、密钥与日志写入系统应用数据目录，不写入安装资源。
+- 管理密钥通过本机 URL 查询参数预填，前端立即清参，用户点击登录；保留管理会话、同源和 CSRF。不得记录含密钥的 URL，不得将预填改为自动登录。
+- `WB2A_DESKTOP=true` 启用父进程 stdin 生命周期。退出先取消任务并持久化，再由 Unix 进程组或 Windows Job Object 回收后代；Windows 子进程在创建时原子加入 Job，禁止退回先启动后绑定的竞态实现。
+- 新 core 行为仍放 `extensions/` 或 `patches/`；不改变生产 Compose、发布架构和真实服务。桌面资源、工具缓存、构建输出均不提交。
+- 验证命令、原生集成入口和签名要求见 `desktop/README.md`，实际验证记录见 `desktop/docs/verification.md`。Windows 原生任务历史恢复、进程树清理和安装验收不能用 macOS 测试或交叉编译替代。
 
 ## 交付
 

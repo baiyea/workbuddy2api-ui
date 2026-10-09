@@ -1,4 +1,6 @@
 const $ = (id) => document.getElementById(id);
+$('admin-key').value = globalThis.takeDesktopAdminKey?.() || '';
+let desktopPrefilled = !!$('admin-key').value;
 let csrf = '', modelList = [], accounts = [], history = [], conversation = newConversation(), activeRequest, flowID, flowTimer;
 let page = 'overview', sessionGeneration = 0;
 let protocol = 'openai';
@@ -11,7 +13,11 @@ async function api(path, data, signal) {
  const generation = sessionGeneration;
  const response = await fetch('/admin/' + path, {method:data === undefined ? 'GET' : 'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:data === undefined ? undefined : JSON.stringify(data),signal});
  if (path !== 'logout' && generation !== sessionGeneration) throw new Error('管理会话已退出，请重新登录');
- if (response.status === 401 && path !== 'login' && path !== 'logout') { signedOut(); throw new Error('管理会话已过期，请重新登录'); }
+ if (response.status === 401 && path !== 'login' && path !== 'logout') {
+  // An initial anonymous session check must not erase the tray's one-shot prefill.
+  if (path !== 'session' || csrf || sessionGeneration !== 0) signedOut();
+  throw new Error('管理会话已过期，请重新登录');
+ }
  return response;
 }
 async function jsonAPI(path, data, signal) {
@@ -23,12 +29,14 @@ async function jsonAPI(path, data, signal) {
  return result;
 }
 function signedOut() {
+ desktopPrefilled = false;
  sessionGeneration++;
  csrf = ''; activeRequest?.abort(); clearTimeout(flowTimer); flowID = undefined; history = []; conversation = newConversation(); stopTaskReads(); taskIntents.clear(); taskState={items:[],active_run:null,latest_runs:[]};taskHistory=[];taskBefore=null;taskStarting=false;taskRenderKey=undefined;
  $('messages').replaceChildren();$('task-list').replaceChildren();$('task-history-body').replaceChildren();$('task-detail').hidden=true;$('task-accounts').textContent='';$('task-log').textContent=''; $('api-key').value = ''; $('api-key').type = 'password'; $('admin-key').value = ''; $('console-view').hidden = true; $('login-view').hidden = false;
  protocol='openai';$('prompt').value='';$('max-tokens').value='1024';$('usage').textContent='用量将在上游返回后显示';renderAccess();
 }
 async function signedIn(session) {
+ desktopPrefilled = false;
  csrf = session.csrf; $('admin-key').value = ''; $('login-view').hidden = true; $('console-view').hidden = false;
  $('realm').querySelector('[value="global"]').disabled = !session.global_enabled;
  await refreshStatus(); await refreshModels();
@@ -45,7 +53,9 @@ function showPage(value) {
 document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => showPage(button.dataset.view)));
 $('login-form').addEventListener('submit', async event => {
  event.preventDefault(); const button = event.submitter; button.disabled = true; $('login-error').textContent = '';
- try { const session = await jsonAPI('login', {key:$('admin-key').value}); await signedIn(session); } catch(error) { $('login-error').textContent = error.message; } finally { button.disabled = false; }
+ const key = $('admin-key').value;
+ if (desktopPrefilled) { $('admin-key').value = ''; desktopPrefilled = false; }
+ try { const session = await jsonAPI('login', {key}); await signedIn(session); } catch(error) { $('login-error').textContent = error.message; } finally { button.disabled = false; }
 });
 $('logout').addEventListener('click', async () => {$('login-error').textContent='';const pending=jsonAPI('logout', {});signedOut();try {await pending;} catch(e){$('login-error').textContent=e.message;} });
 function cell(text, small) { const td = document.createElement('td'); td.textContent = text; if (small) { const s=document.createElement('small');s.textContent=small;td.append(s); } return td; }
