@@ -185,26 +185,67 @@ func TestExecuteTaskObserverDoesNotLeakAcrossRuns(t *testing.T) {
 	}
 }
 
-func TestScriptCommandCanceledWithCoreLifecycle(t *testing.T) {
-	if _, err := os.Stat("/usr/bin/python3"); err != nil {
-		t.Skip("requires local python3")
+func TestScriptLifecycleChild(t *testing.T) {
+	if len(os.Args) < 3 || os.Args[len(os.Args)-2] != "--lifecycle-ready" {
+		return
 	}
+	if err := os.WriteFile(os.Args[len(os.Args)-1], []byte("ready"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	time.Sleep(30 * time.Second)
+}
+
+func TestScriptCommandCanceledWithCoreLifecycle(t *testing.T) {
+	executable, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ready := filepath.Join(t.TempDir(), "ready")
 	old := newScriptCmd
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	newScriptCmd = func(got context.Context, _ string, _ ...string) scriptRunner {
 		if got != ctx {
-			t.Fatal("lost lifecycle context")
+			t.Error("lost lifecycle context")
 		}
-		time.AfterFunc(50*time.Millisecond, cancel)
-		return old(got, "/usr/bin/python3", "-c", "import time; time.sleep(30)")
+		return old(got, executable, "-test.run=^TestScriptLifecycleChild$", "--", "--lifecycle-ready", ready)
 	}
 	t.Cleanup(func() { newScriptCmd = old })
 	s := New(Config{Pool: scriptPool(t)})
-	start := time.Now()
-	result, err := s.ExecuteTask(ctx, "cat")
-	if err == nil || time.Since(start) > 3*time.Second {
-		t.Fatal(result, err)
+	var result TaskResult
+	done := make(chan error, 1)
+	go func() {
+		var err error
+		result, err = s.ExecuteTask(ctx, "cat")
+		done <- err
+	}()
+	// Measure cancellation after a real child is ready. A cold system Python
+	// launch on CI must not consume the shutdown deadline or skip Windows.
+	ticker := time.NewTicker(10 * time.Millisecond)
+	defer ticker.Stop()
+	startup := time.NewTimer(10 * time.Second)
+	defer startup.Stop()
+	for {
+		if _, err := os.Stat(ready); err == nil {
+			break
+		}
+		select {
+		case err := <-done:
+			t.Fatalf("child exited before readiness: %v", err)
+		case <-startup.C:
+			cancel()
+			t.Fatal("child did not become ready")
+		case <-ticker.C:
+		}
+	}
+	cancel()
+	select {
+	case err := <-done:
+		if err == nil {
+			t.Fatal("cancelled child succeeded")
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("child did not stop after cancellation")
 	}
 	for _, a := range result.Accounts {
 		if a.Status != "failed" {
