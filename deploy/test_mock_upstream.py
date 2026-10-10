@@ -18,14 +18,18 @@ class MockUpstreamTests(unittest.TestCase):
         cls.process = subprocess.Popen([sys.executable, str(Path(__file__).with_name('mock_upstream.py')), '--port', port],
                                        stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         cls.client = urllib.request.build_opener(urllib.request.ProxyHandler({}))
-        for _ in range(100):
+        # HTTPServer resolves its bind address; isolated Docker DNS can be slow.
+        for _ in range(600):
             try:
+                if cls.process.poll() is not None:
+                    raise RuntimeError(cls.process.communicate()[1].decode())
                 cls.client.open(cls.url + '/livez', timeout=1).close()
                 return
             except OSError:
                 time.sleep(.03)
         cls.process.terminate()
-        raise RuntimeError('mock failed to start')
+        stderr = cls.process.communicate(timeout=5)[1].decode()
+        raise RuntimeError('mock failed to start: ' + stderr)
 
     @classmethod
     def tearDownClass(cls):
