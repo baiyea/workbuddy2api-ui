@@ -84,7 +84,7 @@ func validateClaudeRequest(raw []byte, input *dto.ClaudeRequest) error {
 		}
 	}
 	if v, ok := f["thinking"]; ok {
-		thinking, err := claudeObject(v, "thinking", "type budget_tokens display")
+		thinking, err := claudeObject(v, "thinking", "type budget_tokens")
 		if err != nil {
 			return err
 		}
@@ -105,12 +105,6 @@ func validateClaudeRequest(raw []byte, input *dto.ClaudeRequest) error {
 		if typ == "enabled" {
 			if _, ok := thinking["budget_tokens"]; !ok {
 				return errors.New("thinking.budget_tokens 必填")
-			}
-		}
-		if v, ok := thinking["display"]; ok {
-			var s string
-			if json.Unmarshal(v, &s) != nil || (s != "summarized" && s != "omitted") {
-				return errors.New("thinking.display 无效")
 			}
 		}
 	}

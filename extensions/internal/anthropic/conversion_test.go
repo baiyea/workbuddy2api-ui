@@ -7,7 +7,64 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/QuantumNous/new-api/relaykit/types"
+	"workbuddy2api/internal/protocol"
 )
+
+func TestThinkingDisplayRejectedBeforeNext(t *testing.T) {
+	for _, display := range []string{`"omitted"`, `"summarized"`, `""`, `null`} {
+		t.Run(display, func(t *testing.T) {
+			body := `{"model":"global:mock","max_tokens":4096,"thinking":{"type":"enabled","budget_tokens":1024,"display":` + display + `},"messages":[{"role":"user","content":"hi"}]}`
+			calls := 0
+			w := httptest.NewRecorder()
+			New(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { calls++; io.WriteString(w, textResponse) }), "fixture-api", 0).ServeHTTP(w, request(body))
+			if w.Code != 400 || calls != 0 {
+				t.Fatalf("status=%d calls=%d body=%s", w.Code, calls, w.Body)
+			}
+			assertMessageFragment(t, w, 400, "thinking.display")
+		})
+	}
+}
+
+func TestOrdinaryClaudeToolArgumentsRequireObject(t *testing.T) {
+	for _, arguments := range []string{"private-invalid-json", `[]`, `null`, `"private-string"`, `1`, `true`, "", `{} {}`, `{"n":1e1000}`, `{}`, `{"q":"hi"}`} {
+		t.Run(arguments, func(t *testing.T) {
+			argumentJSON, _ := json.Marshal(arguments)
+			output := `{"id":"chat_a","choices":[{"message":{"role":"assistant","content":null,"tool_calls":[{"id":"call_a","type":"function","function":{"name":"check","arguments":` + string(argumentJSON) + `}}]},"finish_reason":"tool_calls"}]}`
+			valid := arguments == `{}` || arguments == `{"q":"hi"}`
+			w := httptest.NewRecorder()
+			New(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { io.WriteString(w, output) }), "fixture-api", 0).ServeHTTP(w, request(textRequest))
+			if !valid {
+				if w.Code != 502 || strings.Contains(w.Body.String(), "private") || strings.Contains(w.Body.String(), "tool_use") {
+					t.Fatalf("unsafe tool conversion: %d %s", w.Code, w.Body)
+				}
+				assertError(t, w, 502)
+			} else {
+				if w.Code != 200 {
+					t.Fatalf("valid object rejected: %d %s", w.Code, w.Body)
+				}
+				var result map[string]any
+				_ = json.Unmarshal(w.Body.Bytes(), &result)
+				input := result["content"].([]any)[0].(map[string]any)["input"]
+				if string(mustJSON(t, input)) != arguments {
+					t.Fatalf("input=%v", input)
+				}
+			}
+			// Responses exposes the exact argument string and does not require object JSON.
+			response := httptest.NewRecorder()
+			protocol.Serve(response, httptest.NewRequest("POST", "/v1/responses", strings.NewReader(`{"model":"global:mock","input":"hi"}`)), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { io.WriteString(w, output) }), "fixture-api", 0, types.RelayFormatOpenAIResponses, "")
+			if response.Code != 200 {
+				t.Fatalf("Responses semantics changed: %d %s", response.Code, response.Body)
+			}
+			var result map[string]any
+			_ = json.Unmarshal(response.Body.Bytes(), &result)
+			if result["output"].([]any)[0].(map[string]any)["arguments"] != arguments {
+				t.Fatalf("Responses arguments changed: %s", response.Body)
+			}
+		})
+	}
+}
 
 func convertFixture(t *testing.T, body, output string) (map[string]any, map[string]any) {
 	t.Helper()

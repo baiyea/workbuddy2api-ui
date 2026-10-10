@@ -103,7 +103,7 @@ func Serve(w http.ResponseWriter, r *http.Request, next http.Handler, apiKey str
 	}
 	var output dto.OpenAITextResponse
 	var usage usagePresence
-	if validateCompletion(capture.body.Bytes()) != nil || json.Unmarshal(capture.body.Bytes(), &output) != nil || usage.observe(capture.body.Bytes()) != nil {
+	if validateCompletion(capture.body.Bytes(), format) != nil || json.Unmarshal(capture.body.Bytes(), &output) != nil || usage.observe(capture.body.Bytes()) != nil {
 		cancel()
 		WriteError(w, 502, failureMessage, format)
 		return
@@ -178,7 +178,7 @@ func validFinish(reason string) bool {
 	}
 	return false
 }
-func validateCompletion(raw []byte) error {
+func validateCompletion(raw []byte, format types.RelayFormat) error {
 	var v *struct {
 		ID      string `json:"id"`
 		Error   any    `json:"error"`
@@ -232,7 +232,7 @@ func validateCompletion(raw []byte) error {
 	}
 	var reasoning *string
 	_ = json.Unmarshal(msg["reasoning_content"], &reasoning)
-	if (len(msg["content"]) == 0 || string(msg["content"]) == "null") && len(tools) == 0 && reasoning == nil {
+	if (len(msg["content"]) == 0 || string(msg["content"]) == "null") && len(tools) == 0 && (reasoning == nil || *reasoning == "") {
 		return errors.New("missing message content")
 	}
 	if c.Finish == "tool_calls" && len(tools) == 0 {
@@ -241,6 +241,12 @@ func validateCompletion(raw []byte) error {
 	for _, tool := range tools {
 		if strings.TrimSpace(tool.ID) == "" || tool.Type != "function" || tool.Function == nil || strings.TrimSpace(tool.Function.Name) == "" || tool.Function.Arguments == nil {
 			return errors.New("incomplete tool call")
+		}
+		if format == types.RelayFormatClaude {
+			var input map[string]any
+			if json.Unmarshal([]byte(*tool.Function.Arguments), &input) != nil || input == nil {
+				return errors.New("invalid Claude tool input")
+			}
 		}
 	}
 	return nil
