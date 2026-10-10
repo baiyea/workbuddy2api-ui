@@ -1,0 +1,326 @@
+diff --git a/third_party/relaykit/dto/openai_response.go b/third_party/relaykit/dto/openai_response.go
+index 98cdf41..169b66f 100644
+--- a/third_party/relaykit/dto/openai_response.go
++++ b/third_party/relaykit/dto/openai_response.go
+@@ -584,11 +584,11 @@ type ResponsesStreamResponse struct {
+ 	// - response.function_call_arguments.done
+ 	// - response.custom_tool_call_input.delta
+ 	// - response.custom_tool_call_input.done
+-	OutputIndex  *int                           `json:"output_index,omitempty"`
+-	ContentIndex *int                           `json:"content_index,omitempty"`
+-	SummaryIndex *int                           `json:"summary_index,omitempty"`
+-	ItemID       string                         `json:"item_id,omitempty"`
+-	Part         *ResponsesReasoningSummaryPart `json:"part,omitempty"`
++	OutputIndex  *int   `json:"output_index,omitempty"`
++	ContentIndex *int   `json:"content_index,omitempty"`
++	SummaryIndex *int   `json:"summary_index,omitempty"`
++	ItemID       string `json:"item_id,omitempty"`
++	Part         any    `json:"part,omitempty"`
+ }
+ 
+ // GetOpenAIError 从动态错误类型中提取OpenAIError结构
+diff --git a/third_party/relaykit/relayconvert/internal/oai_chat/text_parts_sdk_test.go b/third_party/relaykit/relayconvert/internal/oai_chat/text_parts_sdk_test.go
+new file mode 100644
+index 0000000..3059f6e
+--- /dev/null
++++ b/third_party/relaykit/relayconvert/internal/oai_chat/text_parts_sdk_test.go
+@@ -0,0 +1,71 @@
++package oaichat
++
++import (
++	"encoding/json"
++	"testing"
++
++	"github.com/QuantumNous/new-api/relaykit/dto"
++	"github.com/samber/lo"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++)
++
++func TestResponsesTextPartLifecycleForSDK(t *testing.T) {
++	for _, reasoning := range []bool{false, true} {
++		t.Run(map[bool]string{false: "text", true: "after_reasoning"}[reasoning], func(t *testing.T) {
++			state := NewChatToResponsesStreamState("resp_sdk", "model")
++			state.EmitSequenceNumber = true
++			delta := dto.ChatCompletionsStreamResponseChoiceDelta{Content: lo.ToPtr("hello")}
++			if reasoning {
++				delta.ReasoningContent = lo.ToPtr("think")
++			}
++			events := mustResponsesEventsFromChatChunk(t, state, &dto.ChatCompletionsStreamResponse{
++				Choices: []dto.ChatCompletionsStreamResponseChoice{{Delta: delta}},
++			})
++			events = append(events, mustResponsesEventsFromChatChunk(t, state, &dto.ChatCompletionsStreamResponse{
++				Choices: []dto.ChatCompletionsStreamResponseChoice{{Delta: dto.ChatCompletionsStreamResponseChoiceDelta{Content: lo.ToPtr(" world")}}},
++			})...)
++			events = append(events, FinalizeChatCompletionsStreamToResponses(state)...)
++			var textEvents []ChatToResponsesStreamEvent
++			for i, event := range events {
++				require.NotNil(t, event.Payload.SequenceNumber)
++				assert.Equal(t, i, *event.Payload.SequenceNumber)
++				if event.Payload.ContentIndex != nil {
++					textEvents = append(textEvents, event)
++				}
++			}
++			require.Len(t, textEvents, 5)
++			kinds := []string{}
++			for _, event := range textEvents {
++				kinds = append(kinds, event.Type)
++			}
++			assert.Equal(t, []string{"response.content_part.added", "response.output_text.delta", "response.output_text.delta", "response.output_text.done", "response.content_part.done"}, kinds)
++			index := 0
++			if reasoning {
++				index = 1
++			}
++			for _, event := range textEvents {
++				require.NotNil(t, event.Payload.OutputIndex)
++				assert.Equal(t, index, *event.Payload.OutputIndex)
++				assert.Equal(t, 0, *event.Payload.ContentIndex)
++				assert.Equal(t, "resp_sdk_msg_0", event.Payload.ItemID)
++			}
++			for _, pos := range []int{0, 4} {
++				raw, err := json.Marshal(textEvents[pos].Payload)
++				require.NoError(t, err)
++				var wire map[string]any
++				require.NoError(t, json.Unmarshal(raw, &wire))
++				part := wire["part"].(map[string]any)
++				assert.Equal(t, "output_text", part["type"])
++				require.NotNil(t, part["annotations"])
++				expected := ""
++				if pos == 4 {
++					expected = "hello world"
++				}
++				assert.Equal(t, expected, part["text"])
++			}
++			final := events[len(events)-1].Payload.Response
++			assert.Equal(t, "hello world", final.Output[index].Content[0].Text)
++		})
++	}
++}
+diff --git a/third_party/relaykit/relayconvert/internal/oai_chat/to_oai_responses_resp_test.go b/third_party/relaykit/relayconvert/internal/oai_chat/to_oai_responses_resp_test.go
+index 2323c41..7d6c451 100644
+--- a/third_party/relaykit/relayconvert/internal/oai_chat/to_oai_responses_resp_test.go
++++ b/third_party/relaykit/relayconvert/internal/oai_chat/to_oai_responses_resp_test.go
+@@ -189,18 +189,18 @@ func TestChatCompletionsStreamToResponsesEventsAggregatesUsageAndToolArgs(t *tes
+ 	})...)
+ 	events = append(events, FinalizeChatCompletionsStreamToResponses(state)...)
+ 
+-	require.Len(t, events, 10)
++	require.Len(t, events, 12)
+ 	assert.Equal(t, responsesEventCreated, events[0].Type)
+-	assert.Equal(t, responsesEventOutputTextDelta, events[2].Type)
+-	assert.Equal(t, "hello", events[2].Payload.Delta)
+-	assert.Equal(t, responsesEventFunctionArgsDelta, events[4].Type)
+-	assert.Equal(t, `{"q":"x"}`, events[4].Payload.Delta)
+-	assert.Equal(t, responsesEventCompleted, events[9].Type)
+-	require.NotNil(t, events[9].Payload.Response)
+-	assert.Equal(t, 6, events[9].Payload.Response.Usage.TotalTokens)
+-	require.Len(t, events[9].Payload.Response.Output, 2)
+-	assert.Equal(t, "hello", events[9].Payload.Response.Output[0].Content[0].Text)
+-	assert.Equal(t, `"{\"q\":\"x\"}"`, string(events[9].Payload.Response.Output[1].Arguments))
++	assert.Equal(t, responsesEventOutputTextDelta, events[3].Type)
++	assert.Equal(t, "hello", events[3].Payload.Delta)
++	assert.Equal(t, responsesEventFunctionArgsDelta, events[5].Type)
++	assert.Equal(t, `{"q":"x"}`, events[5].Payload.Delta)
++	assert.Equal(t, responsesEventCompleted, events[11].Type)
++	require.NotNil(t, events[11].Payload.Response)
++	assert.Equal(t, 6, events[11].Payload.Response.Usage.TotalTokens)
++	require.Len(t, events[11].Payload.Response.Output, 2)
++	assert.Equal(t, "hello", events[11].Payload.Response.Output[0].Content[0].Text)
++	assert.Equal(t, `"{\"q\":\"x\"}"`, string(events[11].Payload.Response.Output[1].Arguments))
+ }
+ 
+ func TestChatCompletionsStreamToResponsesEmitsReasoningSummaryPartLifecycle(t *testing.T) {
+@@ -232,8 +232,10 @@ func TestChatCompletionsStreamToResponsesEmitsReasoningSummaryPartLifecycle(t *t
+ 		responsesEventReasoningSummaryPartAdded,
+ 		responsesEventReasoningSummaryDelta,
+ 		responsesEventOutputItemAdded,
++		"response.content_part.added",
+ 		responsesEventOutputTextDelta,
+ 		"response.output_text.done",
++		"response.content_part.done",
+ 		responsesEventOutputItemDone,
+ 		responsesEventReasoningSummaryDone,
+ 		responsesEventReasoningSummaryPartDone,
+@@ -246,12 +248,12 @@ func TestChatCompletionsStreamToResponsesEmitsReasoningSummaryPartLifecycle(t *t
+ 	assert.Equal(t, 0, lo.FromPtr(partAdded.OutputIndex))
+ 	assert.Equal(t, 0, lo.FromPtr(partAdded.SummaryIndex))
+ 	require.NotNil(t, partAdded.Part)
+-	assert.Equal(t, dto.ResponsesReasoningSummaryPart{Type: "summary_text"}, *partAdded.Part)
++	assert.Equal(t, &dto.ResponsesReasoningSummaryPart{Type: "summary_text"}, partAdded.Part)
+ 
+-	partDone := events[9].Payload
++	partDone := events[11].Payload
+ 	assert.Equal(t, "resp_1_reasoning_0", partDone.ItemID)
+ 	require.NotNil(t, partDone.Part)
+-	assert.Equal(t, dto.ResponsesReasoningSummaryPart{Type: "summary_text", Text: "think"}, *partDone.Part)
++	assert.Equal(t, &dto.ResponsesReasoningSummaryPart{Type: "summary_text", Text: "think"}, partDone.Part)
+ }
+ 
+ func TestChatCompletionsStreamToResponsesReopensItemsAfterMidStreamFinishReason(t *testing.T) {
+diff --git a/third_party/relaykit/relayconvert/internal/oai_chat/to_oai_responses_stream_resp.go b/third_party/relaykit/relayconvert/internal/oai_chat/to_oai_responses_stream_resp.go
+index 6643ef5..3fa41d0 100644
+--- a/third_party/relaykit/relayconvert/internal/oai_chat/to_oai_responses_stream_resp.go
++++ b/third_party/relaykit/relayconvert/internal/oai_chat/to_oai_responses_stream_resp.go
+@@ -444,6 +444,11 @@ func (s *ChatToResponsesStreamState) startText() []ChatToResponsesStreamEvent {
+ 				Role:    "assistant",
+ 				Content: []dto.ResponsesOutputContent{},
+ 			},
++		}), s.event("response.content_part.added", dto.ResponsesStreamResponse{
++			OutputIndex:  intPtr(s.textOutputIndex),
++			ContentIndex: intPtr(0),
++			ItemID:       s.messageID(),
++			Part:         &dto.ResponsesOutputContent{Type: "output_text", Text: "", Annotations: []any{}},
+ 		})}
+ 	}
+ 	return nil
+@@ -623,6 +628,12 @@ func (s *ChatToResponsesStreamState) doneDeltaEvents() []ChatToResponsesStreamEv
+ 		}
+ 		events = append(events, s.event("response.output_text.done", textDone))
+ 		closedMessage := s.messageOutput(status)
++		events = append(events, s.event("response.content_part.done", dto.ResponsesStreamResponse{
++			OutputIndex:  intPtr(s.textOutputIndex),
++			ContentIndex: intPtr(0),
++			ItemID:       s.messageID(),
++			Part:         &closedMessage.Content[0],
++		}))
+ 		events = append(events, s.event(responsesEventOutputItemDone, dto.ResponsesStreamResponse{
+ 			Type:        responsesEventOutputItemDone,
+ 			OutputIndex: intPtr(s.textOutputIndex),
+diff --git a/third_party/relaykit/relayconvert/testdata/golden/stream/claude_to_openai_responses.golden.json b/third_party/relaykit/relayconvert/testdata/golden/stream/claude_to_openai_responses.golden.json
+index 2fe0ebb..85794c5 100644
+--- a/third_party/relaykit/relayconvert/testdata/golden/stream/claude_to_openai_responses.golden.json
++++ b/third_party/relaykit/relayconvert/testdata/golden/stream/claude_to_openai_responses.golden.json
+@@ -44,6 +44,20 @@
+         "output_index": 0
+       }
+     },
++    {
++      "Type": "response.content_part.added",
++      "Payload": {
++        "type": "response.content_part.added",
++        "output_index": 0,
++        "content_index": 0,
++        "item_id": "stream_fixed_msg_0",
++        "part": {
++          "type": "output_text",
++          "text": "",
++          "annotations": []
++        }
++      }
++    },
+     {
+       "Type": "response.output_text.delta",
+       "Payload": {
+@@ -63,6 +77,20 @@
+         "item_id": "stream_fixed_msg_0"
+       }
+     },
++    {
++      "Type": "response.content_part.done",
++      "Payload": {
++        "type": "response.content_part.done",
++        "output_index": 0,
++        "content_index": 0,
++        "item_id": "stream_fixed_msg_0",
++        "part": {
++          "type": "output_text",
++          "text": "Hello world",
++          "annotations": []
++        }
++      }
++    },
+     {
+       "Type": "response.output_item.done",
+       "Payload": {
+diff --git a/third_party/relaykit/relayconvert/testdata/golden/stream/gemini_to_openai_responses.golden.json b/third_party/relaykit/relayconvert/testdata/golden/stream/gemini_to_openai_responses.golden.json
+index 0a5429c..f8361da 100644
+--- a/third_party/relaykit/relayconvert/testdata/golden/stream/gemini_to_openai_responses.golden.json
++++ b/third_party/relaykit/relayconvert/testdata/golden/stream/gemini_to_openai_responses.golden.json
+@@ -44,6 +44,20 @@
+         "output_index": 0
+       }
+     },
++    {
++      "Type": "response.content_part.added",
++      "Payload": {
++        "type": "response.content_part.added",
++        "output_index": 0,
++        "content_index": 0,
++        "item_id": "stream_fixed_msg_0",
++        "part": {
++          "type": "output_text",
++          "text": "",
++          "annotations": []
++        }
++      }
++    },
+     {
+       "Type": "response.output_text.delta",
+       "Payload": {
+@@ -73,6 +87,20 @@
+         "item_id": "stream_fixed_msg_0"
+       }
+     },
++    {
++      "Type": "response.content_part.done",
++      "Payload": {
++        "type": "response.content_part.done",
++        "output_index": 0,
++        "content_index": 0,
++        "item_id": "stream_fixed_msg_0",
++        "part": {
++          "type": "output_text",
++          "text": "Hello world",
++          "annotations": []
++        }
++      }
++    },
+     {
+       "Type": "response.output_item.done",
+       "Payload": {
+diff --git a/third_party/relaykit/relayconvert/testdata/golden/stream/openai_to_openai_responses.golden.json b/third_party/relaykit/relayconvert/testdata/golden/stream/openai_to_openai_responses.golden.json
+index f0a41ed..e10bff6 100644
+--- a/third_party/relaykit/relayconvert/testdata/golden/stream/openai_to_openai_responses.golden.json
++++ b/third_party/relaykit/relayconvert/testdata/golden/stream/openai_to_openai_responses.golden.json
+@@ -44,6 +44,20 @@
+         "output_index": 0
+       }
+     },
++    {
++      "Type": "response.content_part.added",
++      "Payload": {
++        "type": "response.content_part.added",
++        "output_index": 0,
++        "content_index": 0,
++        "item_id": "stream_fixed_msg_0",
++        "part": {
++          "type": "output_text",
++          "text": "",
++          "annotations": []
++        }
++      }
++    },
+     {
+       "Type": "response.output_text.delta",
+       "Payload": {
+@@ -73,6 +87,20 @@
+         "item_id": "stream_fixed_msg_0"
+       }
+     },
++    {
++      "Type": "response.content_part.done",
++      "Payload": {
++        "type": "response.content_part.done",
++        "output_index": 0,
++        "content_index": 0,
++        "item_id": "stream_fixed_msg_0",
++        "part": {
++          "type": "output_text",
++          "text": "Hello world",
++          "annotations": []
++        }
++      }
++    },
+     {
+       "Type": "response.output_item.done",
+       "Payload": {

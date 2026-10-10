@@ -155,3 +155,20 @@ and `go vet -mod=readonly ./...` in a fresh overlay, then test and race-test cor
 `./internal/anthropic ./internal/protocol ./internal/bridge ./cmd/server`.
 Remove this patch only when a replacement pinned snapshot preserves these
 histories and the regressions pass without it.
+
+## 0011-relaykit-responses-text-parts
+
+The pinned Chat-to-Responses stream opens a message with empty content, then
+emits text deltas without opening a content part. OpenAI Python 2.6.1 raises
+`IndexError` while aggregating this stream. Emit `response.content_part.added`
+before the first text delta and `response.content_part.done` after text completion.
+The shared event DTO accepts both output-text and reasoning-summary parts;
+IDs, indices, sequence numbers, annotations and reasoning events are preserved.
+
+The patch includes lifecycle regressions for text and text after reasoning,
+and updates only the corresponding stream golden events. Run the independent
+RelayKit tests/vet and `bash scripts/check.sh` in a fresh overlay. Run
+`scripts/acceptance.sh` with both SDK interpreters enabled to check the actual
+console/core/mock stream and final SDK aggregation. Remove the patch when a
+replacement pinned snapshot emits these content-part events and the library
+and actual SDK regressions pass without it. Original vendored bytes stay frozen.
