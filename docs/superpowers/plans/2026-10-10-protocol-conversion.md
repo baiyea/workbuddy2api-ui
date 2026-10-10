@@ -88,13 +88,13 @@ format 仅为 RelayFormatOpenAIResponses 或 RelayFormatClaude。Serve 负责有
 
 **Interfaces:** `responses.New(next http.Handler, apiKey string, maxBodyBytes int64) http.Handler`。仅截获 `/v1/responses`；认证为单个 Authorization Bearer。其他请求原样交给 next，无 bridge 不包装。
 
-- [ ] **先写路由失败测试。** POST 文本/工具/图片/schema 经 New 到达 `/v1/chat/completions`；GET 为 405，重复/错误认证为 401，models/chat 路径不变。
-- [ ] **实现入口并接线。** 使用 Serve/WriteError；保持 Handler 和 bridge context。沿用明确的 query、压缩体限制。
-- [ ] **先写工具状态失败测试。** function_call_output 保留 call_id；custom 工具依靠请求元数据在响应中恢复；两个并发请求的名称/参数不串。
-- [ ] **先写 reasoning 回传失败测试。** 将生成的 reasoning.summary、assistant 文本和 function_call 作为下轮 input；断言 reasoning_content 和工具关联均保留。encrypted/opaque reasoning 必须在调用 next 前 400。
-- [ ] **制作最小历史补丁。** 只补 Responses 明文 reasoning 请求映射；原始快照保持不变，补丁附测试及移除条件。重物化确认原先 RED 的测试 GREEN。
-- [ ] **验证完整响应与流。** 文本/推理/工具、length 状态、连续序号及 final output 聚合一致；store/background true 和 previous_response_id 等为 400，false 可用。
-- [ ] **验证。** 新物化 `.build/protocol-check-3`，运行库 `test ./...` 以及 `go -C .build/protocol-check-3 test ./internal/responses ./internal/protocol ./internal/server ./cmd/server`；预期退出 0。
+- [x] **先写路由失败测试。** POST 文本/工具/图片/schema 经 New 到达 `/v1/chat/completions`；GET 为 405，重复/错误认证为 401，models/chat 路径不变。
+- [x] **实现入口并接线。** 使用 Serve/WriteError；保持 Handler 和 bridge context。沿用明确的 query、压缩体限制。
+- [x] **先写工具状态失败测试。** function_call_output 保留 call_id；custom 工具依靠请求元数据在响应中恢复；两个并发请求的名称/参数不串。
+- [x] **先写 reasoning 回传失败测试。** 将生成的 reasoning.summary、assistant 文本和 function_call 作为下轮 input；断言 reasoning_content 和工具关联均保留。encrypted/opaque reasoning 必须在调用 next 前 400。
+- [x] **制作最小历史补丁。** 只补 Responses 明文 reasoning 请求映射；原始快照保持不变，补丁附测试及移除条件。重物化确认原先 RED 的测试 GREEN。
+- [x] **验证完整响应与流。** 文本/推理/工具、length 状态、连续序号及 final output 聚合一致；store/background true 和 previous_response_id 等为 400，false 可用。
+- [x] **验证。** 新物化 `.build/protocol-check-3`，运行库 `test ./...` 以及 `go -C .build/protocol-check-3 test ./internal/responses ./internal/protocol ./internal/server ./cmd/server`；预期退出 0。
 
 ## Task 4: 增强 Anthropic 并修正混合历史
 
@@ -111,12 +111,12 @@ format 仅为 RelayFormatOpenAIResponses 或 RelayFormatClaude。Serve 负责有
 
 ## Task 5: SDK、隔离验收、说明与最终审查
 
-**Files:** `scripts/check_anthropic_sdk.py`、新增 `scripts/check_responses_sdk.py`、`scripts/acceptance.sh`、`deploy/mock_upstream.py`；`README.md`、`AGENTS.md`、`console/web/app.js` 与已有 API 提示/署名位置、`docs/superpowers/verification/`。
+**Files:** `scripts/check_anthropic_sdk.py`、新增 `scripts/check_responses_sdk.py`、`scripts/check.sh`、`scripts/acceptance.sh`、`deploy/mock_upstream.py`；`README.md`、`AGENTS.md`、`console/web/app.js` 与已有 API 提示/署名位置、`docs/superpowers/verification/`。
 
 **Interfaces:** SDK 仅用于临时测试环境，不进入生产依赖；复用隔离 console → core → mock 链路。Responses SDK 的验收版本在测试脚本依赖说明中锁定并记录实际版本。
 
 - [ ] **SDK 先补失败断言。** Anthropic 保留 null/晚到 usage、raw events、text_stream、最终聚合，增加工具。Responses 覆盖 create、stream 事件/最终对象、自定义工具 ID 和参数。传输测试不代替 SDK 验收。
-- [ ] **扩展隔离集成。** 实际 console/core 连 mock 检查两协议，保留 OpenAI 流式及管理 owner/CSRF/取消断言；不使用真实账号。
+- [ ] **扩展隔离集成。** 实际 console/core 连 mock 检查两协议，保留 OpenAI 流式及管理 owner/CSRF/取消断言；验证 JSON Schema 到达 mock 上游，不验证或修复生成结果。将 protocol/responses 加入 check.sh 的关键包竞态检查；不使用真实账号。
 - [ ] **更新说明。** README 面向使用者写端点/curl/能力范围；AGENTS 记录目录与验证方式；页面修订“仅文本”提示，保留模型依赖和 beta 限制及第三方署名。无新增交互业务。
 - [ ] **执行检查并记录退出码。** 命令如下；SDK 的临时 Python 路径和锁定版本写入记录，未执行的单独标记。
 
