@@ -27,3 +27,5 @@
 
 
 Read root AGENTS.md and the referenced design spec. Do not create worktrees or branches. Do not spawn subagents. Keep reports/logs under docs/superpowers.
+
+Task 2 handoff: its shared Responses validator rejects `input.type=reasoning` until the library mapping is patched, avoiding silent empty-message fallback. Task 3 also owns updating `extensions/internal/protocol/responses_validation.go` and its focused tests to allow validated plaintext `summary` with the history patch, while continuing to reject encrypted/opaque reasoning before calling next. Final plaintext history roundtrip remains required.

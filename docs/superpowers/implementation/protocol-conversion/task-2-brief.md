@@ -36,3 +36,5 @@ format 仅为 RelayFormatOpenAIResponses 或 RelayFormatClaude。Serve 负责有
 
 
 Read root AGENTS.md and the referenced design spec. Do not create worktrees or branches. Do not spawn subagents. Keep reports/logs under docs/superpowers.
+
+Controller ruling from actual import evidence: update the existing `patches/0008-relaykit-module.patch` and its README entry with the minimal transitive module requirements needed by final shared converter imports. Task1's registry-only import did not require that full graph. Verify a fresh overlay using `go test -mod=readonly ./internal/protocol`; keep frozen and vendor sources untouched.

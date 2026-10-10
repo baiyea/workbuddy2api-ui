@@ -61,7 +61,7 @@ flowchart LR
 
 ## Task 2: 建立共用 RelayKit 传输层
 
-**Files:** 新增 `extensions/internal/protocol/adapter.go`、`stream.go`、`usage.go`、`responses_validation.go` 及对应 `_test.go`。Task 4 添加 `claude_validation.go`；本任务只保留 Claude 文本的必要验证，不开放增强入口。
+**Files:** 新增 `extensions/internal/protocol/adapter.go`、`stream.go`、`usage.go`、`responses_validation.go` 及对应 `_test.go`；按实际导入补齐 `patches/0008-relaykit-module.patch` 的间接依赖及 README 说明。Task 4 添加 `claude_validation.go`；本任务只保留 Claude 文本的必要验证，不开放增强入口。
 
 **Interfaces:**
 
@@ -84,7 +84,7 @@ format 仅为 RelayFormatOpenAIResponses 或 RelayFormatClaude。Serve 负责有
 
 ## Task 3: 接入 Responses 创建接口及明文历史
 
-**Files:** `extensions/internal/responses/adapter.go`、`adapter_test.go`、`extensions/cmd/server/extension.go` 及 wiring 测试；`patches/0009-relaykit-responses-history.patch`（含库回归测试）、`patches/series`、`patches/README.md`。
+**Files:** `extensions/internal/responses/adapter.go`、`adapter_test.go`、`extensions/cmd/server/extension.go` 及 wiring 测试；`extensions/internal/protocol/responses_validation.go` 及明文 summary 验证测试；`patches/0009-relaykit-responses-history.patch`（含库回归测试）、`patches/series`、`patches/README.md`。
 
 **Interfaces:** `responses.New(next http.Handler, apiKey string, maxBodyBytes int64) http.Handler`。仅截获 `/v1/responses`；认证为单个 Authorization Bearer。其他请求原样交给 next，无 bridge 不包装。
 
