@@ -78,7 +78,7 @@ def main():
         observed = state()['requests'][-1]
         assert observed['model'] == 'mock-model'
         assert observed['response_format'] == {'type': 'json_schema', 'json_schema': {
-            'name': 'answer', 'schema': schema, 'strict': True}}, observed
+            'type': 'json_schema', 'name': 'answer', 'schema': schema, 'strict': True}}, observed
     print('PASS: JSON Schema observed at mock after full Handler, JSON and SSE', flush=True)
     # Unsupported state and authentication fail before the mock receives anything.
     before = len(state()['requests'])
