@@ -73,14 +73,14 @@ func WriteError(w http.ResponseWriter, code int, message string, format types.Re
 
 format 仅为 RelayFormatOpenAIResponses 或 RelayFormatClaude。Serve 负责有界解析、验证、转换及 next 调用；调用方负责路由/方法/认证/协议头。conversationID 仅由可信 context 提取。错误包不能透出原始上游诊断内容。
 
-- [ ] **先写请求边界失败测试。** `TestRequestIsolationAndConvertedLimit` 断言 context 取消/owner 保留、公共私有头剥离、转换体超限不调用 next。`TestInvalidRequestsDoNotReachHandler` 覆盖 null、尾随 JSON、空模型、非法布尔值/嵌套结构及私有字段，预期 400。
-- [ ] **实现请求转换。** 公开 ConvertRequest，每请求新建 convmeta.Values 并跨两端复用；safe 策略后检查完整 diagnostics。处理无状态参数，输出上限映射 max_tokens，重建请求后进程内调用 next。
-- [ ] **先写响应/用量失败测试。** `TestUnknownUsageRemainsNull`、`TestLateZeroUsageWins`、`TestPartialUsagePreservesObservedFields`、`TestNonStreamingErrorIsSanitized` 分别断言 null、输入 0/输出 2、最后明确值及脱敏。total 最后明确值优先（包括 0），从未提供才在两项均已知时求和。
-- [ ] **实现普通响应。** 至多 32 MiB 捕获 next；验证 choice、finish_reason、usage 后调用 ConvertResponse，序列化时用原始 presence 修正用量。
-- [ ] **先写流式失败测试。** `TestFirstDeltaIsImmediate` 在 next 未返回时检查文本已输出；`TestTerminalWaitsForLateUsage` 在 finish 后检查尚无终态；`TestTruncatedStreamCannotComplete` 覆盖 DONE 无 finish、残帧、错误包、finish 后 choice 和 DONE 后 data。
-- [ ] **补状态、取消、容量测试。** `TestIncompleteFinishReasons` 断言 length/content_filter 的 Responses 为 incomplete；未知 reason 失败。`TestWriteAndFlushFailureCancelNext`、`TestStreamTotalLimit` 覆盖短写/写入/Flush 失败、8 MiB 单帧和 32 MiB 累计上限，断言取消传到 next 且无成功终态。
-- [ ] **实现 SSE 转换。** 有界逐帧解析并记录 finish/usage，内容去掉两者后喂库；Claude 的 reasoning/text/tools 混合 delta 拆分。正常 EOF 且 finish 合法后合成终止 chunk 再 Finalize，覆盖 nullable usage；Responses 开启 sequence_number。
-- [ ] **验证。** 每批测试先 RED 再 GREEN；新物化 `.build/protocol-check-2`，执行该目录 `go test ./internal/protocol`、`go test -race ./internal/protocol`、`go vet ./internal/protocol`。环境不能运行 race 时记缺口，不写通过。
+- [x] **先写请求边界失败测试。** `TestRequestIsolationAndConvertedLimit` 断言 context 取消/owner 保留、公共私有头剥离、转换体超限不调用 next。`TestInvalidRequestsDoNotReachHandler` 覆盖 null、尾随 JSON、空模型、非法布尔值/嵌套结构及私有字段，预期 400。
+- [x] **实现请求转换。** 公开 ConvertRequest，每请求新建 convmeta.Values 并跨两端复用；safe 策略后检查完整 diagnostics。处理无状态参数，输出上限映射 max_tokens，重建请求后进程内调用 next。
+- [x] **先写响应/用量失败测试。** `TestUnknownUsageRemainsNull`、`TestLateZeroUsageWins`、`TestPartialUsagePreservesObservedFields`、`TestNonStreamingErrorIsSanitized` 分别断言 null、输入 0/输出 2、最后明确值及脱敏。total 最后明确值优先（包括 0），从未提供才在两项均已知时求和。
+- [x] **实现普通响应。** 至多 32 MiB 捕获 next；验证 choice、finish_reason、usage 后调用 ConvertResponse，序列化时用原始 presence 修正用量。
+- [x] **先写流式失败测试。** `TestFirstDeltaIsImmediate` 在 next 未返回时检查文本已输出；`TestTerminalWaitsForLateUsage` 在 finish 后检查尚无终态；`TestTruncatedStreamCannotComplete` 覆盖 DONE 无 finish、残帧、错误包、finish 后 choice 和 DONE 后 data。
+- [x] **补状态、取消、容量测试。** `TestIncompleteFinishReasons` 断言 length/content_filter 的 Responses 为 incomplete；未知 reason 失败。`TestWriteAndFlushFailureCancelNext`、`TestStreamTotalLimit` 覆盖短写/写入/Flush 失败、8 MiB 单帧和 32 MiB 累计上限，断言取消传到 next 且无成功终态。
+- [x] **实现 SSE 转换。** 有界逐帧解析并记录 finish/usage，内容去掉两者后喂库；Claude 的 reasoning/text/tools 混合 delta 拆分。正常 EOF 且 finish 合法后合成终止 chunk 再 Finalize，覆盖 nullable usage；Responses 开启 sequence_number。
+- [x] **验证。** 每批测试先 RED 再 GREEN；新物化 `.build/protocol-check-2`，执行该目录 `go test ./internal/protocol`、`go test -race ./internal/protocol`、`go vet ./internal/protocol`。环境不能运行 race 时记缺口，不写通过。
 
 ## Task 3: 接入 Responses 创建接口及明文历史
 
