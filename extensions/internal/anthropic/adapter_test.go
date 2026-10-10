@@ -12,6 +12,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/QuantumNous/new-api/relaykit/dto"
 	"workbuddy2api/internal/upstream"
 )
 
@@ -36,8 +37,8 @@ func TestTextRequestAndResponse(t *testing.T) {
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			t.Fatal(err)
 		}
-		want := map[string]any{"model": "global:mock", "max_tokens": float64(32), "stream": false,
-			"messages": []any{map[string]any{"role": "system", "content": "简短回答"}, map[string]any{"role": "user", "content": "你好"}}}
+		want := map[string]any{"model": "global:mock", "max_tokens": float64(32),
+			"messages": []any{map[string]any{"role": "system", "content": "简短回答"}, map[string]any{"role": "user", "content": []any{map[string]any{"type": "text", "text": "你好"}}}}}
 		if !reflect.DeepEqual(body, want) {
 			t.Fatalf("converted request = %#v", body)
 		}
@@ -53,7 +54,7 @@ func TestTextRequestAndResponse(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := map[string]any{"id": "test-1", "type": "message", "role": "assistant", "model": "global:mock",
-		"content": []any{map[string]any{"type": "text", "text": "你好"}}, "stop_reason": "end_turn", "stop_sequence": nil,
+		"content": []any{map[string]any{"type": "text", "text": "你好"}}, "stop_reason": "end_turn",
 		"usage": map[string]any{"input_tokens": float64(3), "output_tokens": float64(2)}}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("response = %#v", got)
@@ -136,7 +137,7 @@ func TestRejectInvalidRequestsBeforeNext(t *testing.T) {
 		{name: "stream null", body: field("stream", `null`), code: 400},
 		{name: "stream string", body: field("stream", `"false"`), code: 400},
 		{name: "stream number", body: field("stream", `1`), code: 400},
-		{name: "unknown field", body: field("temperature", `0.5`), code: 400},
+		{name: "unknown field", body: field("unsupported", `0.5`), code: 400},
 		{name: "private conversation field", body: field("conversationId", `"spoofed"`), code: 400},
 		{name: "null unsupported field", body: field("tools", `null`), code: 400},
 		{name: "two JSON documents", body: base + ` {}`, code: 400},
@@ -237,8 +238,8 @@ func TestRejectsNameTheOffendingHeaderOrField(t *testing.T) {
 		{name: "wrong version", edit: func(r *http.Request) { r.Header.Set("anthropic-version", "2099-01-01") }, fragment: "anthropic-version"},
 		{name: "query", edit: func(r *http.Request) { r.URL.RawQuery = "ignored=1" }, fragment: "查询参数"},
 		{name: "compressed", edit: func(r *http.Request) { r.Header.Set("Content-Encoding", "gzip") }, fragment: "Content-Encoding"},
-		{name: "unsupported field tools", body: field("tools", `[]`), fragment: "tools"},
-		{name: "unsupported field temperature", body: field("temperature", `0.5`), fragment: "temperature"},
+		{name: "unsupported field tool_choice", body: field("tool_choice", `{"type":"any"}`), fragment: "tool_choice"},
+		{name: "invalid temperature", body: field("temperature", `null`), fragment: "temperature"},
 		{name: "unsupported field null tools", body: field("tools", `null`), fragment: "tools"},
 		{name: "unsupported field conversationId", body: field("conversationId", `"spoofed"`), fragment: "conversationId"},
 		{name: "missing model", body: field("model", `null`), fragment: "model"},
@@ -300,12 +301,20 @@ func TestTextBlocksAndMultiturnPreserveOrder(t *testing.T) {
 	body := `{"model":"cn:mock","max_tokens":2147483648,"system":[{"type":"text","text":"a"},{"type":"text","text":"b"}],"messages":[{"role":"user","content":"你好"},{"role":"assistant","content":[{"type":"text","text":"x"},{"type":"text","text":"y"}]},{"role":"user","content":"继续"}],"stream":false}`
 	next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var got struct {
-			Messages  []map[string]string `json:"messages"`
-			MaxTokens int64               `json:"max_tokens"`
+			Messages  []dto.Message `json:"messages"`
+			MaxTokens int64         `json:"max_tokens"`
 		}
 		json.NewDecoder(r.Body).Decode(&got)
 		want := []map[string]string{{"role": "system", "content": "ab"}, {"role": "user", "content": "你好"}, {"role": "assistant", "content": "xy"}, {"role": "user", "content": "继续"}}
-		if !reflect.DeepEqual(got.Messages, want) || got.MaxTokens != 2147483648 {
+		var normalized []map[string]string
+		for _, msg := range got.Messages {
+			var text strings.Builder
+			for _, part := range msg.ParseContent() {
+				text.WriteString(part.Text)
+			}
+			normalized = append(normalized, map[string]string{"role": msg.Role, "content": text.String()})
+		}
+		if !reflect.DeepEqual(normalized, want) || got.MaxTokens != 2147483648 {
 			t.Fatalf("lost supported content: %#v", got)
 		}
 		io.WriteString(w, textResponse)
@@ -330,7 +339,7 @@ func TestConvertedBodyAlsoHasLimit(t *testing.T) {
 }
 
 func TestResponseMapping(t *testing.T) {
-	withoutUsage := `{"id":"test-1","choices":[{"message":{"content":"你好"},"finish_reason":"stop"}]}`
+	withoutUsage := `{"id":"test-1","choices":[{"message":{"role":"assistant","content":"你好"},"finish_reason":"stop"}]}`
 	tests := []struct {
 		name, body    string
 		code          int
@@ -348,7 +357,6 @@ func TestResponseMapping(t *testing.T) {
 		{"fraction token", strings.Replace(textResponse, `"prompt_tokens":3`, `"prompt_tokens":1.5`, 1), 502, "", nil, nil},
 		{"empty optional fields", strings.Replace(textResponse, `"content":"你好"`, `"content":"你好","tool_calls":[],"refusal":"","function_call":{"name":"","arguments":""},"reasoning_content":""`, 1), 200, "end_turn", float64(3), float64(2)},
 		{"null optional fields", strings.Replace(textResponse, `"content":"你好"`, `"content":"你好","tool_calls":null,"refusal":null,"function_call":null,"reasoning_content":null`, 1), 200, "end_turn", float64(3), float64(2)},
-		{"reasoning is not content", strings.Replace(textResponse, `"content":"你好"`, `"content":"你好","reasoning_content":"private-reasoning"`, 1), 200, "end_turn", float64(3), float64(2)},
 		{"tools", strings.Replace(textResponse, `"content":"你好"`, `"content":"你好","tool_calls":[{"id":"call","function":{"name":"exec","arguments":"{}"}}]`, 1), 502, "", nil, nil},
 		{"legacy function", strings.Replace(textResponse, `"content":"你好"`, `"content":"你好","function_call":{"name":"exec","arguments":"{}"}`, 1), 502, "", nil, nil},
 		{"refusal", strings.Replace(textResponse, `"content":"你好"`, `"content":"你好","refusal":"private refusal"`, 1), 502, "", nil, nil},
@@ -357,11 +365,10 @@ func TestResponseMapping(t *testing.T) {
 		{"null choice", `{"id":"test-1","choices":[null]}`, 502, "", nil, nil},
 		{"null message", `{"id":"test-1","choices":[{"message":null,"finish_reason":"stop"}]}`, 502, "", nil, nil},
 		{"nontext content", strings.Replace(textResponse, `"content":"你好"`, `"content":[{"type":"text","text":"wrong shape"}]`, 1), 502, "", nil, nil},
-		{"missing content", strings.Replace(textResponse, `"content":"你好"`, `"reasoning_content":"private-reasoning"`, 1), 502, "", nil, nil},
 		{"null content", strings.Replace(textResponse, `"content":"你好"`, `"content":null`, 1), 502, "", nil, nil},
 		{"wrong role", strings.Replace(textResponse, `"role":"assistant"`, `"role":"user"`, 1), 502, "", nil, nil},
 		{"tool finish", strings.Replace(textResponse, `"stop"`, `"tool_calls"`, 1), 502, "", nil, nil},
-		{"unknown finish", strings.Replace(textResponse, `"stop"`, `"content_filter"`, 1), 502, "", nil, nil},
+		{"unknown finish", strings.Replace(textResponse, `"stop"`, `"unknown"`, 1), 502, "", nil, nil},
 		{"null finish", strings.Replace(textResponse, `"stop"`, `null`, 1), 502, "", nil, nil},
 		{"empty id", strings.Replace(textResponse, `"id":"test-1"`, `"id":""`, 1), 502, "", nil, nil},
 		{"error with text", strings.TrimSuffix(textResponse, "}") + `,"error":{"message":"secret"}}`, 502, "", nil, nil},
@@ -405,7 +412,7 @@ func TestRealAggregateOutput(t *testing.T) {
 	New(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { json.NewEncoder(w).Encode(result) }), "fixture-api", 8<<20).ServeHTTP(w, request(textRequest))
 	var body map[string]any
 	json.Unmarshal(w.Body.Bytes(), &body)
-	if w.Code != 200 || body["stop_reason"] != "max_tokens" || body["model"] != "global:mock" || strings.Contains(w.Body.String(), "private-reasoning") {
+	if w.Code != 200 || body["stop_reason"] != "max_tokens" || body["model"] != "global:mock" || !strings.Contains(w.Body.String(), `"thinking":"private-reasoning"`) {
 		t.Fatalf("actual Aggregate response: %s", w.Body)
 	}
 }

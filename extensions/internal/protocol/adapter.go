@@ -108,6 +108,9 @@ func Serve(w http.ResponseWriter, r *http.Request, next http.Handler, apiKey str
 		WriteError(w, 502, failureMessage, format)
 		return
 	}
+	if format == types.RelayFormatClaude {
+		output.Model = model
+	}
 	convertedResponse, err := relayconvert.ConvertResponse(ctx, meta, format, &output)
 	if err == nil {
 		err = types.RejectConversionLoss(types.ConversionLossPolicySafe, convertedResponse.Diagnostics)
@@ -200,18 +203,37 @@ func validateCompletion(raw []byte) error {
 	if json.Unmarshal(msg["role"], &role) != nil || role != "assistant" {
 		return errors.New("invalid role")
 	}
+	for _, key := range []string{"refusal", "reasoning_content"} {
+		if raw, ok := msg[key]; ok && string(raw) != "null" {
+			var text string
+			if json.Unmarshal(raw, &text) != nil || (key == "refusal" && text != "") {
+				return errors.New("invalid " + key)
+			}
+		}
+	}
+	if raw, ok := msg["function_call"]; ok && string(raw) != "null" {
+		var call struct {
+			Name      string `json:"name"`
+			Arguments string `json:"arguments"`
+		}
+		if strictJSON(raw, &call) != nil || call.Name != "" || call.Arguments != "" {
+			return errors.New("unsupported legacy function call")
+		}
+	}
 	if raw, ok := msg["content"]; ok && string(raw) != "null" {
 		var text string
 		if json.Unmarshal(raw, &text) != nil {
 			return errors.New("invalid content")
 		}
 	}
-	if _, ok := msg["content"]; !ok && len(msg["tool_calls"]) == 0 && len(msg["reasoning_content"]) == 0 {
-		return errors.New("missing message content")
-	}
 	tools, err := decodeToolCalls(msg["tool_calls"])
 	if err != nil {
 		return err
+	}
+	var reasoning *string
+	_ = json.Unmarshal(msg["reasoning_content"], &reasoning)
+	if (len(msg["content"]) == 0 || string(msg["content"]) == "null") && len(tools) == 0 && reasoning == nil {
+		return errors.New("missing message content")
 	}
 	if c.Finish == "tool_calls" && len(tools) == 0 {
 		return errors.New("missing tool calls")
@@ -313,33 +335,12 @@ func parseRequest(raw []byte, format types.RelayFormat) (any, string, bool, erro
 	if format != types.RelayFormatClaude {
 		return nil, "", false, errors.New("不支持的协议")
 	}
-	for key := range fields {
-		switch key {
-		case "model", "messages", "max_tokens", "system", "stream":
-		default:
-			return nil, "", false, errors.New("不支持字段 " + key)
-		}
-	}
 	var req dto.ClaudeRequest
-	if err := strictJSON(raw, &req); err != nil {
+	if err := json.Unmarshal(raw, &req); err != nil {
 		return nil, "", false, err
 	}
-	if strings.TrimSpace(req.Model) == "" || req.MaxTokens == nil || *req.MaxTokens == 0 || len(req.Messages) == 0 {
-		return nil, "", false, errors.New("model、max_tokens 和 messages 必填")
-	}
-	if v, ok := fields["system"]; ok {
-		if err := validateText(v, "system", "text"); err != nil {
-			return nil, "", false, err
-		}
-	}
-	for _, msg := range req.Messages {
-		if msg.Role != "user" && msg.Role != "assistant" {
-			return nil, "", false, errors.New("messages.role 无效")
-		}
-		v, _ := json.Marshal(msg.Content)
-		if err := validateText(v, "messages.content", "text"); err != nil {
-			return nil, "", false, err
-		}
+	if err := validateClaudeRequest(raw, &req); err != nil {
+		return nil, "", false, err
 	}
 	return &req, req.Model, req.Stream != nil && *req.Stream, nil
 }

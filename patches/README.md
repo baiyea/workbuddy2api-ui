@@ -136,3 +136,22 @@ also run core `go test ./internal/responses ./internal/protocol ./internal/serve
 ./cmd/server`. Remove the patch only when a replacement pinned snapshot maps
 the same plaintext history without losing text, reasoning, or tool association
 and these regressions pass without it.
+
+## 0010-relaykit-claude-history
+
+The pinned RelayKit Claude-to-Chat mapper omits assistant text when the same
+message contains tool calls, and discards plaintext thinking history. Preserve
+both content and tool calls on the assistant turn; map unsigned plaintext
+thinking to `reasoning_content`, including a thinking-only assistant turn.
+Tool-result IDs and names continue to use the existing mapper. Public APIs,
+module path, and the original vendored source bytes are unchanged.
+
+The host validates nested Claude shapes and rejects signed/redacted history or
+meaningful fields the pinned Chat mapper cannot carry, with a field path before
+calling the Handler. It does not fabricate signatures or expand tool execution.
+Regression tests in the patch reproduce thinking-only and mixed text/thinking/
+tool/result history. Verify the nested library with `go test -mod=readonly ./...`
+and `go vet -mod=readonly ./...` in a fresh overlay, then test and race-test core
+`./internal/anthropic ./internal/protocol ./internal/bridge ./cmd/server`.
+Remove this patch only when a replacement pinned snapshot preserves these
+histories and the regressions pass without it.

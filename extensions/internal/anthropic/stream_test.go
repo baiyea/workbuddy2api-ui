@@ -108,7 +108,7 @@ func TestStreamFirstTextArrivesBeforeNextContinues(t *testing.T) {
 		t.Fatalf("event order: %v", kinds)
 	}
 	start := got[0]["message"].(map[string]any)
-	if start["model"] != "global:mock" || !strings.HasPrefix(start["id"].(string), "msg_") || start["stop_reason"] != nil {
+	if start["model"] != "global:mock" || start["id"] != "x" || start["stop_reason"] != nil {
 		t.Fatalf("bad message identity: %v", start)
 	}
 	if !reflect.DeepEqual(start["usage"], map[string]any{"input_tokens": nil, "output_tokens": nil}) || !reflect.DeepEqual(got[5]["usage"], map[string]any{"input_tokens": float64(3), "output_tokens": float64(2)}) {
@@ -121,6 +121,7 @@ func TestStreamUsageAndFraming(t *testing.T) {
 		name, raw, reason string
 		input, output     any
 	}{
+		{"content filter", firstText + strings.ReplaceAll(stopFrame, `"stop"`, `"content_filter"`) + doneFrame, "refusal", nil, nil},
 		{"unknown", firstText + stopFrame + doneFrame, "end_turn", nil, nil},
 		{"empty block", stopFrame + doneFrame, "end_turn", nil, nil},
 		{"length without DONE", firstText + strings.ReplaceAll(stopFrame, `"stop"`, `"length"`), "max_tokens", nil, nil},
@@ -157,7 +158,6 @@ func TestStreamRejectsInvalidOrTruncatedOutput(t *testing.T) {
 		{"EOF without finish", firstText, true},
 		{"tools", firstText + "data: {\"choices\":[{\"delta\":{\"tool_calls\":[{\"id\":\"secret\"}]}}]}\n\n", true},
 		{"function call", "data: {\"choices\":[{\"delta\":{\"function_call\":{\"name\":\"secret\"}}}]}\n\n", false},
-		{"content filter", firstText + strings.ReplaceAll(stopFrame, `"stop"`, `"content_filter"`), true},
 		{"error before text", "event: error\ndata: {\"error\":{\"message\":\"secret\"}}\n\n", false},
 		{"error after text", firstText + "data: {\"error\":{\"message\":\"secret\"}}\n\n", true},
 		{"oversized frame", "data: " + strings.Repeat("x", (8<<20)+1), false},

@@ -1,170 +1,25 @@
-// Package anthropic adapts the supported Messages text subset in-process.
+// Package anthropic authenticates Messages requests and uses the shared converter.
 package anthropic
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha256"
 	"crypto/subtle"
-	"encoding/json"
-	"errors"
-	"io"
 	"net/http"
-	"sort"
-	"strings"
-	"unicode/utf8"
+
+	"github.com/QuantumNous/new-api/relaykit/types"
+	"workbuddy2api/internal/protocol"
 )
-
-// supportedFields is the top-level request key set the text subset accepts; anything else is
-// reported by name so clients can correct the request without guessing.
-var supportedFields = map[string]struct{}{
-	"model": {}, "max_tokens": {}, "system": {}, "stream": {}, "messages": {},
-}
-
-type textBlock struct {
-	Type string `json:"type"`
-	Text string `json:"text"`
-}
-
-type message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
-}
 
 type conversationKey struct{}
 
-// WithConversation is for authenticated internal callers supplying a validated ID.
-// Public request headers never supply this context value.
+// WithConversation accepts a validated ID from authenticated internal callers only.
 func WithConversation(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, conversationKey{}, id)
 }
 
-type requestData struct {
-	Model     *string         `json:"model"`
-	MaxTokens *int64          `json:"max_tokens"`
-	System    json.RawMessage `json:"system"`
-	Stream    json.RawMessage `json:"stream"`
-	Messages  []struct {
-		Role    string          `json:"role"`
-		Content json.RawMessage `json:"content"`
-	} `json:"messages"`
-}
-
-type completion struct {
-	ID      string `json:"id"`
-	Error   any    `json:"error"`
-	Choices []struct {
-		Message *struct {
-			Role         string            `json:"role"`
-			Content      *string           `json:"content"`
-			ToolCalls    []json.RawMessage `json:"tool_calls"`
-			Refusal      string            `json:"refusal"`
-			FunctionCall json.RawMessage   `json:"function_call"`
-		} `json:"message"`
-		FinishReason string `json:"finish_reason"`
-	} `json:"choices"`
-	Usage struct {
-		PromptTokens     *int64 `json:"prompt_tokens"`
-		CompletionTokens *int64 `json:"completion_tokens"`
-	} `json:"usage"`
-}
-
-const failureMessage = "模型调用失败，请稍后重试"
-
-func (out *completion) valid() bool {
-	if out.ID == "" || out.Error != nil || len(out.Choices) != 1 {
-		return false
-	}
-	choice := out.Choices[0]
-	msg := choice.Message
-	if msg == nil || msg.Content == nil || (msg.Role != "" && msg.Role != "assistant") || len(msg.ToolCalls) > 0 || msg.Refusal != "" {
-		return false
-	}
-	if len(msg.FunctionCall) > 0 {
-		var call struct {
-			Name      string `json:"name"`
-			Arguments string `json:"arguments"`
-		}
-		if strictJSON(msg.FunctionCall, &call) != nil || call.Name != "" || call.Arguments != "" {
-			return false
-		}
-	}
-	if choice.FinishReason != "stop" && choice.FinishReason != "length" {
-		return false
-	}
-	return (out.Usage.PromptTokens == nil || *out.Usage.PromptTokens >= 0) && (out.Usage.CompletionTokens == nil || *out.Usage.CompletionTokens >= 0)
-}
-
-func strictJSON(raw []byte, out any) error {
-	d := json.NewDecoder(bytes.NewReader(raw))
-	d.DisallowUnknownFields()
-	if err := d.Decode(out); err != nil {
-		return err
-	}
-	if d.Decode(new(any)) != io.EOF {
-		return errors.New("trailing JSON")
-	}
-	return nil
-}
-
-func textContent(raw json.RawMessage) (string, error) {
-	var text *string
-	if json.Unmarshal(raw, &text) == nil && text != nil {
-		return *text, nil
-	}
-	var blocks []struct {
-		Type string  `json:"type"`
-		Text *string `json:"text"`
-	}
-	if strictJSON(raw, &blocks) != nil || len(blocks) == 0 {
-		return "", errors.New("expected text")
-	}
-	var out strings.Builder
-	for _, block := range blocks {
-		if block.Type != "text" || block.Text == nil {
-			return "", errors.New("expected text block")
-		}
-		out.WriteString(*block.Text)
-	}
-	return out.String(), nil
-}
-
-// unsupportedField reports the first top-level key outside the supported set, so a rejected
-// request names the offending field instead of failing with a generic parse error. Unknown
-// fields are located after the body is known to be UTF-8 text.
-func unsupportedField(raw []byte) (string, bool) {
-	var fields map[string]json.RawMessage
-	if json.Unmarshal(raw, &fields) != nil {
-		return "", false
-	}
-	names := make([]string, 0, len(fields))
-	for name := range fields {
-		names = append(names, name)
-	}
-	sort.Strings(names)
-	for _, name := range names {
-		if _, supported := supportedFields[name]; !supported {
-			return name, true
-		}
-	}
-	return "", false
-}
-
 func writeError(w http.ResponseWriter, code int, message string) {
-	typ := "api_error"
-	switch code {
-	case 401:
-		typ = "authentication_error"
-	case 400, 405:
-		typ = "invalid_request_error"
-	case 413:
-		typ = "request_too_large"
-	case 429:
-		typ = "rate_limit_error"
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(map[string]any{"type": "error", "error": map[string]string{"type": typ, "message": message}})
+	protocol.WriteError(w, code, message, types.RelayFormatClaude)
 }
 
 // New intercepts only /v1/messages; existing OpenAI routes remain untouched.
@@ -192,7 +47,7 @@ func New(next http.Handler, apiKey string, maxBodyBytes int64) http.Handler {
 			return
 		}
 		if _, beta := r.Header[http.CanonicalHeaderKey("anthropic-beta")]; beta {
-			writeError(w, 400, "anthropic-beta 请求头不受支持：本接口只实现 anthropic-version 2023-06-01 的文本子集，出现该头即拒绝。无条件附带 anthropic-beta 的客户端需先在客户端侧移除")
+			writeError(w, 400, "anthropic-beta 请求头不受支持：本接口采用 anthropic-version 2023-06-01 的协议转换，出现该头即拒绝。无条件附带 anthropic-beta 的客户端需先在客户端侧移除")
 			return
 		}
 		if r.URL.RawQuery != "" || r.URL.ForceQuery {
@@ -203,143 +58,7 @@ func New(next http.Handler, apiKey string, maxBodyBytes int64) http.Handler {
 			writeError(w, 400, "不支持 Content-Encoding 压缩请求体")
 			return
 		}
-		raw, err := io.ReadAll(io.LimitReader(r.Body, maxBodyBytes+1))
-		if int64(len(raw)) > maxBodyBytes {
-			writeError(w, 413, "请求体超过大小限制")
-			return
-		}
-		var input requestData
-		if err != nil || !utf8.Valid(raw) {
-			writeError(w, 400, "请求体必须是 UTF-8 编码的单个 JSON 对象")
-			return
-		}
-		if strictJSON(raw, &input) != nil {
-			if name, ok := unsupportedField(raw); ok {
-				writeError(w, 400, "不支持字段 "+name+"：仅支持 model、max_tokens、system、stream、messages")
-				return
-			}
-			writeError(w, 400, "请求字段无效，仅支持普通文本消息")
-			return
-		}
-		if input.Model == nil || strings.TrimSpace(*input.Model) == "" {
-			writeError(w, 400, "model 缺失或为空")
-			return
-		}
-		if input.MaxTokens == nil || *input.MaxTokens <= 0 {
-			writeError(w, 400, "max_tokens 必须是正整数")
-			return
-		}
-		if len(input.Messages) == 0 {
-			writeError(w, 400, "messages 不能为空")
-			return
-		}
-		stream := false
-		if len(input.Stream) > 0 {
-			var value *bool
-			if json.Unmarshal(input.Stream, &value) != nil || value == nil {
-				writeError(w, 400, "stream 必须是布尔值")
-				return
-			}
-			stream = *value
-		}
-		messages := make([]message, 0, len(input.Messages)+1)
-		if len(input.System) > 0 {
-			text, err := textContent(input.System)
-			if err != nil {
-				writeError(w, 400, "system 仅支持文本")
-				return
-			}
-			messages = append(messages, message{Role: "system", Content: text})
-		}
-		for _, item := range input.Messages {
-			text, err := textContent(item.Content)
-			if err != nil || (item.Role != "user" && item.Role != "assistant") {
-				writeError(w, 400, "messages 仅支持 user/assistant 文本消息")
-				return
-			}
-			messages = append(messages, message{Role: item.Role, Content: text})
-		}
-		converted := map[string]any{"model": *input.Model, "max_tokens": *input.MaxTokens, "messages": messages, "stream": stream}
-		if id, _ := r.Context().Value(conversationKey{}).(string); id != "" {
-			converted["conversationId"] = id
-		}
-		body, _ := json.Marshal(converted)
-		if int64(len(body)) > maxBodyBytes {
-			writeError(w, 413, "转换后的请求体超过大小限制")
-			return
-		}
-		ctx, cancel := context.WithCancel(r.Context())
-		defer cancel()
-		req := r.Clone(ctx)
-		req.URL.Path, req.URL.RawPath, req.RequestURI = "/v1/chat/completions", "", "/v1/chat/completions"
-		req.Body, req.ContentLength = io.NopCloser(bytes.NewReader(body)), int64(len(body))
-		req.GetBody, req.TransferEncoding, req.Trailer = nil, nil, nil
-		req.Header = http.Header{"Content-Type": {"application/json"}, "Authorization": {"Bearer " + apiKey}}
-		if stream {
-			writer := newStreamWriter(w, *input.Model, cancel)
-			writer.ctx = ctx
-			next.ServeHTTP(writer, req)
-			_ = writer.finish()
-			return
-		}
-		capture := &responseBuffer{header: make(http.Header), ctx: ctx, cancel: cancel}
-		next.ServeHTTP(capture, req)
-		if capture.err != nil {
-			writeError(w, 502, failureMessage)
-			return
-		}
-		if capture.status != 200 {
-			code := capture.status
-			if code < 400 || code > 599 {
-				code = 502
-			}
-			writeError(w, code, failureMessage)
-			return
-		}
-		var output completion
-		if !utf8.Valid(capture.body.Bytes()) || json.Unmarshal(capture.body.Bytes(), &output) != nil || !output.valid() {
-			writeError(w, 502, failureMessage)
-			return
-		}
-		stop := "end_turn"
-		if output.Choices[0].FinishReason == "length" {
-			stop = "max_tokens"
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]any{"id": output.ID, "type": "message", "role": "assistant", "model": input.Model,
-			"content": []textBlock{{Type: "text", Text: *output.Choices[0].Message.Content}}, "stop_reason": stop, "stop_sequence": nil,
-			"usage": map[string]any{"input_tokens": output.Usage.PromptTokens, "output_tokens": output.Usage.CompletionTokens}})
+		id, _ := r.Context().Value(conversationKey{}).(string)
+		protocol.Serve(w, r, next, apiKey, maxBodyBytes, types.RelayFormatClaude, id)
 	})
-}
-
-type responseBuffer struct {
-	header http.Header
-	status int
-	body   bytes.Buffer
-	ctx    context.Context
-	cancel context.CancelFunc
-	err    error
-}
-
-func (w *responseBuffer) Header() http.Header { return w.header }
-func (w *responseBuffer) WriteHeader(status int) {
-	if w.status == 0 {
-		w.status = status
-	}
-}
-func (w *responseBuffer) Write(p []byte) (int, error) {
-	if w.err == nil {
-		w.err = w.ctx.Err()
-	}
-	if w.err == nil && len(p) > (32<<20)-w.body.Len() {
-		w.err = errors.New("response exceeds limit")
-		w.cancel()
-	}
-	if w.err != nil {
-		return 0, w.err
-	}
-	if w.status == 0 {
-		w.WriteHeader(200)
-	}
-	return w.body.Write(p)
 }

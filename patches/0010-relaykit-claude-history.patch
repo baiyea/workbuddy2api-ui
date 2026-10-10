@@ -1,0 +1,74 @@
+--- a/third_party/relaykit/relayconvert/internal/claude_messages/to_oai_chat_req.go
++++ b/third_party/relaykit/relayconvert/internal/claude_messages/to_oai_chat_req.go
+@@ -233,6 +233,11 @@
+ 							FileData: "data:application/pdf;base64," + kitutil.Interface2String(mediaMsg.Source.Data),
+ 						},
+ 					})
++				case "thinking":
++					if mediaMsg.Thinking != nil {
++						thought := openAIMessage.GetReasoningContent() + *mediaMsg.Thinking
++						openAIMessage.ReasoningContent = &thought
++					}
+ 				case "tool_use":
+ 					toolCall := dto.ToolCallRequest{
+ 						ID:   mediaMsg.Id,
+@@ -270,11 +275,11 @@
+ 			if len(toolCalls) > 0 {
+ 				openAIMessage.SetToolCalls(toolCalls)
+ 			}
+-			if len(mediaMessages) > 0 && len(toolCalls) == 0 {
++			if len(mediaMessages) > 0 {
+ 				openAIMessage.SetMediaContent(mediaMessages)
+ 			}
+ 		}
+-		if len(openAIMessage.ParseContent()) > 0 || len(openAIMessage.ToolCalls) > 0 {
++		if len(openAIMessage.ParseContent()) > 0 || len(openAIMessage.ToolCalls) > 0 || openAIMessage.ReasoningContent != nil {
+ 			openAIMessages = append(openAIMessages, openAIMessage)
+ 		}
+ 	}
+--- /dev/null
++++ b/third_party/relaykit/relayconvert/internal/claude_messages/plaintext_history_test.go
+@@ -0,0 +1,43 @@
++package claudemessages
++
++import (
++	"context"
++	"testing"
++
++	"github.com/QuantumNous/new-api/relaykit/dto"
++	"github.com/QuantumNous/new-api/relaykit/relayconvert/convmeta"
++	"github.com/stretchr/testify/require"
++)
++
++func TestClaudePlaintextMixedHistory(t *testing.T) {
++	for _, withTool := range []bool{false, true} {
++		t.Run(map[bool]string{false: "thinking-only", true: "text-tool-result"}[withTool], func(t *testing.T) {
++			thought, text := "think carefully", "checking"
++			blocks := []dto.ClaudeMediaMessage{{Type: "thinking", Thinking: &thought}}
++			if withTool {
++				blocks = append(blocks, dto.ClaudeMediaMessage{Type: "text", Text: &text}, dto.ClaudeMediaMessage{Type: "tool_use", Id: "call_a", Name: "check", Input: map[string]any{"q": "hi"}})
++			}
++			messages := []dto.ClaudeMessage{{Role: "assistant", Content: blocks}}
++			if withTool {
++				messages = append(messages, dto.ClaudeMessage{Role: "user", Content: []dto.ClaudeMediaMessage{{Type: "tool_result", ToolUseId: "call_a", Content: "checked"}}})
++			}
++			got, err := ClaudeMessagesRequestToOpenAIChat(context.Background(), dto.ClaudeRequest{Model: "test", Messages: messages}, &convmeta.Values{})
++			require.NoError(t, err)
++			require.NotEmpty(t, got.Messages)
++			if withTool {
++				require.Len(t, got.Messages, 2)
++				require.Len(t, got.Messages[0].ParseContent(), 1)
++				require.Equal(t, "checking", got.Messages[0].ParseContent()[0].Text)
++				calls := got.Messages[0].ParseToolCalls()
++				require.Len(t, calls, 1)
++				require.Equal(t, "call_a", calls[0].ID)
++				require.Equal(t, "check", calls[0].Function.Name)
++				require.Equal(t, `{"q":"hi"}`, calls[0].Function.Arguments)
++				require.Equal(t, "tool", got.Messages[1].Role)
++				require.Equal(t, "call_a", got.Messages[1].ToolCallId)
++				require.Equal(t, "checked", got.Messages[1].Content)
++			}
++			require.Equal(t, thought, got.Messages[0].GetReasoningContent())
++		})
++	}
++}
