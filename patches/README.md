@@ -101,7 +101,10 @@ without the hook.
 
 `go.mod` requires `github.com/QuantumNous/new-api/relaykit v0.0.0` and replaces
 it with `./third_party/relaykit`; the core baseline is Go 1.26. `go.sum` records
-the pinned module's dependencies. The independent RelayKit snapshot keeps its
+the pinned module's dependencies. The core module also records the indirect
+dependencies required by the shared protocol transport's public `relayconvert`
+imports, so a fresh overlay supports `go test -mod=readonly ./internal/protocol`.
+The independent RelayKit snapshot keeps its
 original module path and Go 1.25.1 declaration. Its source, tests and dependency
 files are unchanged Git blobs from the commit recorded in
 `extensions/third_party/relaykit/SOURCE.json`, which also lists each original
