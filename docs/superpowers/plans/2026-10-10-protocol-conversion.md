@@ -102,12 +102,12 @@ format 仅为 RelayFormatOpenAIResponses 或 RelayFormatClaude。Serve 负责有
 
 **Interfaces:** 保持 anthropic.New、WithConversation、bridge envelope。`validateClaudeRequest(raw []byte, input *dto.ClaudeRequest) error` 负责嵌套形状验证，不承担协议转换。
 
-- [ ] **先补入口失败测试。** `TestToolDefinitionsCallsAndResults`、`TestImagesAndGenerationParameters`、`TestThinkingOutput`、`TestToolStreamKeepsLateZeroUsage` 在旧文本实现上确认失败，记录失败原因。
-- [ ] **先写库缺口失败测试。** 完整 assistant text+tool_use 历史和随后 tool_result，断言 Chat 同时保留文本、tool_calls、关联 ID；无签名明文 thinking 保留 reasoning_content。原始库应失败。
-- [ ] **制作最小库补丁。** 只修该方向已证实的内容丢失，保持公开 API/模块路径；回归与改动一并写入 0010。外部非空 signature/redacted 块由宿主返回带路径 400，不伪造或悄悄删除。
-- [ ] **替换文本转换与旧传输。** 保留 x-api-key/version/beta/query/compression 检查；读取可信 context 会话后调用 Serve。仅删除共享层已替代的代码。
-- [ ] **完善验证及旧测试。** 保留 malformed/null/角色/缺字段/未知字段/非法图片校验；只移除因能力扩展过时的“工具/图片/参数必拒绝”断言。认证、取消、owner、未知/晚到用量及错误回归保留。
-- [ ] **验证。** 新物化 `.build/protocol-check-4`，运行库 `test ./...`，以及 core `test ./internal/anthropic ./internal/protocol ./internal/bridge ./cmd/server` 和相关包 race；新增及现有契约均须通过。
+- [x] **先补入口失败测试。** `TestToolDefinitionsCallsAndResults`、`TestImagesAndGenerationParameters`、`TestThinkingOutput`、`TestToolStreamKeepsLateZeroUsage` 在旧文本实现上确认失败，记录失败原因。
+- [x] **先写库缺口失败测试。** 完整 assistant text+tool_use 历史和随后 tool_result，断言 Chat 同时保留文本、tool_calls、关联 ID；无签名明文 thinking 保留 reasoning_content。原始库应失败。
+- [x] **制作最小库补丁。** 只修该方向已证实的内容丢失，保持公开 API/模块路径；回归与改动一并写入 0010。外部非空 signature/redacted 块由宿主返回带路径 400，不伪造或悄悄删除。
+- [x] **替换文本转换与旧传输。** 保留 x-api-key/version/beta/query/compression 检查；读取可信 context 会话后调用 Serve。仅删除共享层已替代的代码。
+- [x] **完善验证及旧测试。** 保留 malformed/null/角色/缺字段/未知字段/非法图片校验；只移除因能力扩展过时的“工具/图片/参数必拒绝”断言。认证、取消、owner、未知/晚到用量及错误回归保留。
+- [x] **验证。** 新物化 `.build/protocol-check-4`，运行库 `test ./...`，以及 core `test ./internal/anthropic ./internal/protocol ./internal/bridge ./cmd/server` 和相关包 race；新增及现有契约均须通过。
 
 ## Task 5: SDK、隔离验收、说明与最终审查
 

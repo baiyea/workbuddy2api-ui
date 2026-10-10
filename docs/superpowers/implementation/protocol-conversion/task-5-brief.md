@@ -39,3 +39,9 @@ git diff --check
 
 
 Read root AGENTS.md and the referenced design spec. Do not create worktrees or branches. Do not spawn subagents. Keep reports/logs under docs/superpowers.
+
+Task4 controller ruling to document: pinned direct Claude-to-Chat mapping omits tool_choice, so explicit Anthropic tool_choice is rejected with path400; model-selected tools remain available. Do not claim forced/named Anthropic tool choice support or add an alternate conversion chain in integration.
+
+Read task-4-report.md for the exact accepted/rejected input table when updating user docs. It lists pinned direct-mapper limits including cache metadata, strict tool flags, nonempty signatures, is_error:true, output_format, and state/server fields; document material user-facing limits without suggesting full Anthropic or Claude Code compatibility. Task4 preserved requested-model output and retained malformed-upstream errors via shared checks.
+
+Task4 review clarification: thinking.display is unrepresentable across this direct Chat route and will return400; numeric thinking budget is mapped by RelayKit to effort, not guaranteed exact upstream token budget. Check final task-4-report.md fix section for exact shipped behavior.
