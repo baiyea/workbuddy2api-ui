@@ -26,6 +26,7 @@ def check(client, model):
     assert events[0].type == 'response.created' and events[-1].type == 'response.completed'
     assert [e.sequence_number for e in events] == list(range(len(events)))
     assert ''.join(e.delta for e in events if e.type == 'response.output_text.delta') == reply.output_text
+    print('  raw text events: ' + ', '.join(e.type for e in events), flush=True)
     with client.responses.stream(**request) as stream:
         list(stream)
         final = stream.get_final_response()
