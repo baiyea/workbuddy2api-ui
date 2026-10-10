@@ -117,3 +117,21 @@ The nested module must be checked separately; core `./...` does not include it.
 Docker and desktop resources package the notices and SOURCE.json without
 packaging RelayKit source files. Remove this patch only if core no longer uses
 RelayKit or its base module provides the equivalent pinned local dependency.
+
+## 0009-relaykit-responses-history
+
+The pinned RelayKit Responses request mapper treats a plaintext `reasoning`
+input item as an empty user message. Map its `summary_text` blocks to Chat
+`reasoning_content`, and attach the following assistant text and tool calls to
+that turn. Reject opaque/encrypted reasoning fields instead of dropping them.
+The shared protocol validator checks the plaintext shape and reports the exact
+input field path before calling the existing Handler. No reasoning signature,
+response persistence, or separate tool state is introduced.
+
+Regression tests in the patch cover plaintext summary/text/function/result
+history and reasoning followed directly by a tool call. Verify the nested
+RelayKit module with `go test ./...` and `go vet ./...` in a fresh overlay;
+also run core `go test ./internal/responses ./internal/protocol ./internal/server
+./cmd/server`. Remove the patch only when a replacement pinned snapshot maps
+the same plaintext history without losing text, reasoning, or tool association
+and these regressions pass without it.

@@ -103,7 +103,7 @@ func TestInvalidRequestsDoNotReachHandler(t *testing.T) {
 
 func TestResponsesLooseFieldsRejectMalformedShapes(t *testing.T) {
 	for _, tail := range []string{
-		`"input":[{"type":"unknown"}]`, `"input":[{"type":"reasoning","summary":[{"type":"summary_text","text":"think"}]}]`,
+		`"input":[{"type":"unknown"}]`, `"input":[{"type":"reasoning","summary":[{"type":"summary_text","text":null}]}]`,
 		`"input":[{"type":"function_call","name":"f","call_id":17,"arguments":"{}"}]`,
 		`"input":[{"type":"function_call_output","call_id":"c","output":null}]`,
 		`"input":[{"type":"custom_tool_call","name":"f","call_id":"c","input":{}}]`,

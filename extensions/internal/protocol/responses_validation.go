@@ -83,6 +83,10 @@ func validateResponses(fields map[string]json.RawMessage) error {
 			}
 		} else {
 			switch typ {
+			case "reasoning":
+				if err := validateResponsesReasoning(item, path); err != nil {
+					return err
+				}
 			case "function_call", "custom_tool_call":
 				for _, key := range []string{"call_id", "name"} {
 					if err := requiredString(item, key, path); err != nil {
@@ -111,6 +115,48 @@ func validateResponses(fields map[string]json.RawMessage) error {
 			default:
 				return errors.New(path + ".type 不受支持")
 			}
+		}
+	}
+	return nil
+}
+
+func validateResponsesReasoning(item map[string]json.RawMessage, path string) error {
+	for key := range item {
+		switch key {
+		case "type", "summary":
+		case "id", "status":
+			if err := requiredString(item, key, path); err != nil {
+				return err
+			}
+		case "content":
+			if string(item[key]) != "null" {
+				return errors.New(path + ".content 不支持：仅支持明文 summary")
+			}
+		case "role", "quality", "size":
+			// RelayKit's shared output DTO emits these inert fields on reasoning items.
+			var value *string
+			if json.Unmarshal(item[key], &value) != nil || value == nil || *value != "" {
+				return errors.New(path + "." + key + " 不受支持")
+			}
+		default:
+			return errors.New(path + "." + key + " 不支持：仅支持明文 summary")
+		}
+	}
+	var summary []map[string]json.RawMessage
+	if json.Unmarshal(item["summary"], &summary) != nil || summary == nil {
+		return errors.New(path + ".summary 必须是数组")
+	}
+	for i, block := range summary {
+		p := fmt.Sprintf("%s.summary[%d]", path, i)
+		for key := range block {
+			if key != "type" && key != "text" {
+				return errors.New(p + "." + key + " 不受支持")
+			}
+		}
+		var typ string
+		var text *string
+		if json.Unmarshal(block["type"], &typ) != nil || typ != "summary_text" || json.Unmarshal(block["text"], &text) != nil || text == nil {
+			return errors.New(p + " 必须是 summary_text 文本块")
 		}
 	}
 	return nil
