@@ -259,3 +259,53 @@ func TestResponsesErrorSequence(t *testing.T) {
 		}
 	}
 }
+
+func TestIncompleteStreamToolsCannotComplete(t *testing.T) {
+	for _, f := range formats {
+		for _, call := range []string{
+			`{"index":0,"id":"call_1","type":"function","function":{"arguments":"secret"}}`,
+			`{"index":0,"type":"function","function":{"name":"f","arguments":"{}"}}`,
+			`{"index":0,"id":"call_1","type":"function","function":{"name":"f"}}`,
+			`{"index":0,"id":"call_1","function":{"name":"f","arguments":"{}"}}`,
+		} {
+			t.Run(string(f)+call, func(t *testing.T) {
+				var handlerContext context.Context
+				w := run(f, true, func(w http.ResponseWriter, r *http.Request) {
+					handlerContext = r.Context()
+					io.WriteString(w, textFrame+`data: {"id":"chat-test","model":"test","choices":[{"index":0,"delta":{"tool_calls":[`+call+`]}}]}`+"\n\n"+strings.Replace(finishFrame, `"stop"`, `"tool_calls"`, 1)+doneFrame)
+				})
+				if terminal(w.Body.String()) || !strings.Contains(w.Body.String(), "event: error") {
+					t.Errorf("incomplete tools completed: %s", w.Body.String())
+				}
+				if strings.Contains(w.Body.String(), `"message":"secret"`) {
+					t.Error("diagnostic leaked")
+				}
+				if handlerContext.Err() == nil {
+					t.Error("handler context not canceled")
+				}
+			})
+		}
+	}
+}
+
+func TestStreamToolsCanFinishAfterLateRequiredFields(t *testing.T) {
+	for _, f := range formats {
+		w := run(f, true, func(w http.ResponseWriter, r *http.Request) {
+			io.WriteString(w, `data: {"id":"chat-test","model":"test","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"call_1","type":"function","function":{"arguments":"{}"}}]}}]}`+"\n\n"+`data: {"id":"chat-test","model":"test","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"name":"f"}}]}}]}`+"\n\n"+strings.Replace(finishFrame, `"stop"`, `"tool_calls"`, 1))
+		})
+		if !terminal(w.Body.String()) || !strings.Contains(w.Body.String(), `"name":"f"`) {
+			t.Errorf("valid late fields rejected: %s", w.Body.String())
+		}
+	}
+}
+
+func TestStreamToolIdentityCanPrecedeFunction(t *testing.T) {
+	for _, f := range formats {
+		w := run(f, true, func(w http.ResponseWriter, r *http.Request) {
+			io.WriteString(w, `data: {"id":"chat-test","model":"test","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"call_1","type":"function"}]}}]}`+"\n\n"+`data: {"id":"chat-test","model":"test","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"name":"f","arguments":"{}"}}]}}]}`+"\n\n"+strings.Replace(finishFrame, `"stop"`, `"tool_calls"`, 1))
+		})
+		if !terminal(w.Body.String()) || !strings.Contains(w.Body.String(), `"name":"f"`) {
+			t.Errorf("valid split tool rejected: %s", w.Body.String())
+		}
+	}
+}

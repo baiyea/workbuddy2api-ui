@@ -28,12 +28,65 @@ type streamWriter struct {
 	format                   types.RelayFormat
 	state                    *relayconvert.ResponseStreamState
 	usage                    usagePresence
+	tools                    map[int]streamToolFields
 	model, id, reason        string
 	pending                  []byte
 	lineStart, total, status int
 	sequence                 int
 	started, done            bool
 	err                      error
+}
+
+type streamToolFields struct {
+	id, name         string
+	typed, arguments bool
+}
+
+func (s *streamWriter) observeTools(raw json.RawMessage) error {
+	var delta struct {
+		Tools json.RawMessage `json:"tool_calls"`
+	}
+	if err := json.Unmarshal(raw, &delta); err != nil {
+		return err
+	}
+	calls, err := decodeToolCalls(delta.Tools)
+	if err != nil {
+		return err
+	}
+	for _, call := range calls {
+		if call.Index == nil || *call.Index < 0 {
+			return errors.New("invalid tool index")
+		}
+		if s.tools == nil {
+			s.tools = make(map[int]streamToolFields)
+		}
+		tool := s.tools[*call.Index]
+		id := strings.TrimSpace(call.ID)
+		if id != "" {
+			if tool.id != "" && tool.id != id {
+				return errors.New("changed tool id")
+			}
+			tool.id = id
+		}
+		if call.Function != nil {
+			name := strings.TrimSpace(call.Function.Name)
+			if name != "" {
+				if tool.name != "" && tool.name != name {
+					return errors.New("changed tool name")
+				}
+				tool.name = name
+			}
+			tool.arguments = tool.arguments || call.Function.Arguments != nil
+		}
+		if call.Type != "" {
+			if call.Type != "function" {
+				return errors.New("invalid tool type")
+			}
+			tool.typed = true
+		}
+		s.tools[*call.Index] = tool
+	}
+	return nil
 }
 
 func (s *streamWriter) Header() http.Header { return s.header }
@@ -147,6 +200,9 @@ func (s *streamWriter) frame(raw []byte) error {
 	var delta *dto.ChatCompletionsStreamResponseChoiceDelta
 	if strictJSON(choice.Delta, &delta) != nil || delta == nil || (delta.Role != "" && delta.Role != "assistant") {
 		return errors.New("invalid delta")
+	}
+	if err := s.observeTools(choice.Delta); err != nil {
+		return err
 	}
 	if choice.Finish != nil {
 		if !validFinish(*choice.Finish) {
@@ -279,6 +335,16 @@ func (s *streamWriter) finish() {
 	if (s.status != 0 && (s.status < 200 || s.status >= 300)) || len(bytes.TrimSpace(s.pending)) > 0 || s.reason == "" {
 		s.fail(errors.New("failed or truncated stream"), false)
 		return
+	}
+	if s.reason == "tool_calls" && len(s.tools) == 0 {
+		s.fail(errors.New("missing tool calls"), false)
+		return
+	}
+	for _, tool := range s.tools {
+		if tool.id == "" || tool.name == "" || !tool.typed || !tool.arguments {
+			s.fail(errors.New("incomplete tool call"), false)
+			return
+		}
 	}
 	chunk := &dto.ChatCompletionsStreamResponse{Id: s.id, Model: s.model, Choices: []dto.ChatCompletionsStreamResponseChoice{{FinishReason: &s.reason}}}
 	if err := s.convert(chunk); err != nil {

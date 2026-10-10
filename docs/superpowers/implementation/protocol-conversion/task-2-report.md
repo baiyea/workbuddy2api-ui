@@ -60,3 +60,39 @@ Reviewed the request callers (none wired yet), library public registry signature
 - Route/method/auth/version enforcement belongs to the caller as specified. There is no Responses/Anthropic public wiring in this commit.
 - SDK, full project shell checks and isolated deployment acceptance are owned by subsequent integration tasks. This task does not claim these or actual upstream capability verification.
 - Preserved the preexisting `.gitignore`, untracked `upstream-convert/` and model/protocol probe data, as well as controller-owned concurrent docs/environment edits. No real credentials/data, service restarts, publishing, pushing, or deployment were used.
+
+## Review round 1 — invalid tool results
+
+Addressed the Important finding in `task-2-review.md` against implementation commit `5b95153`. Confirmed the library evidence: `dto.Message.ParseToolCalls` discards unmarshal errors, ordinary Responses conversion skips nameless tools, and streaming conversion buffers nameless calls without guaranteeing they appear at completion. Aggregate diagnostics do not make these malformed Chat tool outputs fail automatically.
+
+The ordinary response boundary now requires an array of non-null tool objects, each with a nonempty ID/name, function type, function object and string arguments field. A tool_calls finish also requires at least one call. The stream boundary records only required-field presence and ID/name per tool index (without another argument buffer), then checks every accumulated call before sending synthetic finish. Missing fields, invalid types/indexes, or changed identities fail with cancellation and sanitized errors. Legitimate fields may arrive across multiple chunks, including identity before function and name after arguments. Generated arguments are not validated against JSON Schema or repaired.
+
+RED commands, fresh materializations:
+
+```powershell
+python scripts/overlay.py prepare --output .build/protocol-task2-review1-red
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task2-review1-red test -mod=readonly ./internal/protocol -run 'TestInvalidResponseTools|TestIncompleteStreamTools|TestStreamToolsCanFinish'
+```
+
+Observed exit 1: ordinary malformed tool objects/missing fields returned success; incomplete streaming calls produced success terminals for both target protocols. The positive late-name case passed. Evidence: `task-2-review1-red.log`.
+
+Self-review caught an over-strict intermediate fragment check; a new regression was run before correcting it:
+
+```powershell
+python scripts/overlay.py prepare --output .build/protocol-task2-review1-fragment-red
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task2-review1-fragment-red test -mod=readonly ./internal/protocol -run TestStreamToolIdentityCanPrecedeFunction
+```
+
+Observed exit 1 for both formats (`valid split tool rejected`), recorded in `task-2-review1-fragment-red.log`. Final validation allows missing function fields in individual fragments while requiring their accumulated presence at completion.
+
+Final GREEN commands:
+
+```powershell
+python scripts/overlay.py prepare --output .build/protocol-task2-review1-final
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task2-review1-final test -mod=readonly ./internal/protocol
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task2-review1-final test -mod=readonly -race ./internal/protocol
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task2-review1-final vet -mod=readonly ./internal/protocol
+git diff --check -- extensions/internal/protocol
+```
+
+Results: test PASS 1.039s; race PASS 5.826s; vet and whitespace checks exit 0. Logs: `task-2-review1-{test,race,vet}.log`. The full protocol suite includes both formats, incomplete fields, cancellation, errors without successful completion, valid late/split fields, custom tools and existing transport regressions. No new public wiring or vendor changes; full-core/SDK/container verification was not repeated for this focused review fix and remains with integration.

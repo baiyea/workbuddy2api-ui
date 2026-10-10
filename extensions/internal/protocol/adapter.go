@@ -209,7 +209,46 @@ func validateCompletion(raw []byte) error {
 	if _, ok := msg["content"]; !ok && len(msg["tool_calls"]) == 0 && len(msg["reasoning_content"]) == 0 {
 		return errors.New("missing message content")
 	}
+	tools, err := decodeToolCalls(msg["tool_calls"])
+	if err != nil {
+		return err
+	}
+	if c.Finish == "tool_calls" && len(tools) == 0 {
+		return errors.New("missing tool calls")
+	}
+	for _, tool := range tools {
+		if strings.TrimSpace(tool.ID) == "" || tool.Type != "function" || tool.Function == nil || strings.TrimSpace(tool.Function.Name) == "" || tool.Function.Arguments == nil {
+			return errors.New("incomplete tool call")
+		}
+	}
 	return nil
+}
+
+// Preserve required-field presence before RelayKit's permissive tool decoding.
+type toolCallFields struct {
+	Index    *int   `json:"index"`
+	ID       string `json:"id"`
+	Type     string `json:"type"`
+	Function *struct {
+		Name      string  `json:"name"`
+		Arguments *string `json:"arguments"`
+	} `json:"function"`
+}
+
+func decodeToolCalls(raw json.RawMessage) ([]*toolCallFields, error) {
+	if len(raw) == 0 {
+		return nil, nil
+	}
+	var calls []*toolCallFields
+	if json.Unmarshal(raw, &calls) != nil {
+		return nil, errors.New("invalid tool calls")
+	}
+	for _, call := range calls {
+		if call == nil {
+			return nil, errors.New("invalid tool call")
+		}
+	}
+	return calls, nil
 }
 
 func strictJSON(raw []byte, out any) error {

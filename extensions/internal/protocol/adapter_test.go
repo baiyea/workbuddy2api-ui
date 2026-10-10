@@ -158,3 +158,28 @@ func TestOriginalRequestLimitAndUTF8(t *testing.T) {
 		}
 	}
 }
+
+func TestInvalidResponseToolsCannotComplete(t *testing.T) {
+	for _, f := range formats {
+		for _, calls := range []string{
+			`{}`, `[null]`, `[{"id":"call_1","type":"function","function":{"arguments":"secret"}}]`,
+			`[{"id":"call_1","type":"function","function":{"name":"f"}}]`,
+			`[{"type":"function","function":{"name":"f","arguments":"{}"}}]`,
+			`[{"id":"call_1","type":"invalid","function":{"name":"f","arguments":"{}"}}]`, `[]`,
+		} {
+			t.Run(string(f)+calls, func(t *testing.T) {
+				var handlerContext context.Context
+				w := run(f, false, func(w http.ResponseWriter, r *http.Request) {
+					handlerContext = r.Context()
+					io.WriteString(w, `{"id":"chat-test","model":"test","choices":[{"index":0,"message":{"role":"assistant","content":null,"tool_calls":`+calls+`},"finish_reason":"tool_calls"}]}`)
+				})
+				if w.Code != 502 || !strings.Contains(w.Body.String(), "error") || strings.Contains(w.Body.String(), "secret") {
+					t.Errorf("invalid tools accepted/leaked: %d %s", w.Code, w.Body.String())
+				}
+				if handlerContext.Err() == nil {
+					t.Error("handler context not canceled")
+				}
+			})
+		}
+	}
+}
