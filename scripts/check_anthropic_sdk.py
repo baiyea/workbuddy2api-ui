@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Probe the approved text contract with anthropic==0.67.0 and httpx==0.28.1.
+"""Probe text/tools with anthropic==0.67.0 and httpx==0.28.1.
 
 Default: in-memory responses only. --url enables an explicitly selected local
-fixture gateway; a passing mock probe does not prove gateway compatibility.
+isolated gateway; neither fixtures nor a mock gateway prove real model support.
 Use Python 3.12 and install the pinned SDKs in a temporary venv, never in a
 production image; SDK 0.67.0 fails raw SSE type parsing under Python 3.14.
 """
@@ -52,6 +52,23 @@ def mock_transport(input_tokens, output_tokens):
         assert "authorization" not in request.headers
         body = json.loads(request.content)
         assert body["model"] == "cn:mock-model" and body["max_tokens"] == 32
+        if body.get('tools'):
+            reply = message(input_tokens, output_tokens)
+            reply.update(content=[{'type': 'tool_use', 'id': 'call_fixture', 'name': 'check',
+                                   'input': {'q': 'hi'}}], stop_reason='tool_use')
+            start = dict(reply, content=[], stop_reason=None, usage={'input_tokens': None, 'output_tokens': None})
+            tool_sse = event('message_start', message=start)
+            tool_sse += event('content_block_start', index=0, content_block={
+                'type': 'tool_use', 'id': 'call_fixture', 'name': 'check', 'input': {}})
+            for fragment in ('{"q":', '"hi"}'):
+                tool_sse += event('content_block_delta', index=0,
+                                  delta={'type': 'input_json_delta', 'partial_json': fragment})
+            tool_sse += event('content_block_stop', index=0)
+            tool_sse += event('message_delta', delta={'stop_reason': 'tool_use', 'stop_sequence': None},
+                              usage=reply['usage']) + event('message_stop')
+            if body.get('stream'):
+                return httpx.Response(200, headers={'Content-Type': 'text/event-stream'}, content=tool_sse.encode())
+            return httpx.Response(200, json=reply)
         assert body["messages"] == [{"role": "user", "content": "你好"}]
         if body.get("stream"):
             return httpx.Response(200, headers={"Content-Type": "text/event-stream"},
@@ -115,6 +132,33 @@ def local_url(value):
     return value
 
 
+def check_tools(client, model, expected_input, expected_output):
+    request = dict(model=model, max_tokens=32,
+                   tools=[{'name': 'check', 'input_schema': {'type': 'object',
+                           'properties': {'q': {'type': 'string'}}}}],
+                   messages=[{'role': 'user', 'content': '你好'},
+                             {'role': 'assistant', 'content': [{'type': 'tool_use', 'id': 'call_previous',
+                              'name': 'check', 'input': {'q': 'old'}}]},
+                             {'role': 'user', 'content': [{'type': 'tool_result',
+                              'tool_use_id': 'call_previous', 'content': 'checked'}]}])
+    def verify(reply):
+        tool = next(block for block in reply.content if block.type == 'tool_use')
+        assert (tool.id, tool.name, tool.input) == ('call_fixture', 'check', {'q': 'hi'})
+        assert reply.stop_reason == 'tool_use'
+        assert_usage(reply.usage, expected_input, expected_output)
+    verify(client.messages.create(**request))
+    with client.messages.create(stream=True, **request) as raw:
+        events = list(raw)
+    assert events[-1].type == 'message_stop'
+    fragments = [e.delta.partial_json for e in events if e.type == 'content_block_delta'
+                 and e.delta.type == 'input_json_delta']
+    assert len(fragments) >= 2 and json.loads(''.join(fragments)) == {'q': 'hi'}
+    with client.messages.stream(**request) as stream:
+        list(stream)
+        verify(stream.get_final_message())
+    print('  tool JSON/raw deltas/final aggregate/history request: PASS', flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", type=local_url)
@@ -124,7 +168,8 @@ def main():
     print(f"python={sys.version.split()[0]} anthropic={version('anthropic')} "
           f"httpx={version('httpx')}", flush=True)
     cases = [("local gateway", 1, 1)] if args.url else [
-        ("mock unknown→known", 3, 2), ("mock unknown→unknown", None, None)]
+        ("mock unknown→known", 3, 2), ("mock unknown→unknown", None, None),
+        ("mock real zero", 0, 0)]
     failures = []
     for label, input_tokens, output_tokens in cases:
         print(label, flush=True)
@@ -140,6 +185,7 @@ def main():
             try:
                 check(client, args.model if args.url else "cn:mock-model",
                       "mock-runtime-ok" if args.url else "你好", input_tokens, output_tokens)
+                check_tools(client, args.model if args.url else 'cn:mock-model', input_tokens, output_tokens)
             except AssertionError as error:
                 failures.append(f"{label}: {error}")
     if failures:

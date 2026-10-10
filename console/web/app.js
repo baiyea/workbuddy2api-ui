@@ -243,8 +243,8 @@ function renderAccess(){
  $('base-url').value=location.origin+(anthropic?'':'/v1');
  $('api-endpoint').value=location.origin+(anthropic?'/v1/messages':'/v1/chat/completions');
  $('api-auth').textContent=anthropic?'x-api-key · anthropic-version: 2023-06-01':'Authorization: Bearer <API Key>';
- $('protocol-support').textContent=anthropic?'Anthropic · Beta 测试 · 文本兼容':'OpenAI · Chat Completions';
- $('protocol-note').textContent=anthropic?'Base URL 使用站点根地址，SDK 会追加 /v1/messages。支持文本、多轮和流式回答；暂不支持图片、工具、thinking，也不承诺 Claude Code 兼容。':'Base URL 包含 /v1，使用兼容 Chat Completions 的客户端连接。';
+ $('protocol-support').textContent=anthropic?'Anthropic · Beta 测试 · Messages 转换':'OpenAI · Chat Completions';
+ $('protocol-note').textContent=anthropic?'Base URL 使用站点根地址，SDK 会追加 /v1/messages。API 支持文本、工具、部分媒体与无签名 thinking 转换，能力取决于模型；网页用于对话测试。不支持显式 tool_choice、beta 扩展或完整 Claude Code；详细限制见 README。':'Base URL 包含 /v1，支持 Chat Completions 与无状态 POST /responses；Responses 多轮需发送完整历史，不提供 response 存储或 Files API，详细限制见 README。';
  const available=modelList.some(item=>item.id===model);
  $('copy-example').disabled=!available||!!activeRequest;$('go-chat').disabled=!available||!!activeRequest;
  if(!available){$('api-example').textContent='暂无可选模型，请先刷新模型列表。';return;}

@@ -33,7 +33,7 @@ console（独立 Go 服务，内嵌 HTML/CSS/JavaScript）
 - **console**：负责网页、管理认证和代理；不加载账号凭据，不直接执行签到等业务。
 - 仅 console 发布宿主端口。core 只在 Compose 网络内访问；console 仅只读挂载密钥目录，不挂载账号和状态目录。
 - 当前 README 重点介绍 `/v1/models`、`/v1/chat/completions` 与流式调用；不得把“OpenAI 兼容”宣传为完整覆盖所有 OpenAI API 或客户端功能。
-- `/v1/messages` 由 core 的 Anthropic 文本适配器在进程内复用原 OpenAI Handler；不另建账号池、HTTP 回环或协议代理服务。只在启用 core 桥接的分支包装，未启用桥接的源码模式保持原 Handler。
+- `/v1/responses` 与 `/v1/messages` 由 core 的共享协议层复用 RelayKit，在进程内调用原 OpenAI Handler；不另建账号池、HTTP 回环或协议代理服务。只在启用 core 桥接的分支包装，未启用桥接的源码模式保持原 Handler。
 
 ## 目录与代码入口
 
@@ -42,7 +42,9 @@ console（独立 Go 服务，内嵌 HTML/CSS/JavaScript）
 | `upstream/`、`upstream.lock` | 上游普通源码快照；锁文件记录来源、commit 和源码摘要。 |
 | `extensions/cmd/server/extension.go` | core 初始化、密钥、桥接和任务生命周期接线。 |
 | `extensions/internal/bridge/` | 内部管理接口，复用公共能力。 |
-| `extensions/internal/anthropic/` | Messages 文本请求、普通响应与增量 SSE 适配，传递取消与真实用量。 |
+| `extensions/internal/protocol/` | 共享 RelayKit 请求/JSON/SSE 转换、输入校验、有界传输、真实可空用量和取消。 |
+| `extensions/internal/responses/`、`extensions/internal/anthropic/` | Responses Bearer / Messages x-api-key 入口、路由限制与可信会话接线。 |
+| `extensions/third_party/relaykit/` | 固定 New API 独立模块快照、SOURCE.json 摘要、原路径和许可；修正通过 patches。 |
 | `extensions/internal/oauth/`、`extensions/internal/pool/` | 授权流程、账号热加载等扩展。 |
 | `extensions/internal/scheduler/`、`extensions/internal/taskrun/` | 任务目录、执行观察、单运行器和持久历史。 |
 | `extensions/scripts/` | Python 任务结果事件与测试。 |
@@ -83,13 +85,14 @@ git diff -- patches extensions deploy console scripts
 
 ## 开发与测试
 
-开发机需要 Git、Bash、Python 3、Go、Node.js、curl、Docker Compose 和 Buildx。Go 最低版本以各模块 `go.mod` 为准，镜像使用 Go 1.23；竞态测试需要支持 CGO 的本机编译环境。部署成品镜像的服务器不需要这些开发工具。
+开发机需要 Git、Bash、Python 3、Go、Node.js、curl、Docker Compose 和 Buildx。Go 最低版本以各模块 `go.mod` 为准；core/RelayKit 使用 Go 1.26 系列，console 镜像使用 Go 1.23。竞态测试需要支持 CGO 的本机编译环境。部署成品镜像的服务器不需要这些开发工具。
 
 以下命令从仓库根目录执行。根目录不是 Go 模块，不要直接在根目录运行 `go test ./...`。
 
 ```bash
 python3 -m unittest discover -s scripts -p 'test_*.py' -v
 python3 -m unittest discover -s deploy -p 'test_*.py' -v
+python3 -m unittest discover -s desktop/scripts -p 'test_*.py' -v
 bash scripts/check.sh
 docker compose --env-file /dev/null -f docker-compose.yml config --quiet
 git diff --check
@@ -110,22 +113,27 @@ node --test console/web_test.cjs
 
 涉及镜像、Compose、启动参数、密钥或持久化时，还需运行 `bash scripts/acceptance.sh`。它在隔离项目、端口和存储中验证直接启动、YAML 密钥覆盖与取消覆盖、日志、时区、数据保留以及 mock API/任务流程。禁止将测试指向真实凭据或数据；模拟验收不证明真实上游授权成功或奖励到账。
 
-### Anthropic 文本验证
+### Responses / Anthropic 协议验证
 
-公共 `/v1/messages` 使用同一个模型 API Key（`x-api-key`）和固定 `anthropic-version: 2023-06-01`。`New(next, apiKey, maxBodyBytes)` 仅截获该路径，其他 OpenAI 路径不变；未知用量保持 `null`，不得伪造零或宣称完整 Claude Code 兼容。
+公共 `POST /v1/responses` 使用模型 API Key（Bearer），`POST /v1/messages` 使用同一个 Key（`x-api-key`）和固定 `anthropic-version: 2023-06-01`。入口调用 `protocol.Serve`，每请求独立转换状态；其他 OpenAI 路径不变。未知用量保持 `null`、真实零保留、最后明确累计值优先；JSON 与 SSE 累计 32 MiB，SSE 单帧 8 MiB。不得宣称完整 OpenAI、Anthropic 或 Claude Code 兼容。
 
-网页 `POST /admin/messages` 沿用管理会话、同源、CSRF 和退出取消，代理至带 owner 的 `/internal/v1/messages`。请求 envelope 为 `{conversation_id, request}`；ID 限 `[A-Za-z0-9_-]{1,128}`，request 为完整 Anthropic 文本请求，不加私有字段。bridge 有界读取并验证 envelope，通过 `WithConversation` 注入可信上下文，由 adapter 写入 OpenAI `conversationId`；不接受公共私有头伪造会话。体积限制沿用 `server.max_body_mb`，包含管理 envelope。
+Responses 仅无状态 POST 创建；有状态字段、store/background true、无法解析的 Files 引用与 opaque 推理拒绝。Messages 的显式 tool_choice、strict 工具、cache/citations、非空签名、thinking.display、is_error:true、output_format 与服务端字段拒绝；budget_tokens 仅近似映射到 effort。JSON Schema 只负责可表达字段的传递，不验证/修复模型生成结果。精确边界与历史补丁见 `docs/superpowers/specs/2026-10-10-protocol-conversion.md`。
 
-SDK 仅用于隔离测试，不进入镜像或生产依赖。使用 Python 3.12 临时虚拟环境安装 `anthropic==0.67.0 httpx==0.28.1` 后执行：
+网页 `POST /admin/messages` 沿用管理会话、同源、CSRF 和退出取消，代理至带 owner 的 `/internal/v1/messages`。请求 envelope 为 `{conversation_id, request}`；ID 限 `[A-Za-z0-9_-]{1,128}`，request 为完整 Anthropic 转换请求，不加私有字段。bridge 有界读取并验证 envelope，通过 `WithConversation` 注入可信上下文，由 adapter 写入 OpenAI `conversationId`；不接受公共私有头伪造会话。体积限制沿用 `server.max_body_mb`，包含管理 envelope。
+
+SDK 仅用于隔离测试，不进入镜像或生产依赖。使用 Python 3.12 临时虚拟环境安装 `anthropic==0.67.0 openai==2.6.1 httpx==0.28.1` 后执行：
 
 ```bash
-# 内存契约：未知/晚到用量、raw events、text_stream、最终消息聚合
+# 内存契约：未知/晚到/零用量、raw events、text_stream、工具与最终消息聚合
 /path/to/venv/bin/python scripts/check_anthropic_sdk.py
 # 实际访问验收脚本创建的隔离 mock 网关；执行后沿原机制清理
-WB2A_SDK_PYTHON=/path/to/venv/bin/python bash scripts/acceptance.sh
+WB2A_SDK_PYTHON=/path/to/venv/bin/python \
+WB2A_RESPONSES_SDK_PYTHON=/path/to/venv/bin/python bash scripts/acceptance.sh
 ```
 
-验收保留 OpenAI 流式断言，并覆盖 Anthropic JSON、SSE、错误包和管理入口；`WB2A_SDK_PYTHON` 未设置时仅跳过 SDK 步骤，不能将这次运行报告为 SDK 通过。实际网关 SDK 验收与内存 fixture、真实上游调用分开记录。Python 3.14 不作为 SDK 0.67.0 验收环境；不得为绕过解析失败而删断言。
+验收保留 OpenAI 流式断言；两个 SDK 覆盖 create、raw 事件与最终对象、工具参数/ID/回填。`check_protocol_gateway.py` 在隔离 core 中检查 console → core → mock 的 JSON Schema 实际上游 payload、owner/CSRF/退出和断连取消；mock 的观测接口不进入生产。两个解释器变量未设置时各自跳过 SDK，不能报告对应 SDK 通过。实际网关 SDK 验收与内存 fixture、真实上游调用分开记录。Python 3.14 不作为 SDK 0.67.0 验收环境；不得为绕过解析失败而删断言。
+
+`check.sh` 单独运行 RelayKit test/vet，并对 protocol/responses/anthropic 等关键 core 包运行 race。隔离验收读取镜像中 RelayKit LICENSE/NOTICE/THIRD-PARTY-LICENSES.md/SOURCE.json；桌面 prepare 保留这些随包文件。控制台页脚保留 New API 署名和原项目链接。
 
 新增行为先补能失败的回归测试，再做最小修改。纯文档改动核对事实、命令和链接即可，不因此重建发布镜像。只报告有实际执行结果的验证。
 

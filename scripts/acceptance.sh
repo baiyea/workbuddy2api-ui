@@ -186,6 +186,10 @@ import json,os
 assert json.load(open("/app/config.json")) == {}
 assert not os.listdir("/app/auths")
 assert "MIT License" in open("/app/LICENSE").read()
+for name in ("LICENSE", "NOTICE", "THIRD-PARTY-LICENSES.md", "SOURCE.json"):
+    assert open("/app/licenses/relaykit/" + name).read().strip(), name
+source=json.load(open("/app/licenses/relaykit/SOURCE.json"))
+assert source["commit"] == "0f38a14a5e8e322ea741478b0e49878be3130e1d"
 '
 standalone_compose exec -T console test -s /app/LICENSE
 [[ "$(standalone_compose exec -T core date +%z)" == "+0800" ]]
@@ -453,6 +457,12 @@ if [[ -n "${WB2A_SDK_PYTHON:-}" ]]; then
   "$WB2A_SDK_PYTHON" "$repo_root/scripts/check_anthropic_sdk.py" \
     --url "http://127.0.0.1:$legacy_port" --key legacy-api --model global:mock-model
 fi
+if [[ -n "${WB2A_RESPONSES_SDK_PYTHON:-}" ]]; then
+  "$WB2A_RESPONSES_SDK_PYTHON" "$repo_root/scripts/check_responses_sdk.py" \
+    --url "http://127.0.0.1:$legacy_port" --key legacy-api --model global:mock-model
+fi
+compose_for "$legacy_project" "$legacy_port" exec -T core python3 - "http://127.0.0.1:$legacy_port" \
+  < "$repo_root/scripts/check_protocol_gateway.py"
 
 acceptance_passed=true
 echo "acceptance passed: fresh/rebuild/legacy; isolated mock URL http://127.0.0.1:$legacy_port/"
