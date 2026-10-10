@@ -19,7 +19,8 @@ class MockUpstreamTests(unittest.TestCase):
                                        stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
         cls.client = urllib.request.build_opener(urllib.request.ProxyHandler({}))
         # HTTPServer resolves its bind address; isolated Docker DNS can be slow.
-        for _ in range(600):
+        deadline = time.monotonic() + 20
+        while time.monotonic() < deadline:
             try:
                 if cls.process.poll() is not None:
                     raise RuntimeError(cls.process.communicate()[1].decode())

@@ -318,7 +318,7 @@ docker run --rm --network none \
 legacy_before="$(docker run --rm --network none \
   --mount "type=volume,src=${legacy_project}_auths,dst=/auths,readonly" \
   --mount "type=volume,src=${legacy_project}_data,dst=/data,readonly" \
-  alpine:3.20 sh -eu -c 'sha256sum /auths/workbuddy-mock.json /data/state.json /data/console-keys.json')"
+  alpine:3.20 sh -eu -c 'sha256sum /auths/workbuddy-mock.json /data/console-keys.json | cut -d " " -f1')"
 compose_for "$legacy_project" "$legacy_port" up -d --wait --no-build
 [[ "$(compose_for "$legacy_project" "$legacy_port" port console 7863)" == "127.0.0.1:$legacy_port" ]]
 wait_live "http://127.0.0.1:$legacy_port/livez"
@@ -450,8 +450,18 @@ run=json.load(sys.stdin)
 assert run["id"] == sys.argv[1] and run["status"] == "skipped" and run["finished_at"] is not None
 ' "$run_id"
 legacy_after="$(compose_for "$legacy_project" "$legacy_port" exec -T core sh -eu -c \
-  'sha256sum /app/auths/workbuddy-mock.json /app/data/state.json /app/data/console-keys.json')"
+  'sha256sum /app/auths/workbuddy-mock.json /app/data/console-keys.json | cut -d " " -f1')"
 [[ "$legacy_before" == "$legacy_after" ]]
+# Requests update pool metrics; preserve credentials byte-for-byte and state semantics.
+compose_for "$legacy_project" "$legacy_port" exec -T core python3 -c '
+import datetime,json
+state=json.load(open("/app/data/state.json"))
+assert set(state["accounts"]) == {"mock"}
+account=state["accounts"]["mock"]
+assert account["credits"] == 77 and account["err_total"] == 4
+assert account["success_count"] == 4
+assert datetime.datetime.fromisoformat(account["last_success"]).year > 1
+'
 
 if [[ -n "${WB2A_SDK_PYTHON:-}" ]]; then
   "$WB2A_SDK_PYTHON" "$repo_root/scripts/check_anthropic_sdk.py" \

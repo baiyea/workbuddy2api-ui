@@ -142,8 +142,10 @@ def main():
 
     connection, response = request('/v1/responses', {
         'model': 'global:mock-model', 'input': 'fixture-slow-disconnect', 'stream': True}, headers=auth)
-    while b'response.output_text.delta' not in response.readline():
-        pass
+    line = response.readline()
+    while line and b'response.output_text.delta' not in line:
+        line = response.readline()
+    assert b'response.output_text.delta' in line, 'Responses stream ended before first delta'
     response.close()
     connection.close()
     wait_for(lambda: any('fixture-slow-disconnect' in json.dumps(item['messages'])
