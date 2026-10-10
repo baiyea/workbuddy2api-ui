@@ -242,6 +242,89 @@ func TestGeneratedPlaintextHistoryRoundtrip(t *testing.T) {
 	}
 }
 
+func TestGeneratedStreamHistoryKeepsInterleavedAssistantTurn(t *testing.T) {
+	parts := map[string]string{
+		"call_a":    `{"tool_calls":[{"index":0,"id":"call_a","type":"function","function":{"name":"first","arguments":"{\"a\":1}"}}]}`,
+		"call_b":    `{"tool_calls":[{"index":1,"id":"call_b","type":"function","function":{"name":"second","arguments":"{\"b\":2}"}}]}`,
+		"reasoning": `{"reasoning_content":"think"}`,
+		"text":      `{"content":"checking"}`,
+	}
+	for _, order := range [][]string{
+		{"call_a", "reasoning", "call_b", "text"},
+		{"call_a", "text", "reasoning", "call_b"},
+		{"text", "call_a", "reasoning", "call_b"},
+		{"reasoning", "call_a", "text", "call_b"},
+		{"call_a", "call_b", "text", "reasoning"},
+		{"text", "reasoning", "call_a", "call_b"},
+	} {
+		t.Run(strings.Join(order, "-"), func(t *testing.T) {
+			first := invoke(New(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				for _, part := range order {
+					io.WriteString(w, `data: {"id":"chat-test","model":"test","choices":[{"index":0,"delta":`+parts[part]+`}]}`+"\n\n")
+				}
+				io.WriteString(w, `data: {"id":"chat-test","model":"test","choices":[{"index":0,"delta":{},"finish_reason":"tool_calls"}]}`+"\n\n")
+			}), "key", 1<<20), `{"model":"test","input":"hi","stream":true}`)
+			var history []any
+			for _, line := range strings.Split(first.Body.String(), "\n") {
+				if !strings.HasPrefix(line, "data: ") {
+					continue
+				}
+				v := decode(t, strings.NewReader(strings.TrimPrefix(line, "data: ")))
+				if v["type"] == "response.completed" {
+					history = v["response"].(map[string]any)["output"].([]any)
+				}
+			}
+			if len(history) != 4 {
+				t.Fatalf("missing generated history: %s", first.Body)
+			}
+			for i, part := range order {
+				item := history[i].(map[string]any)
+				want := "function_call"
+				if part == "reasoning" {
+					want = "reasoning"
+				}
+				if part == "text" {
+					want = "message"
+				}
+				if item["type"] != want || (want == "function_call" && item["call_id"] != part) {
+					t.Fatalf("generated order changed: %v", history)
+				}
+			}
+			// Resubmit the generated objects unchanged, including serializer fields and order.
+			history = append(history, map[string]any{"type": "function_call_output", "call_id": "call_a", "output": "one"}, map[string]any{"type": "function_call_output", "call_id": "call_b", "output": "two"})
+			body, _ := json.Marshal(map[string]any{"model": "test", "input": history})
+			called := false
+			second := invoke(New(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				called = true
+				messages := decode(t, r.Body)["messages"].([]any)
+				if len(messages) != 3 {
+					t.Fatalf("one assistant turn split: %v", messages)
+				}
+				assistant := messages[0].(map[string]any)
+				if assistant["role"] != "assistant" || assistant["content"] != "checking" || assistant["reasoning_content"] != "think" {
+					t.Errorf("text/reasoning lost: %v", assistant)
+				}
+				calls, ok := assistant["tool_calls"].([]any)
+				if !ok || len(calls) != 2 {
+					t.Fatalf("parallel calls split: %v", messages)
+				}
+				for i, want := range []struct{ id, name, args, result string }{{"call_a", "first", `{"a":1}`, "one"}, {"call_b", "second", `{"b":2}`, "two"}} {
+					call := calls[i].(map[string]any)
+					function := call["function"].(map[string]any)
+					result := messages[i+1].(map[string]any)
+					if call["id"] != want.id || function["name"] != want.name || function["arguments"] != want.args || result["role"] != "tool" || result["tool_call_id"] != want.id || result["content"] != want.result {
+						t.Errorf("tool batch/result lost: %v", messages)
+					}
+				}
+				io.WriteString(w, completion)
+			}), "key", 1<<20), string(body))
+			if !called || second.Code != 200 {
+				t.Errorf("history rejected: called=%v %d %s", called, second.Code, second.Body)
+			}
+		})
+	}
+}
+
 func TestUnsupportedStateRejectedBeforeNext(t *testing.T) {
 	for _, tail := range []string{`"store":true`, `"background":true`, `"previous_response_id":"r"`, `"conversation":null`, `"prompt":{}`, `"context_management":[]`} {
 		w := invoke(New(http.HandlerFunc(func(http.ResponseWriter, *http.Request) { t.Error("state reached next") }), "key", 1<<20), `{"model":"test","input":"hi",`+tail+`}`)

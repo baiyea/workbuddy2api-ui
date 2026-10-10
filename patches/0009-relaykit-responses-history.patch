@@ -1,6 +1,6 @@
 --- a/third_party/relaykit/relayconvert/internal/oai_responses/to_oai_chat_req.go
 +++ b/third_party/relaykit/relayconvert/internal/oai_responses/to_oai_chat_req.go
-@@ -204,6 +204,40 @@
+@@ -204,6 +204,46 @@
  func responsesInputItemToChatMessages(ctx context.Context, item map[string]any, messages []dto.Message) ([]dto.Message, []any, error) {
  	itemType := strings.TrimSpace(kitutil.Interface2String(item["type"]))
  	switch itemType {
@@ -37,19 +37,25 @@
 +			text.WriteString(value)
 +		}
 +		value := text.String()
++		if len(messages) > 0 && messages[len(messages)-1].Role == "assistant" {
++			last := &messages[len(messages)-1]
++			value = last.GetReasoningContent() + value
++			last.ReasoningContent = &value
++			return messages, nil, nil
++		}
 +		return append(messages, dto.Message{Role: "assistant", ReasoningContent: &value}), nil, nil
  	case responsesInputTypeFunctionCall:
  		toolCall, err := responsesFunctionCallItemToChatToolCall(item)
  		if err != nil {
-@@ -229,6 +263,14 @@
+@@ -229,6 +269,14 @@
  	content, err := responsesInputContentToChatContent(ctx, item["content"])
  	if err != nil {
  		return nil, nil, err
 +	}
-+	// A generated reasoning item precedes the text and tool calls of the same assistant turn.
++	// Generated output items may interleave text, reasoning and calls in one assistant turn.
 +	if role == "assistant" && len(messages) > 0 {
 +		last := &messages[len(messages)-1]
-+		if last.Role == "assistant" && last.ReasoningContent != nil && last.Content == nil {
++		if last.Role == "assistant" && last.Content == nil && (last.ReasoningContent != nil || len(last.ParseToolCalls()) > 0) {
 +			last.Content = content
 +			return messages, nil, nil
 +		}
@@ -58,7 +64,7 @@
  }
 --- /dev/null
 +++ b/third_party/relaykit/relayconvert/internal/oai_responses/plaintext_history_test.go
-@@ -0,0 +1,48 @@
+@@ -0,0 +1,71 @@
 +package oairesponses
 +
 +import (
@@ -106,4 +112,27 @@
 +	require.Equal(t, "think", got.Messages[0].GetReasoningContent())
 +	require.Equal(t, "checking", got.Messages[0].Content)
 +	require.Equal(t, "call_a", got.Messages[0].ParseToolCalls()[0].ID)
++}
++
++func TestResponsesToolFirstReasoningKeepsAssistantBatch(t *testing.T) {
++	for _, input := range []string{
++		`[{"type":"function_call","call_id":"call_a","name":"check","arguments":"{}"},{"type":"reasoning","summary":[{"type":"summary_text","text":"think"}]},{"role":"assistant","content":"checking"},{"type":"function_call_output","call_id":"call_a","output":"checked"}]`,
++		`[{"type":"function_call","call_id":"call_a","name":"check","arguments":"{}"},{"role":"assistant","content":"checking"},{"type":"reasoning","summary":[{"type":"summary_text","text":"think"}]},{"type":"function_call_output","call_id":"call_a","output":"checked"}]`,
++		`[{"role":"assistant","content":"checking"},{"type":"function_call","call_id":"call_a","name":"check","arguments":"{}"},{"type":"reasoning","summary":[{"type":"summary_text","text":"think"}]},{"type":"function_call_output","call_id":"call_a","output":"checked"}]`,
++	} {
++		got, err := ResponsesRequestToChatCompletionsRequest(context.Background(), &dto.OpenAIResponsesRequest{Model: "test", Input: []byte(input)})
++		require.NoError(t, err)
++		require.Len(t, got.Messages, 2, "input: %s", input)
++		require.Equal(t, "assistant", got.Messages[0].Role)
++		require.Equal(t, "checking", got.Messages[0].Content)
++		require.Equal(t, "think", got.Messages[0].GetReasoningContent())
++		calls := got.Messages[0].ParseToolCalls()
++		require.Len(t, calls, 1)
++		require.Equal(t, "call_a", calls[0].ID)
++		require.Equal(t, "check", calls[0].Function.Name)
++		require.Equal(t, "{}", calls[0].Function.Arguments)
++		require.Equal(t, "tool", got.Messages[1].Role)
++		require.Equal(t, "call_a", got.Messages[1].ToolCallId)
++		require.Equal(t, "checked", got.Messages[1].Content)
++	}
 +}

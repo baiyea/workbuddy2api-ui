@@ -116,8 +116,9 @@ All exit 0. Core PASS: Responses 0.872s, protocol 1.018s, server 31.560s,
 cmd/server 1.832s. Race PASS: Responses 6.845s, protocol 5.667s, server 34.418s,
 cmd/server 4.011s. The full nested library module passed all tested packages.
 Logs: `task-3-core-final.log`, `task-3-race-final.log`,
-`task-3-library-final.log`, `task-3-library-vet-final.log`,
-`task-3-core-vet-final.log` (vet logs are empty on success).
+`task-3-library-final.log`. Both vet commands returned exit 0 without output;
+PowerShell's Tee-Object did not create the named empty vet log files. These vet
+results are recorded by the tool outputs, not by nonexistent log artifacts.
 
 The new endpoint regressions cover model/output-limit mapping, text/image/schema
 and strict function tools, parallel call/result ID ordering, concurrent request
@@ -151,3 +152,67 @@ acceptance are owned by the controller's integration work and were not duplicate
 here. No actual upstream calls, real credentials/data, service restart,
 publication, Git push, or deployment occurred. Mock Handler tests establish
 conversion contracts only, not real model capability or SDK/container acceptance.
+
+## Review round 1 — tool-first streaming history
+
+Fix base: `5602eb2b9a5ce53de28dc062c494f86ec41fb39e`. Technically verified I1 from
+`task-3-review.md`: stream output preserves first appearance, so a tool can
+precede reasoning and text in a valid final response. The original 0009 reasoning
+branch appended another assistant, splitting a generated call/result batch.
+Text arriving between tools and reasoning also created a separate assistant.
+
+Before changing the mapper, added
+`TestGeneratedStreamHistoryKeepsInterleavedAssistantTurn`. Six real SSE orderings
+exercise all relative text/reasoning/tool orders, including calls interleaved on
+either side of reasoning. The regression confirms emitted output retains the
+first-seen order, resubmits those original output objects without modifying
+order or serializer fields, adds two tool results, and requires one assistant
+with both names/arguments/IDs, reasoning and text followed by its linked results.
+Five orderings failed with split assistant messages; the prior reasoning-first
+ordering passed. An independent library regression also reproduced call →
+reasoning → text → result splitting, and covers call → text → reasoning and
+text → call → reasoning.
+
+RED commands:
+
+```powershell
+python scripts/overlay.py prepare --output .build/protocol-task3-review1-red
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task3-review1-red test -mod=readonly ./internal/responses -run TestGeneratedStreamHistoryKeepsInterleavedAssistantTurn
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task3-review1-red/third_party/relaykit test -mod=readonly ./relayconvert/internal/oai_responses -run TestResponsesToolFirstReasoningKeepsAssistantBatch
+```
+
+Both exit 1 with the expected split-message failures. The library regression was
+added in that materialization before changing its source, then carried back in
+0009. Logs: `task-3-review1-endpoint-red.log`, `task-3-review1-library-red.log`.
+
+The minimal mapper fix attaches a reasoning item to the preceding contiguous
+assistant if present, retaining its existing text/tool calls and reasoning.
+Assistant text with no preceding content also joins an already-started
+reasoning/tool assistant. User/tool messages remain boundaries. No SSE output
+order or index is changed, and the shared transport/validator is unchanged.
+The patched library regression and maintenance notes accompany the change.
+
+GREEN commands:
+
+```powershell
+python scripts/overlay.py prepare --output .build/protocol-task3-review1-final
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task3-review1-final test -mod=readonly ./internal/responses ./internal/protocol ./cmd/server
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task3-review1-final/third_party/relaykit test -mod=readonly ./relayconvert/internal/oai_responses ./relayconvert
+.build/dev-tools/go/bin/go.exe -C .build/protocol-task3-review1-final test -mod=readonly -race ./internal/responses ./internal/protocol
+git diff --check -- extensions/internal/responses patches docs/superpowers/implementation/protocol-conversion/task-3-report.md
+```
+
+All exit 0. Core PASS: Responses 0.870s, protocol 0.299s, cmd/server 0.489s.
+Focused library PASS: oai_responses 0.087s, public relayconvert 0.128s.
+Race PASS: Responses 2.528s, protocol 5.283s. Logs:
+`task-3-review1-core-final.log`, `task-3-review1-library-final.log`,
+`task-3-review1-race-final.log`. All six own-output ordering cases now pass.
+
+Self-review checked both changed merge branches against the function-call helper
+and all regression permutations. The call/result batch remains contiguous,
+existing text/tool state is retained, and no user/tool boundary is crossed.
+No changes were needed in transport, validation, public wiring or dependencies.
+Broad vet is not repeated for this focused fix; Task 5 owns fresh full-core/library
+production-toolchain checks. The earlier incorrect references to empty vet log
+files were corrected above. No new service, state, routing, authorization,
+snapshot or deployment changes.

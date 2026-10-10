@@ -129,7 +129,8 @@ input field path before calling the existing Handler. No reasoning signature,
 response persistence, or separate tool state is introduced.
 
 Regression tests in the patch cover plaintext summary/text/function/result
-history and reasoning followed directly by a tool call. Verify the nested
+history, reasoning followed directly by a tool call, and tools/text arriving
+before reasoning within the same assistant turn. Verify the nested
 RelayKit module with `go test ./...` and `go vet ./...` in a fresh overlay;
 also run core `go test ./internal/responses ./internal/protocol ./internal/server
 ./cmd/server`. Remove the patch only when a replacement pinned snapshot maps
