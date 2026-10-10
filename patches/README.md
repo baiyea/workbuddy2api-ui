@@ -7,7 +7,7 @@ Baseline: Sliverkiss/workbuddy2api commit
 `c576b489fa22e3c156e960ee6336c4e653a0d95c`. Apply only through
 `python3 scripts/overlay.py prepare --output ABS_NEW_DIRECTORY`; never edit
 `upstream/`. New source and tests live in `extensions/`, not in these patches.
-`series` is the explicit application order: 0001, 0002, 0003, 0004, 0005, 0006, 0007.
+`series` is the explicit application order: 0001 through 0008.
 For a deliberate upstream candidate, run
 `python3 scripts/overlay.py update --ref COMMIT_OR_TAG`; it keeps the current
 snapshot and lock until the candidate passes `scripts/check.sh` and isolated
@@ -96,3 +96,21 @@ Run `TestDesktopScriptHasNoConsoleWindow` on Windows; cross-compilation alone do
 not verify native window behavior. Remove this patch when the base command
 factory provides the same desktop-only Windows process flags and these tests pass
 without the hook.
+
+## 0008-relaykit-module
+
+`go.mod` requires `github.com/QuantumNous/new-api/relaykit v0.0.0` and replaces
+it with `./third_party/relaykit`; the core baseline is Go 1.26. `go.sum` records
+the pinned module's dependencies. The independent RelayKit snapshot keeps its
+original module path and Go 1.25.1 declaration. Its source, tests and dependency
+files are unchanged Git blobs from the commit recorded in
+`extensions/third_party/relaykit/SOURCE.json`, which also lists each original
+file's SHA-256. Root LICENSE, NOTICE and THIRD-PARTY-LICENSES.md from New API
+are preserved alongside the module. No New API host service is included.
+
+Materialize a fresh directory, then run `go -C third_party/relaykit test ./...`,
+`go -C third_party/relaykit vet ./...` and the core tests from that directory.
+The nested module must be checked separately; core `./...` does not include it.
+Docker and desktop resources package the notices and SOURCE.json without
+packaging RelayKit source files. Remove this patch only if core no longer uses
+RelayKit or its base module provides the equivalent pinned local dependency.

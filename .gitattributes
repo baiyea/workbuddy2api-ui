@@ -1,3 +1,4 @@
 # Preserve the frozen snapshot and patch bytes under Windows core.autocrlf.
 /upstream/** -text
-/patches/** -text
+/extensions/third_party/relaykit/** -text
+/patches/** -text whitespace=-blank-at-eol,-space-before-tab

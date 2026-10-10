@@ -1,0 +1,819 @@
+{
+  "format": 1,
+  "repository": "https://github.com/QuantumNous/new-api",
+  "commit": "0f38a14a5e8e322ea741478b0e49878be3130e1d",
+  "module": "github.com/QuantumNous/new-api/relaykit",
+  "source_directory": "relaykit",
+  "files": [
+    {
+      "path": "LICENSE",
+      "source_path": "LICENSE",
+      "sha256": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
+    },
+    {
+      "path": "NOTICE",
+      "source_path": "NOTICE",
+      "sha256": "528067fcdf4f9d7e3fdb489d02cbdd36a0efa63fc2eb1686340612c26beb9f33"
+    },
+    {
+      "path": "THIRD-PARTY-LICENSES.md",
+      "source_path": "THIRD-PARTY-LICENSES.md",
+      "sha256": "9fbf84bd75bdb45d8d430c32ddf02816bb8e6828b49c66d92f4b047b0f74361b"
+    },
+    {
+      "path": "README.md",
+      "source_path": "relaykit/README.md",
+      "sha256": "0361dbfa6abc83ca39f9239628c65f9a306e0882e1d33f2a48548fb7f2d169f0"
+    },
+    {
+      "path": "dto/alpha_search_request.go",
+      "source_path": "relaykit/dto/alpha_search_request.go",
+      "sha256": "39bb3eace65f6bb3a9484207a0b3258d869d657a0deb6db06c951d342270c455"
+    },
+    {
+      "path": "dto/audio.go",
+      "source_path": "relaykit/dto/audio.go",
+      "sha256": "6693aa0cc2b13fab2dd7b2f47ac964a533ce452ac82557580f5238bd3b01bd4c"
+    },
+    {
+      "path": "dto/billing_usage.go",
+      "source_path": "relaykit/dto/billing_usage.go",
+      "sha256": "f2a294ba71c7b1c18609362979d5647213f2a552a3b4f6469f5d475d68e0f251"
+    },
+    {
+      "path": "dto/billing_usage_test.go",
+      "source_path": "relaykit/dto/billing_usage_test.go",
+      "sha256": "ac1e3195c3891671ac4f03a39f2ba807f9a2aba8583d5642cebdaffc8687680d"
+    },
+    {
+      "path": "dto/channel_settings.go",
+      "source_path": "relaykit/dto/channel_settings.go",
+      "sha256": "89ea8ddd52e2a49debef6bd364b4446bde91fcf8ea1269007dd5b632d00e24f5"
+    },
+    {
+      "path": "dto/channel_settings_test.go",
+      "source_path": "relaykit/dto/channel_settings_test.go",
+      "sha256": "4b9aab944abcacd7e237b90d18a0b510eb159a9b15d9367209af69cdb8cfe17e"
+    },
+    {
+      "path": "dto/claude.go",
+      "source_path": "relaykit/dto/claude.go",
+      "sha256": "5e8b4145c13d070984161ebc2863df22b87f1389a98c4c31bfe77b9e8ad593f6"
+    },
+    {
+      "path": "dto/embedding.go",
+      "source_path": "relaykit/dto/embedding.go",
+      "sha256": "24bacaf83942becdc55b476041150eeabd3cacd07146274c074c2f1fc3e95c52"
+    },
+    {
+      "path": "dto/error.go",
+      "source_path": "relaykit/dto/error.go",
+      "sha256": "d7c7b5174dbd0b4feb46124bb39a41a6372bcb14cb29a29614dbd2db46c9d4b7"
+    },
+    {
+      "path": "dto/gemini.go",
+      "source_path": "relaykit/dto/gemini.go",
+      "sha256": "e8656e80510e5f72d31578c49ea4a09e241c967b0656114f78808b31234c5db7"
+    },
+    {
+      "path": "dto/gemini_generation_config_test.go",
+      "source_path": "relaykit/dto/gemini_generation_config_test.go",
+      "sha256": "837856b5bffacd981afde906cbd21e425671bfb32424b82bef87fea7d357b691"
+    },
+    {
+      "path": "dto/gemini_isstream_test.go",
+      "source_path": "relaykit/dto/gemini_isstream_test.go",
+      "sha256": "2840ec80039fceeb34b418c1714dcaf8575d21debef931d6d4b7e1642abb2001"
+    },
+    {
+      "path": "dto/gemini_response_test.go",
+      "source_path": "relaykit/dto/gemini_response_test.go",
+      "sha256": "b7c26abdd26dad8cd7843ba01c26ce6f881e6c66fc53d09d4991055978c4873c"
+    },
+    {
+      "path": "dto/legacy_dalle_image.go",
+      "source_path": "relaykit/dto/legacy_dalle_image.go",
+      "sha256": "7397d7151727b12c334aefccdd93ee4f31a64927be819eddc7e9c76d5f675aec"
+    },
+    {
+      "path": "dto/notify.go",
+      "source_path": "relaykit/dto/notify.go",
+      "sha256": "341d47c8c30243af104e2a7ef129759e3b13f18da85599be172e340b36d8786b"
+    },
+    {
+      "path": "dto/openai_compaction.go",
+      "source_path": "relaykit/dto/openai_compaction.go",
+      "sha256": "b78558bb6435a0ef4542ccc6b7f060275427b7c371dbba923ec8ff45cc28aa77"
+    },
+    {
+      "path": "dto/openai_image.go",
+      "source_path": "relaykit/dto/openai_image.go",
+      "sha256": "6bc575a746807718cccfbecdf27b01d06eb95cc26bb2380a2f4f803e30ecb68a"
+    },
+    {
+      "path": "dto/openai_request.go",
+      "source_path": "relaykit/dto/openai_request.go",
+      "sha256": "1ac54b0dcd10639ade2a03f519481aab7895608117ddeeceae65d4758985069d"
+    },
+    {
+      "path": "dto/openai_request_zero_value_test.go",
+      "source_path": "relaykit/dto/openai_request_zero_value_test.go",
+      "sha256": "4f463bd4a3f512bc103a8137b82e779dfd5497dca8cba489d8c6d29607510db4"
+    },
+    {
+      "path": "dto/openai_response.go",
+      "source_path": "relaykit/dto/openai_response.go",
+      "sha256": "7c762f030483a4a4ef2d9171683b66cdc0e59cb4a0b9878cfad2c21af08a43a8"
+    },
+    {
+      "path": "dto/openai_responses_compaction_request.go",
+      "source_path": "relaykit/dto/openai_responses_compaction_request.go",
+      "sha256": "6245dbe695bcb0993bf7fd78033ed46221ac2dec65141f66f349fdf72db48adf"
+    },
+    {
+      "path": "dto/openai_video.go",
+      "source_path": "relaykit/dto/openai_video.go",
+      "sha256": "f9eae70d871687bc069f85cc662d2813187bd4ddfae178ec2ece35c2139bdea4"
+    },
+    {
+      "path": "dto/playground.go",
+      "source_path": "relaykit/dto/playground.go",
+      "sha256": "9dc2bd136f27979d6388a8cc9b6289ab1c91e5b7626ae58af6fc9edc56a4ad36"
+    },
+    {
+      "path": "dto/pricing.go",
+      "source_path": "relaykit/dto/pricing.go",
+      "sha256": "f302773a0855d5e262b47ddb75cf552baa58fa8148b1f9d04dcfb7c47d047fef"
+    },
+    {
+      "path": "dto/ratio_sync.go",
+      "source_path": "relaykit/dto/ratio_sync.go",
+      "sha256": "617af0c446a4a49fd12503b31221a126121f4387090c3f592ca41c3510bc121e"
+    },
+    {
+      "path": "dto/realtime.go",
+      "source_path": "relaykit/dto/realtime.go",
+      "sha256": "94ca5e32977d8e38066516954acdfbcf56447102bbcd246103411715c59f3a5a"
+    },
+    {
+      "path": "dto/reasoning_state.go",
+      "source_path": "relaykit/dto/reasoning_state.go",
+      "sha256": "654d0a4c7cdbd20e9c2488edc1c2acb2397b4afd3e858af247d2f6668afeff76"
+    },
+    {
+      "path": "dto/request_common.go",
+      "source_path": "relaykit/dto/request_common.go",
+      "sha256": "e81ebb7e61f3b656d4d23da5ce658d26a3a6a73fa29a2e368ae6f132547c23e6"
+    },
+    {
+      "path": "dto/rerank.go",
+      "source_path": "relaykit/dto/rerank.go",
+      "sha256": "e7f10bdb84a1096a67fd9c5a84881dbe89dd816ad1684a930bb24ccf1fcc305a"
+    },
+    {
+      "path": "dto/sensitive.go",
+      "source_path": "relaykit/dto/sensitive.go",
+      "sha256": "3d7c0029ab4d49304d119be51fa27a33980f25866163917122e5594fd3a13622"
+    },
+    {
+      "path": "dto/token_count_meta_test.go",
+      "source_path": "relaykit/dto/token_count_meta_test.go",
+      "sha256": "e96d7d2e365488695a2c3f50d5187e84ca3d4c882c597c6424cd137014dd6240"
+    },
+    {
+      "path": "dto/usage_merge.go",
+      "source_path": "relaykit/dto/usage_merge.go",
+      "sha256": "54a59f9f8631520522cae577ba68b565857b2cdff2c87eea5c3d8ce5d0157a44"
+    },
+    {
+      "path": "dto/usage_merge_test.go",
+      "source_path": "relaykit/dto/usage_merge_test.go",
+      "sha256": "e515c1b8549a8db82c0a2394902c3ef373f383a6b383fc8c12bc6791a93f0e90"
+    },
+    {
+      "path": "dto/user_settings.go",
+      "source_path": "relaykit/dto/user_settings.go",
+      "sha256": "88286f74f01e0eed104bc4bc18fc97a8969d0db485a2436ccd28310b7236f2ca"
+    },
+    {
+      "path": "dto/values.go",
+      "source_path": "relaykit/dto/values.go",
+      "sha256": "b640a6b7d8de820469ecd4486efd3b56d45527bb1d3dfe06f1e5e84714d92e7e"
+    },
+    {
+      "path": "dto/values_test.go",
+      "source_path": "relaykit/dto/values_test.go",
+      "sha256": "14ee58308814832647b0f5b99b268e6d5f8b03f64645abce47d955f406559882"
+    },
+    {
+      "path": "go.mod",
+      "source_path": "relaykit/go.mod",
+      "sha256": "612007f65b3a4d6578df90695cc967be6f455c06fd86d16429dde7e45230e2e0"
+    },
+    {
+      "path": "go.sum",
+      "source_path": "relaykit/go.sum",
+      "sha256": "ac34b93a2954f88485f4ccac717f906d41f0070cd371342c87624bf5bcbb4aad"
+    },
+    {
+      "path": "reasonmap/reasonmap.go",
+      "source_path": "relaykit/reasonmap/reasonmap.go",
+      "sha256": "ac04ec1fe94516f1042e75e4d3bbe3b512d3b10dbce99af729c3287176f9187d"
+    },
+    {
+      "path": "relayconvert/boundary_test.go",
+      "source_path": "relaykit/relayconvert/boundary_test.go",
+      "sha256": "49558bdb57052200789fdbba99621a24c750131e836fbd0cb58ad5f6f107ecbd"
+    },
+    {
+      "path": "relayconvert/claude_default_max_tokens_test.go",
+      "source_path": "relaykit/relayconvert/claude_default_max_tokens_test.go",
+      "sha256": "b753d3821fe397f63a3020c29a59318a5a7c27eed852c7b61d85250bdd6973ff"
+    },
+    {
+      "path": "relayconvert/convmeta/format.go",
+      "source_path": "relaykit/relayconvert/convmeta/format.go",
+      "sha256": "6a53b5c4b9e807bd2896010edc088bff1b191052429114b2b42bd122fbc95dff"
+    },
+    {
+      "path": "relayconvert/convmeta/meta.go",
+      "source_path": "relaykit/relayconvert/convmeta/meta.go",
+      "sha256": "8e25041da390d212cc3706ac1ee29af990839effb1253a256c8d2bf1990a0f44"
+    },
+    {
+      "path": "relayconvert/convmeta/meta_test.go",
+      "source_path": "relaykit/relayconvert/convmeta/meta_test.go",
+      "sha256": "f5f61b9da187080f59afa7930877a6c5bb46f03707db987d938f6ddd772be2d6"
+    },
+    {
+      "path": "relayconvert/convmeta/options.go",
+      "source_path": "relaykit/relayconvert/convmeta/options.go",
+      "sha256": "adb5135bb43e95ad65ebe479a88fa6e2248faf3e007eec33f00274c72d0ec5bf"
+    },
+    {
+      "path": "relayconvert/convmeta/websearch.go",
+      "source_path": "relaykit/relayconvert/convmeta/websearch.go",
+      "sha256": "66502c4bb145ae640041c3e6cfddb471b5e216b8f6cb1d1d0fb155375fc5a7dc"
+    },
+    {
+      "path": "relayconvert/golden_test.go",
+      "source_path": "relaykit/relayconvert/golden_test.go",
+      "sha256": "c5190a89219a0c97b35d6031d8a793c957ffdc8fe6777db9c0ec09cdbb370dc2"
+    },
+    {
+      "path": "relayconvert/internal/claude_messages/citations.go",
+      "source_path": "relaykit/relayconvert/internal/claude_messages/citations.go",
+      "sha256": "4343146fb1ea96ab544b1c4e927c2728ed778bc9b11d1d38ffbb2dd2a6f12dc1"
+    },
+    {
+      "path": "relayconvert/internal/claude_messages/stream_billing_usage_test.go",
+      "source_path": "relaykit/relayconvert/internal/claude_messages/stream_billing_usage_test.go",
+      "sha256": "3e99627ba84ec3b42634fe004e3fa7063ec465d90a631f40f6843d0f636e35a2"
+    },
+    {
+      "path": "relayconvert/internal/claude_messages/to_oai_chat_req.go",
+      "source_path": "relaykit/relayconvert/internal/claude_messages/to_oai_chat_req.go",
+      "sha256": "209aeaf1a9c581d757a21a201a8d53d6db6d1ca1362a5d5dbdcacf2f34a041fd"
+    },
+    {
+      "path": "relayconvert/internal/claude_messages/to_oai_chat_req_test.go",
+      "source_path": "relaykit/relayconvert/internal/claude_messages/to_oai_chat_req_test.go",
+      "sha256": "cc657d5c57735a3dc30886d0db927afb818929560231ddf1c12e84b3a8387560"
+    },
+    {
+      "path": "relayconvert/internal/claude_messages/to_oai_chat_resp.go",
+      "source_path": "relaykit/relayconvert/internal/claude_messages/to_oai_chat_resp.go",
+      "sha256": "207f7a39842221f5ab166f119c26a58df938fa06e522d1a44edbb530214b7a7e"
+    },
+    {
+      "path": "relayconvert/internal/claude_messages/to_oai_responses_hosted_stream.go",
+      "source_path": "relaykit/relayconvert/internal/claude_messages/to_oai_responses_hosted_stream.go",
+      "sha256": "6d4d4d66984d5cf23b48877140477e9c66972798c2ed42e5d7c4d739010919b8"
+    },
+    {
+      "path": "relayconvert/internal/claude_messages/to_oai_responses_req.go",
+      "source_path": "relaykit/relayconvert/internal/claude_messages/to_oai_responses_req.go",
+      "sha256": "4e095bdc6458dfb6f0c5daccf130673065ed0df8b29f034cb8a2e786cb2d5083"
+    },
+    {
+      "path": "relayconvert/internal/convdiag/collector.go",
+      "source_path": "relaykit/relayconvert/internal/convdiag/collector.go",
+      "sha256": "3f6bc948950a5b4a86c4964bd2d1914ed28a547165e830d394a2ad494fe043ee"
+    },
+    {
+      "path": "relayconvert/internal/gemini_chat/grounding.go",
+      "source_path": "relaykit/relayconvert/internal/gemini_chat/grounding.go",
+      "sha256": "08fc05b119e2496ddae07edcb6f1efaf69d934ce6edee4d37a85eb23fa386e58"
+    },
+    {
+      "path": "relayconvert/internal/gemini_chat/to_oai_chat_req.go",
+      "source_path": "relaykit/relayconvert/internal/gemini_chat/to_oai_chat_req.go",
+      "sha256": "d23d1353426a898cff93aab9f6da7f1222e7488b6568d5a0c7ffe100779f7c27"
+    },
+    {
+      "path": "relayconvert/internal/gemini_chat/to_oai_chat_resp.go",
+      "source_path": "relaykit/relayconvert/internal/gemini_chat/to_oai_chat_resp.go",
+      "sha256": "8744a264318a4ac8f3d72d53ccd9e8ec712ecbd5372a35eb25a33fcf6fe4c77e"
+    },
+    {
+      "path": "relayconvert/internal/gemini_chat/to_oai_responses_hosted_stream.go",
+      "source_path": "relaykit/relayconvert/internal/gemini_chat/to_oai_responses_hosted_stream.go",
+      "sha256": "8764596f7f3ad97e27d50bd6aaee6dddd233e8f11cd5f40c24015c342a61e1ae"
+    },
+    {
+      "path": "relayconvert/internal/jsonutil/stringify.go",
+      "source_path": "relaykit/relayconvert/internal/jsonutil/stringify.go",
+      "sha256": "034d24fb41e4c902b7406f615bb235761d274cd3741817291bfd3de09922a12f"
+    },
+    {
+      "path": "relayconvert/internal/media/media.go",
+      "source_path": "relaykit/relayconvert/internal/media/media.go",
+      "sha256": "9e0616839d23dd63245a33357ea4ef4371970f5154505c1ba5a67d0c287386a6"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/citations.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/citations.go",
+      "sha256": "a4bf86e39ff444b08f671fc04f6c16d578d2966c49053d06dae91d479306b73c"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_claude_messages_req.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_claude_messages_req.go",
+      "sha256": "45378bf8f72d68ba6c09bd45d9164e71ec664fee222d896ed0a32b34abc4123f"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_claude_messages_req_test.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_claude_messages_req_test.go",
+      "sha256": "1a66dae278c26efffc7de72dfb0821c14f89b2831bd7a6a62102e1296dd9903d"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_claude_messages_resp.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_claude_messages_resp.go",
+      "sha256": "bc3d336ce7cd33e1fcb06c445fd02762a8751e5adb4e72d9963ac512166ecd95"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_claude_messages_resp_test.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_claude_messages_resp_test.go",
+      "sha256": "fcbcf9ff50eb02ccccd9500c9311022ea7c7a37b8b1eccf48b4f746dbc6e72c7"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_gemini_chat_req.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_gemini_chat_req.go",
+      "sha256": "29a7f69721b2a0a50b00164b49f9b66a51c6dd5a53a0cc771bd56f82c0119429"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_gemini_chat_resp.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_gemini_chat_resp.go",
+      "sha256": "0ececa0608efc143c23b300b831e4a3b177bce46d7bd77bc7ad311f70ae5fcea"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_gemini_chat_resp_test.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_gemini_chat_resp_test.go",
+      "sha256": "372c5c6d8082baf7770d8863fd7f62562018690d9f4724ad07105214c30ba7a0"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_oai_responses_req.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_oai_responses_req.go",
+      "sha256": "e5af4c88ffce740dfc67fb5d59a822f5c6981e7ad2781295d0922304e70290bf"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_oai_responses_req_test.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_oai_responses_req_test.go",
+      "sha256": "1cd2192461a48bcea881aa036d865fb4c5c1f95b869ef8ece3e56cbc19e781d5"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_oai_responses_resp.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_oai_responses_resp.go",
+      "sha256": "4eccfca7d07e8f8fa20b4ec6c99668a57d6d27b4f652bfb8141cf7dbae9b4b28"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_oai_responses_resp_test.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_oai_responses_resp_test.go",
+      "sha256": "f23dd2fb8fef6bcc31b4f9e08d251239903d274472633bdc21c3defdc4f99372"
+    },
+    {
+      "path": "relayconvert/internal/oai_chat/to_oai_responses_stream_resp.go",
+      "source_path": "relaykit/relayconvert/internal/oai_chat/to_oai_responses_stream_resp.go",
+      "sha256": "29ea02e4405b4887cf32e6a031c8e96818bd8252d3720b8f86767010d692114f"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/req_helpers.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/req_helpers.go",
+      "sha256": "a594f7e8daa3357cd441bd7543971df9889d10d0d20530f1959da1e9aeb658b2"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_claude_messages_req.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_claude_messages_req.go",
+      "sha256": "704671537a50bd65c19e74ea7ce3aa711ebe9daa69e31eab97be84b0e0e4c256"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_claude_messages_resp.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_claude_messages_resp.go",
+      "sha256": "6e3cd605549310ce94bbc9376e77c470e209c83d16e08494d415b37376eda38a"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_claude_messages_stream_resp.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_claude_messages_stream_resp.go",
+      "sha256": "71a3fa91b06a52b596ffccb7bc70f6cb4dffa6b8bd7d8846ef3fe19d31c1e9bf"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_claude_messages_stream_resp_test.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_claude_messages_stream_resp_test.go",
+      "sha256": "4482dedbc0d42cfb900db9b239e95a803ab9a3aa9b78d08f3acd410bc6e127ac"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_gemini_chat_req.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_gemini_chat_req.go",
+      "sha256": "81e6a4d0998d0ed747c70775daa2bd93c243904fac2692d7d6d7e66cf42988ce"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_oai_chat_req.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_oai_chat_req.go",
+      "sha256": "dd1b7a937c0f575b3afa13f850e3c6012cb0c35eceea0c924f04e0261ef997f1"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_oai_chat_req_test.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_oai_chat_req_test.go",
+      "sha256": "09477830d999aa1cf6728f85fb9fff27f5de55f7521bdff486a33a618508abbb"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_oai_chat_resp.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_oai_chat_resp.go",
+      "sha256": "d1b1c02846f2d3c91d84170aea15e0556ef6cbc3b5e95c29272d65a28ad1c12b"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_oai_chat_resp_test.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_oai_chat_resp_test.go",
+      "sha256": "c39ede0f82ab8127edd564e03e6c6b38b6506a1993fc62f7922d60c2c93d68d0"
+    },
+    {
+      "path": "relayconvert/internal/oai_responses/to_oai_chat_stream_resp.go",
+      "source_path": "relaykit/relayconvert/internal/oai_responses/to_oai_chat_stream_resp.go",
+      "sha256": "aada5d6a566e222d88ae5dcbcda3ba7e601d06a26fe9cfb484b24224a2f9591d"
+    },
+    {
+      "path": "relayconvert/internal/shared/claude/cache.go",
+      "source_path": "relaykit/relayconvert/internal/shared/claude/cache.go",
+      "sha256": "6e37b5365d0dddbaf4e87cd049c617a4f88e21f1b6adcb4331d6fabe9574fa62"
+    },
+    {
+      "path": "relayconvert/internal/shared/claude/errors.go",
+      "source_path": "relaykit/relayconvert/internal/shared/claude/errors.go",
+      "sha256": "ef668e874200c36b9ce4b917e66399a79ff4b92afbfd1b816b7c3f2ef64d8095"
+    },
+    {
+      "path": "relayconvert/internal/shared/claude/media.go",
+      "source_path": "relaykit/relayconvert/internal/shared/claude/media.go",
+      "sha256": "2a9aa2a54d3ef0ae3ae0d5555c5e54d9b4e93f8afd7d328f3002b1497e1e19bd"
+    },
+    {
+      "path": "relayconvert/internal/shared/claude/reasoning.go",
+      "source_path": "relaykit/relayconvert/internal/shared/claude/reasoning.go",
+      "sha256": "7a4fbb57dc775a83d59a3d81cbae062d343c61f589d6d9277268aafc638c6eb4"
+    },
+    {
+      "path": "relayconvert/internal/shared/claude/schema.go",
+      "source_path": "relaykit/relayconvert/internal/shared/claude/schema.go",
+      "sha256": "635ab05fe954f918c7dcd107f413af16fff29efeba1995a391fcf59ed771b145"
+    },
+    {
+      "path": "relayconvert/internal/shared/claude/tool_choice.go",
+      "source_path": "relaykit/relayconvert/internal/shared/claude/tool_choice.go",
+      "sha256": "11cb829383bdfe33a6abcd8e7ca3a14826d516b76fff1ab2356f1c12956fcda3"
+    },
+    {
+      "path": "relayconvert/internal/shared/claude/usage.go",
+      "source_path": "relaykit/relayconvert/internal/shared/claude/usage.go",
+      "sha256": "dab8a7b5948788d205ffcecc300c0015059ae9e9b03fc1b2bbcbc516109f82d3"
+    },
+    {
+      "path": "relayconvert/internal/shared/gemini/request.go",
+      "source_path": "relaykit/relayconvert/internal/shared/gemini/request.go",
+      "sha256": "07c9414af42955f1cf61830387bd24c57f150a8697a683e55e67995ae6032d65"
+    },
+    {
+      "path": "relayconvert/internal/shared/gemini/schema.go",
+      "source_path": "relaykit/relayconvert/internal/shared/gemini/schema.go",
+      "sha256": "aaadffb1688a952951de99fc936f14fbf7c8a804e13708310e1cf3815b4f238d"
+    },
+    {
+      "path": "relayconvert/internal/toolconv/decode.go",
+      "source_path": "relaykit/relayconvert/internal/toolconv/decode.go",
+      "sha256": "286f0a48d1b9212f2afb28d91a7f1bf81752934d1e4777524c63e82eb25953e5"
+    },
+    {
+      "path": "relayconvert/internal/toolconv/encode.go",
+      "source_path": "relaykit/relayconvert/internal/toolconv/encode.go",
+      "sha256": "f9fedee274227e29b6774ec76dacb468b08eab8b531da7f2909119e08c1d2214"
+    },
+    {
+      "path": "relayconvert/internal/toolconv/hosted_values.go",
+      "source_path": "relaykit/relayconvert/internal/toolconv/hosted_values.go",
+      "sha256": "e058cfe654efd7034557082480c1269216bbb8550d99eb757eafc8e679a7f0ed"
+    },
+    {
+      "path": "relayconvert/internal/toolconv/model.go",
+      "source_path": "relaykit/relayconvert/internal/toolconv/model.go",
+      "sha256": "3be0787c0f8ed4a01f0277a342a4a479c8fe805d9099914ef376e3d129d6bdf6"
+    },
+    {
+      "path": "relayconvert/internal/toolconv/policy_test.go",
+      "source_path": "relaykit/relayconvert/internal/toolconv/policy_test.go",
+      "sha256": "5ae82802a5dd7b1f2e6437248073a73674b4bddd53157cdecbe755a7a01c7279"
+    },
+    {
+      "path": "relayconvert/internal/toolconv/response.go",
+      "source_path": "relaykit/relayconvert/internal/toolconv/response.go",
+      "sha256": "f20d34b8b1f0d437aebca3450c4b8070202e1432e1ada9708f8d676c12b513db"
+    },
+    {
+      "path": "relayconvert/internal/toolconv/response_artifacts.go",
+      "source_path": "relaykit/relayconvert/internal/toolconv/response_artifacts.go",
+      "sha256": "7d41165e66563f37260212bbed9dc2bd26218bb0bcf62210eb63db25b2086951"
+    },
+    {
+      "path": "relayconvert/kitutil/json.go",
+      "source_path": "relaykit/relayconvert/kitutil/json.go",
+      "sha256": "065fab087fa007025d27852e594b16bec79040d5865c2b6d02972fd048d1134b"
+    },
+    {
+      "path": "relayconvert/kitutil/json_test.go",
+      "source_path": "relaykit/relayconvert/kitutil/json_test.go",
+      "sha256": "296d7f7bc75975592389b99153ae69e4d6ec62707b2f22fa43597091afb4108b"
+    },
+    {
+      "path": "relayconvert/kitutil/log.go",
+      "source_path": "relaykit/relayconvert/kitutil/log.go",
+      "sha256": "7cc0fa13663d20c077634e1d6e61286eccc2f0d064396bcf152008fc87524549"
+    },
+    {
+      "path": "relayconvert/kitutil/log_test.go",
+      "source_path": "relaykit/relayconvert/kitutil/log_test.go",
+      "sha256": "d4dc08366c35793205481dc368cfa8130de4330612bf4d81152a567ea75ec1f8"
+    },
+    {
+      "path": "relayconvert/kitutil/mask.go",
+      "source_path": "relaykit/relayconvert/kitutil/mask.go",
+      "sha256": "02820a5bb7676993abfee9f7a62ce56d997add1b78fdbf43c0636a86ed22b12d"
+    },
+    {
+      "path": "relayconvert/kitutil/value.go",
+      "source_path": "relaykit/relayconvert/kitutil/value.go",
+      "sha256": "32a6dc2626b1968c6cb9b0f0a8ba46d2ed80754d0500d59108e0ef040fe944dd"
+    },
+    {
+      "path": "relayconvert/media.go",
+      "source_path": "relaykit/relayconvert/media.go",
+      "sha256": "7256b4d978942006aecb759f4cbe5583730ca83a1fc821da65d4284cd9b4cb6c"
+    },
+    {
+      "path": "relayconvert/reasoning/claude.go",
+      "source_path": "relaykit/relayconvert/reasoning/claude.go",
+      "sha256": "7c09b6ed0912d8037d45c59bde25b447fd57dc256a107446b578085406eef76b"
+    },
+    {
+      "path": "relayconvert/reasoning/gemini.go",
+      "source_path": "relaykit/relayconvert/reasoning/gemini.go",
+      "sha256": "91faf6652376b242a95bf59bb524b5c553fd81888612629e7fba7b66cac4f2ab"
+    },
+    {
+      "path": "relayconvert/reasoning/gemini_test.go",
+      "source_path": "relaykit/relayconvert/reasoning/gemini_test.go",
+      "sha256": "9946bfa8e6a2475e36c8f8394a3d87f0fce1705745762f531be674130b19dbfc"
+    },
+    {
+      "path": "relayconvert/reasoning/intent.go",
+      "source_path": "relaykit/relayconvert/reasoning/intent.go",
+      "sha256": "b167d2bace7529cec8606b006a6a89bf8d5a8f1a6b8781c1862a289cc892cea5"
+    },
+    {
+      "path": "relayconvert/reasoning/intent_test.go",
+      "source_path": "relaykit/relayconvert/reasoning/intent_test.go",
+      "sha256": "033b7d895856d1277ad1e657b0232e85f6f7d7ba0bca514b602f8df25cf2773e"
+    },
+    {
+      "path": "relayconvert/reasoning/suffix.go",
+      "source_path": "relaykit/relayconvert/reasoning/suffix.go",
+      "sha256": "6454b6a0151e722e6849472ba3c7235a980326b5cf803dbc7cbaa0f7f1898ca6"
+    },
+    {
+      "path": "relayconvert/reasoning/suffix_test.go",
+      "source_path": "relaykit/relayconvert/reasoning/suffix_test.go",
+      "sha256": "9a8679c491add101da62462c7292e015dcfbfb516dcb9d57a82f5ee85f3a8066"
+    },
+    {
+      "path": "relayconvert/request_compat.go",
+      "source_path": "relaykit/relayconvert/request_compat.go",
+      "sha256": "9ab23550d7cde0943a841e45c0ce7a56bba4cda62ac896bfd0dd9e8df30f5289"
+    },
+    {
+      "path": "relayconvert/request_registry.go",
+      "source_path": "relaykit/relayconvert/request_registry.go",
+      "sha256": "dde8ddeacce8de9dc4045e1e5f06d1ba37463e163ee03d470a2f278c7dd49d95"
+    },
+    {
+      "path": "relayconvert/request_registry_test.go",
+      "source_path": "relaykit/relayconvert/request_registry_test.go",
+      "sha256": "a9c60b4533fffb9cfcd8452c3439f575b94302c10cb6a8303514af089141d3ca"
+    },
+    {
+      "path": "relayconvert/response_compat.go",
+      "source_path": "relaykit/relayconvert/response_compat.go",
+      "sha256": "87c2bde976c25e0354e4c8ba1762da67a23738d6ca4a4010641b678846203942"
+    },
+    {
+      "path": "relayconvert/response_registry.go",
+      "source_path": "relaykit/relayconvert/response_registry.go",
+      "sha256": "3a697a3b78c2813c0d95879c5fe84ab941e763dfbd17e2ecac52cd169f467d52"
+    },
+    {
+      "path": "relayconvert/response_registry_test.go",
+      "source_path": "relaykit/relayconvert/response_registry_test.go",
+      "sha256": "b8ccf69855db317b83e9b99834dfe23dc1570ca2128a5538e5d2eec7c8004798"
+    },
+    {
+      "path": "relayconvert/safety_settings_test.go",
+      "source_path": "relaykit/relayconvert/safety_settings_test.go",
+      "sha256": "f174be29ddf77a71b8b0ecd8a257c637c0b4534afa1c4fbec5b3fb5c8c82fb5e"
+    },
+    {
+      "path": "relayconvert/terminal_stream_test.go",
+      "source_path": "relaykit/relayconvert/terminal_stream_test.go",
+      "sha256": "7f9d0293d3f4f4ab70273de292dd0e512a743bc982d2a5272526d2e44530a8cb"
+    },
+    {
+      "path": "relayconvert/testdata/golden/request/openai_responses_to_claude.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/request/openai_responses_to_claude.golden.json",
+      "sha256": "9145d963f00e285b23971d42cbb5b3a5b86653931bd0ff33cbb023747b93fa2a"
+    },
+    {
+      "path": "relayconvert/testdata/golden/request/openai_responses_to_openai.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/request/openai_responses_to_openai.golden.json",
+      "sha256": "37124720a6815e71dc3ff8646be2f3748a1f337383803eb6aa35be5fadb8e082"
+    },
+    {
+      "path": "relayconvert/testdata/golden/request/openai_to_claude.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/request/openai_to_claude.golden.json",
+      "sha256": "a8f2f0e3fc6d87ee005ba35b911dc83fbd0d52a5f41408f26dad73eec3861fe6"
+    },
+    {
+      "path": "relayconvert/testdata/golden/request/openai_to_openai_responses.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/request/openai_to_openai_responses.golden.json",
+      "sha256": "3ce8141b972c9c4f9b2e260cfb7746e51f7ce916aa1ddfd9945ee2fb42fd7366"
+    },
+    {
+      "path": "relayconvert/testdata/golden/response/claude_to_openai.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/response/claude_to_openai.golden.json",
+      "sha256": "261faccc58edcc031ae7e91ebce4f0110fac21f69ed27960dd6c1c64997f7989"
+    },
+    {
+      "path": "relayconvert/testdata/golden/response/claude_to_openai_responses.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/response/claude_to_openai_responses.golden.json",
+      "sha256": "52f1c231052f7359aa57fe101af17314cd1cd83c8812ad5f871ec6d67098937e"
+    },
+    {
+      "path": "relayconvert/testdata/golden/response/gemini_to_claude.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/response/gemini_to_claude.golden.json",
+      "sha256": "99277004684f20fbc5a2216c8cc3aa9dd7983ea55014f910c7b7a01881a696b5"
+    },
+    {
+      "path": "relayconvert/testdata/golden/response/gemini_to_openai.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/response/gemini_to_openai.golden.json",
+      "sha256": "870f62d343ccf34fc6255caeb4d696832eb329cf76958544b1a1ef943e3ac7cf"
+    },
+    {
+      "path": "relayconvert/testdata/golden/response/gemini_to_openai_responses.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/response/gemini_to_openai_responses.golden.json",
+      "sha256": "53ccebaa5b2f310dfbcf64dc1b92e9c8733e386780afd44d2a9bc72f9841667d"
+    },
+    {
+      "path": "relayconvert/testdata/golden/response/openai_responses_to_claude.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/response/openai_responses_to_claude.golden.json",
+      "sha256": "928846e836a945b4f968a6717ca5ed1236de22140587d71ac153e5c4755e48c5"
+    },
+    {
+      "path": "relayconvert/testdata/golden/response/openai_responses_to_openai.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/response/openai_responses_to_openai.golden.json",
+      "sha256": "4ebf2bceaef594a5aa2761cb5e7b6f1f3e4611fb5eebf0fe4afc2a906362a1bf"
+    },
+    {
+      "path": "relayconvert/testdata/golden/response/openai_to_openai_responses.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/response/openai_to_openai_responses.golden.json",
+      "sha256": "613cbc578b19a4707c7c969bc156eae5f40c03e7fbaa31d814e0ab71b51734ef"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/claude_to_gemini.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/claude_to_gemini.golden.json",
+      "sha256": "37bec6e3a793c65759bbfab4a75878b45f80e69103f0b7add537e8276ce92d44"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/claude_to_openai.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/claude_to_openai.golden.json",
+      "sha256": "1c5bc203f8412c85d83118a0d15631a7e5aefeac34bd60eb1af715341b8d221b"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/claude_to_openai_responses.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/claude_to_openai_responses.golden.json",
+      "sha256": "f7f4e3fc06463c5cc3a83009281f598d8b20ecb7157c3a6a151fde9a054205d9"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/gemini_to_claude.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/gemini_to_claude.golden.json",
+      "sha256": "be6cbbf194c0eff792efc27ce5ae0ee2ee05f7d74af4eeb919a055c3119cf86f"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/gemini_to_openai.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/gemini_to_openai.golden.json",
+      "sha256": "47c45ab0ce3b7fa5a2b4c5f84b3e5867d3e191861285ec80e5372a821784339c"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/gemini_to_openai_responses.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/gemini_to_openai_responses.golden.json",
+      "sha256": "a19bca243a37ddc47ef0c6f121d727dafeb5b0b2e1e5ad85b90a412baf549a5a"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/openai_responses_to_claude.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/openai_responses_to_claude.golden.json",
+      "sha256": "ac1acc6d0794c48ab7beefa927f4c7124d480a4e948d7f728fca736afcc4e1b6"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/openai_responses_to_gemini.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/openai_responses_to_gemini.golden.json",
+      "sha256": "02d4916af8e5b27db5f4a8d39a379f7e0871ef8ba09eb5d1fbfcdee9e9ab94b4"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/openai_responses_to_openai.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/openai_responses_to_openai.golden.json",
+      "sha256": "4952a0ebdf03e3ac86c6641ad7e6bf7c2e99b896a9fb99f537d3fa0d56b469c6"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/openai_to_claude.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/openai_to_claude.golden.json",
+      "sha256": "a54e9b1ad05855ec5599d914c100bff49392b88d00ef23fa430050ff9aad0b87"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/openai_to_gemini.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/openai_to_gemini.golden.json",
+      "sha256": "44360027b6c0395db4f41a5f6bc5d42f06620de66cead4a0c9fcea6f42bfbf2c"
+    },
+    {
+      "path": "relayconvert/testdata/golden/stream/openai_to_openai_responses.golden.json",
+      "source_path": "relaykit/relayconvert/testdata/golden/stream/openai_to_openai_responses.golden.json",
+      "sha256": "39f33065aae0d2f03b887c1404a1a90d2de6021dd140d1cb7adde5d1b5c2e13a"
+    },
+    {
+      "path": "relayconvert/text_converter_registry.go",
+      "source_path": "relaykit/relayconvert/text_converter_registry.go",
+      "sha256": "1d5bb1a8c2ed3ef2813805c5b451f58358eb177345614bc793d3416c777b94d8"
+    },
+    {
+      "path": "relayconvert/text_converter_registry_test.go",
+      "source_path": "relaykit/relayconvert/text_converter_registry_test.go",
+      "sha256": "1123e2accfa1a7105c7705d506bf218a5236eb94911e9262cddb7391eb803507"
+    },
+    {
+      "path": "relayconvert/tool_loss_policy_test.go",
+      "source_path": "relaykit/relayconvert/tool_loss_policy_test.go",
+      "sha256": "7df74d3233d1f615fe07ee131905049a2b8189f3d783f7a9556a01ea71176b12"
+    },
+    {
+      "path": "types/channel_error.go",
+      "source_path": "relaykit/types/channel_error.go",
+      "sha256": "2a780541bc31f14c8caa9d018f8d7109690876d3c984e0adef191211f5253c8e"
+    },
+    {
+      "path": "types/conversion.go",
+      "source_path": "relaykit/types/conversion.go",
+      "sha256": "89702241ebaebedf5431ead2a39e81340c4480e6172cf67a9d27317adb06b364"
+    },
+    {
+      "path": "types/endpoint_type.go",
+      "source_path": "relaykit/types/endpoint_type.go",
+      "sha256": "ba61e6452031bf287f37c8bdddb0b99eb64cec1610d6fc0f0a15b0c7e660ab8b"
+    },
+    {
+      "path": "types/error.go",
+      "source_path": "relaykit/types/error.go",
+      "sha256": "d4c02bfb52d16467789bee4e621d651447fe298aac76f9c111bf88f28843e932"
+    },
+    {
+      "path": "types/file_data.go",
+      "source_path": "relaykit/types/file_data.go",
+      "sha256": "a424f53e6eb47b9a3f4ffd3292555c6fa46fece3c26c19cc6919c62a7143568c"
+    },
+    {
+      "path": "types/file_source.go",
+      "source_path": "relaykit/types/file_source.go",
+      "sha256": "ba773c738accc8ebb13c9ad045d1b97f703ab20cf2e7329ec2a579c944ae2f27"
+    },
+    {
+      "path": "types/relay_format.go",
+      "source_path": "relaykit/types/relay_format.go",
+      "sha256": "22c7cca442816c4c5e8e7b074fd1f5021460b86b43634c360f0244fa5489e5df"
+    },
+    {
+      "path": "types/request_meta.go",
+      "source_path": "relaykit/types/request_meta.go",
+      "sha256": "00588971c9197e8062c4fcc320b2cd86901b3ef8eb2cb40646effef5b226aac5"
+    }
+  ]
+}

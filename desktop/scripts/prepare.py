@@ -91,6 +91,13 @@ def copy_scripts(materialized, destination):
         shutil.copy2(materialized / 'scripts' / name, scripts / name)
 
 
+def copy_relaykit_notices(materialized, destination):
+    notices = destination / 'licenses/relaykit'
+    notices.mkdir()
+    for name in ('LICENSE', 'NOTICE', 'THIRD-PARTY-LICENSES.md', 'SOURCE.json'):
+        shutil.copy2(materialized / 'third_party/relaykit' / name, notices / name)
+
+
 def write_runtime_metadata(stage, config, lock):
     (stage / 'config.json').write_text('{}\n', encoding='utf-8')
     manifest = {'target': config['target'], 'python_version': lock['python_version']}
@@ -202,6 +209,7 @@ def prepare(target, cache, output):
         subprocess.run([sys.executable, str(ROOT / 'scripts/overlay.py'), 'prepare',
                         '--output', str(materialized)], cwd=ROOT, check=True)
         copy_scripts(materialized, stage)
+        copy_relaykit_notices(materialized, stage)
         commit = json.loads((ROOT / 'upstream.lock').read_text())['commit']
         identity = subprocess.check_output([sys.executable, str(ROOT / 'scripts/overlay.py'),
                                             'identity'], cwd=ROOT, text=True).strip()

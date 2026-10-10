@@ -124,6 +124,29 @@ class PrepareTests(unittest.TestCase):
         self.assertEqual({p.name for p in (destination / 'scripts').iterdir()},
                          {'task_common.py', 'task_runner.py', 'school_open_day_2026.py', 'task_events.py', 'global_region.py'})
 
+    def test_resources_include_relaykit_notices_and_source_provenance(self):
+        source = self.root / 'materialized'
+        relaykit = source / 'third_party/relaykit'
+        relaykit.mkdir(parents=True)
+        notices = {'LICENSE': b'license\r\n', 'NOTICE': b'authors\n',
+                   'THIRD-PARTY-LICENSES.md': b'dependency notices\n',
+                   'SOURCE.json': b'{"commit":"pinned","files":{}}\n'}
+        for name, content in notices.items():
+            (relaykit / name).write_bytes(content)
+        (relaykit / 'go.mod').write_text('module fixture\n')
+        (relaykit / 'converter.go').write_text('package fixture\n')
+        destination = self.root / 'resources'
+        (destination / 'licenses').mkdir(parents=True)
+        self.assertTrue(hasattr(self.prepare, 'copy_relaykit_notices'),
+                        'desktop resources must copy RelayKit notices and provenance')
+        self.prepare.copy_relaykit_notices(source, destination)
+        packaged = destination / 'licenses/relaykit'
+        self.assertEqual({p.name for p in packaged.iterdir()}, set(notices))
+        for name, content in notices.items():
+            self.assertEqual((packaged / name).read_bytes(), content)
+        self.assertEqual({p.relative_to(destination).as_posix() for p in destination.rglob('*') if p.is_file()},
+                         {f'licenses/relaykit/{name}' for name in notices})
+
     def test_failed_replacement_restores_existing_runtime(self):
         output = self.root / 'runtime'
         stage = self.root / 'stage'

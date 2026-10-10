@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.23-alpine AS build
+FROM --platform=$BUILDPLATFORM golang:1.26-alpine AS build
 RUN apk add --no-cache git python3
 WORKDIR /source
 COPY upstream.lock ./
@@ -14,6 +14,8 @@ ARG TARGETARCH
 RUN set -eu; \
     commit="$(python3 -c 'import json; print(json.load(open("/source/upstream.lock"))["commit"])')"; \
     identity="$(python3 /source/scripts/overlay.py identity)"; \
+    go -C third_party/relaykit test ./...; \
+    go -C third_party/relaykit vet ./...; \
     go test ./...; \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w -X main.upstreamCommit=$commit -X main.patchIdentity=$identity" -o /out/wb2api ./cmd/server; \
     for command in signin login credit trial activity; do CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags="-s -w" -o "/out/$command" "./cmd/$command"; done
@@ -29,6 +31,7 @@ ENV WB2A_CORE=true WB2A_LISTEN=:7863 WB2A_AUTH_DIR=/app/auths WB2A_STATE_FILE=/a
 COPY deploy/default-config.json /app/config.json
 COPY --chmod=755 deploy/core-entrypoint.sh /usr/local/bin/wb2api-entrypoint.sh
 COPY LICENSE /app/LICENSE
+COPY --from=build /build/core/third_party/relaykit/LICENSE /build/core/third_party/relaykit/NOTICE /build/core/third_party/relaykit/THIRD-PARTY-LICENSES.md /build/core/third_party/relaykit/SOURCE.json /app/licenses/relaykit/
 COPY --from=build /out/wb2api /app/wb2api
 COPY --from=build /out/signin /app/signin_bin
 COPY --from=build /out/login /app/login
