@@ -52,12 +52,12 @@ flowchart LR
 
 **Interfaces:** 本地 `require github.com/QuantumNous/new-api/relaykit v0.0.0` 与 `replace ... => ./third_party/relaykit`；模块补丁使 core 达到 Go 1.26 基线。原始库接口保持不变。
 
-- [ ] **核对来源并复制。** 核对源 commit 与工作区状态，复制独立模块的受版本控制文件和 LICENSE/NOTICE，记录每个原始文件 SHA-256；保留用户源目录。已归档草稿不能替代来源核对。
-- [ ] **建立依赖补丁。** 用尚不存在的 `.build/protocol-deps-<编号>` 物化目录修改 go.mod/go.sum，再生成补丁；另一新目录重新 prepare，确认本地 replace 生效，不从远端选择其他 RelayKit 版本。
-- [ ] **先补打包失败测试。** `test_resources_include_relaykit_notices_and_source_provenance` 调用真实复制函数，断言声明内容字节一致且不混入库源码；运行 `python -m unittest discover -s desktop/scripts -p test_prepare.py -v`，先观察缺少复制行为的失败。
-- [ ] **最小实现构建/声明接入。** core 构建镜像升至 Go 1.26 系列，独立 test/vet 嵌套模块；Docker 与桌面资源含 LICENSE/NOTICE/来源清单。console 工具链、Compose 不变。
-- [ ] **验证。** 新物化 `.build/protocol-check-1`；运行 `go -C .build/protocol-check-1/third_party/relaykit test ./...`、同目录 `vet ./...`、`go -C .build/protocol-check-1 test ./...` 及前述 Python 测试；预期全部退出 0。
-- [ ] **记录与审查。** 保存命令、结果、快照摘要；审查模块边界及打包，确认没有账号、密钥或 New API 宿主服务。
+- [x] **核对来源并复制。** 核对源 commit 与工作区状态，复制独立模块的受版本控制文件和 LICENSE/NOTICE，记录每个原始文件 SHA-256；保留用户源目录。已归档草稿不能替代来源核对。
+- [x] **建立依赖补丁。** 用尚不存在的 `.build/protocol-deps-<编号>` 物化目录修改 go.mod/go.sum，再生成补丁；另一新目录重新 prepare，确认本地 replace 生效，不从远端选择其他 RelayKit 版本。
+- [x] **先补打包失败测试。** `test_resources_include_relaykit_notices_and_source_provenance` 调用真实复制函数，断言声明内容字节一致且不混入库源码；运行 `python -m unittest discover -s desktop/scripts -p test_prepare.py -v`，先观察缺少复制行为的失败。
+- [x] **最小实现构建/声明接入。** core 构建镜像升至 Go 1.26 系列，独立 test/vet 嵌套模块；Docker 与桌面资源含 LICENSE/NOTICE/来源清单。console 工具链、Compose 不变。
+- [x] **验证。** 新物化 `.build/protocol-check-1`；运行 `go -C .build/protocol-check-1/third_party/relaykit test ./...`、同目录 `vet ./...`、`go -C .build/protocol-check-1 test ./...` 及前述 Python 测试；预期全部退出 0。
+- [x] **记录与审查。** 保存命令、结果、快照摘要；审查模块边界及打包，确认没有账号、密钥或 New API 宿主服务。
 
 ## Task 2: 建立共用 RelayKit 传输层
 

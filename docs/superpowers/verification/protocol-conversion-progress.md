@@ -27,3 +27,6 @@
 | Task 3 | Responses 历史补丁与入口 | 无冲突 |
 | Task 4 | Anthropic 历史补丁与信任边界 | 无冲突 |
 | Task 5 | SDK、容器、原路径回归 | 无冲突；全部必须实际通过 |
+
+- Task 1: complete (commit 884cbdc5, review protocol_review1: spec compliant/quality approved, no findings). Desktop11, check.sh full native incl race, Go1.26.9 Linux core+RelayKit test/vet,162 source hashes verified. Windows scripts/deploy POSIX failures remain a Task5 Linux integration check, not waived.
+- Task 2: starting from approved Task1; request metadata shared only within one request, no early completion or usage estimation.
