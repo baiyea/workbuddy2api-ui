@@ -208,14 +208,18 @@ func (s *streamWriter) frame(raw []byte) error {
 	if choice == nil || choice.Index != 0 || s.reason != "" {
 		return errors.New("invalid choice or choice after finish")
 	}
+	normalized, err := normalizeEmptyDelta(choice.Delta)
+	if err != nil {
+		return err
+	}
 	var delta *dto.ChatCompletionsStreamResponseChoiceDelta
-	if strictJSON(choice.Delta, &delta) != nil || delta == nil || (delta.Role != "" && delta.Role != "assistant") {
+	if strictJSON(normalized, &delta) != nil || delta == nil || (delta.Role != "" && delta.Role != "assistant") {
 		return errors.New("invalid delta")
 	}
 	if err := s.observeTools(choice.Delta); err != nil {
 		return err
 	}
-	if choice.Finish != nil {
+	if choice.Finish != nil && *choice.Finish != "" {
 		if !validFinish(*choice.Finish) {
 			return errors.New("invalid finish reason")
 		}
@@ -418,4 +422,28 @@ func (s *streamWriter) capturePayload(payload []byte) error {
 	s.validated.Write(compact.Bytes())
 	s.validated.WriteString("\n\n")
 	return nil
+}
+
+// WorkBuddy serializes these inert placeholders on otherwise valid Chat deltas.
+func normalizeEmptyDelta(raw json.RawMessage) ([]byte, error) {
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &fields); err != nil {
+		return nil, err
+	}
+	for _, key := range []string{"function_call", "extra_fields"} {
+		if bytes.Equal(bytes.TrimSpace(fields[key]), []byte("null")) {
+			delete(fields, key)
+		}
+	}
+	if bytes.Equal(bytes.TrimSpace(fields["refusal"]), []byte(`""`)) {
+		delete(fields, "refusal")
+	}
+	var call *struct {
+		Name      *string `json:"name"`
+		Arguments *string `json:"arguments"`
+	}
+	if strictJSON(fields["function_call"], &call) == nil && call != nil && call.Name != nil && call.Arguments != nil && *call.Name == "" && *call.Arguments == "" {
+		delete(fields, "function_call")
+	}
+	return json.Marshal(fields)
 }
