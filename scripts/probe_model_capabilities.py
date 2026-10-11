@@ -213,7 +213,9 @@ def run(args):
         base = base[:-3]
     if not re.fullmatch(r"https?://[^/?#@]+", base):
         raise ValueError("--base-url must be an HTTP(S) origin, optionally ending /v1")
-    if args.output.exists() and not args.overwrite:
+    if args.output.suffix.lower() != ".json":
+        raise ValueError("--output must have a .json extension")
+    if (args.output.exists() or args.output.with_suffix(".md").exists()) and not args.overwrite:
         raise ValueError("Output already exists; choose another path or explicitly --overwrite")
     report = {"started_at": dt.datetime.now(dt.timezone.utc).isoformat(), "base_url": base,
               "models": models, "checks": args.checks, "max_output_tokens": args.max_output_tokens,
@@ -230,7 +232,7 @@ def run(args):
             body = {"model": model["id"], ("max_output_tokens" if protocol == "responses" else "max_tokens"): args.max_output_tokens, **body}
             result = call(base, key, protocol, body, args.timeout)
             summary = result.get("summary", {})
-            status = "error" if "error" in result else ("pass" if summary.get("complete") and expected(summary) else ("not_observed" if uncertain and summary.get("complete") else "fail"))
+            status = "error" if "error" in result or summary.get("errors") else ("pass" if summary.get("complete") and expected(summary) else ("not_observed" if uncertain and summary.get("complete") else "fail"))
             record = {"model_name": model["name"], "model_id": model["id"], "protocol": protocol,
                       "check": check, "status": status, "request": body, **result}
             report["records"].append(record)
@@ -239,18 +241,18 @@ def run(args):
             return summary
 
         for protocol in ("responses", "anthropic"):
-            def prompt(text, **extra):
+            def prompt(content, **extra):
                 return {("input" if protocol == "responses" else "messages"):
-                        (text if protocol == "responses" else [{"role": "user", "content": text}]), **extra}
+                        (content if protocol == "responses" else [{"role": "user", "content": content}]), **extra}
 
             if "text" in args.checks:
-                baseline = probe(protocol, "text", prompt("请只输出这个测试标记，不要解释：" + marker), lambda s: s["text"].strip() == marker)
-                if not baseline.get("complete"):
+                probe(protocol, "text", prompt("请只输出这个测试标记，不要解释：" + marker), lambda s: s["text"].strip() == marker)
+                if report["records"][-1]["status"] != "pass":
                     if not baseline_checked:
                         probe("chat", "diagnostic_baseline", {"messages": [{"role": "user", "content": "只输出 " + marker}]}, lambda s: s["text"].strip() == marker)
                         baseline_checked = True
                     report["records"].append({"model_name": model["name"], "model_id": model["id"], "protocol": protocol,
-                                               "check": "remaining", "status": "skipped", "reason": "Text baseline did not complete; avoid further quota consumption"})
+                                               "check": "remaining", "status": "skipped", "reason": "Text baseline did not pass; avoid further quota consumption"})
                     save_report(report, args.output)
                     continue
             if "stream" in args.checks:

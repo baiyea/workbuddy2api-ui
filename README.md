@@ -163,9 +163,9 @@ python scripts/probe_model_capabilities.py \
   --output docs/superpowers/verification/my-model-probe.json
 ```
 
-也可用 `--key-file 路径` 读取包含 `api_key` 的本地 JSON，密钥不会写进报告。结果同时保存 JSON 请求/响应证据与 Markdown 表格；已有报告默认不覆盖。`--checks text stream history tools schema image inline_file` 可选择测试项，`--timeout` 和 `--max-output-tokens` 控制单次请求预算。PowerShell 可将示例写在一行执行。
+也可用 `--key-file 路径` 读取包含 `api_key` 的本地 JSON，密钥不会写进报告。`--output` 必须使用 `.json` 扩展名，结果同时保存 JSON 请求/响应证据与同名 Markdown 表格；任一报告已存在时默认拒绝覆盖，显式 `--overwrite` 才可覆盖两者。`--checks text stream history tools schema image inline_file` 可选择测试项，`--timeout` 和 `--max-output-tokens` 控制单次请求预算。PowerShell 可将示例写在一行执行。
 
-文本基线失败时会跳过该协议的后续调用，并用原 Chat 接口做一次诊断，区分入口故障和模型可用性。`pass` / `fail` 是该用例的断言结果，`error` 表示 HTTP/传输/解析错误，`not_observed` 表示未观察到，不能直接推断“不支持”；`skipped` 会附原因。Schema 用例以冲突提示检查约束是否实际生效，一次通过也不保证严格遵守。Messages 的输出 Schema 当前由网关明确不支持，脚本标记跳过，不归因于模型。出现 `fail` 或 `error` 时脚本退出码为 1。
+文本基线未通过（包括完成但输出为空或标记不匹配）时会跳过该协议的后续调用，并用原 Chat 接口对每个模型最多做一次诊断，区分入口故障和模型可用性。`pass` / `fail` 是该用例的断言结果，`error` 表示 HTTP/传输/解析错误或 SSE 错误事件，`not_observed` 表示未观察到，不能直接推断“不支持”；`skipped` 会附原因。Schema 用例以冲突提示检查约束是否实际生效，一次通过也不保证严格遵守。Messages 的输出 Schema 当前由网关明确不支持，脚本标记跳过，不归因于模型。出现 `fail` 或 `error` 时脚本退出码为 1。
 
 ### 自动获取积分
 
