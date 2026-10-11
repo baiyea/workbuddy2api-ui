@@ -1,0 +1,2215 @@
+{
+  "started_at": "2026-10-11T03:03:59.429857+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:glm-5.3",
+      "id": "global:glm-5.3"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_bbe710efbe"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2126,
+      "first_byte_ms": 2126,
+      "response": {
+        "created_at": 1791687838,
+        "id": "c23b4def3a07ab8092ce19b33baa2d9c",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.3",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_bbe710efbe",
+                "type": "output_text"
+              }
+            ],
+            "id": "c23b4def3a07ab8092ce19b33baa2d9c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 9,
+          "total_tokens": 45
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_bbe710efbe",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 9,
+          "total_tokens": 45
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_bbe710efbe",
+                "type": "output_text"
+              }
+            ],
+            "id": "c23b4def3a07ab8092ce19b33baa2d9c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2157,
+      "first_byte_ms": 2156,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687841,
+              "id": "resp_e720c30196e44d0096ff56e969825978",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:glm-5.3",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.added",
+          "data": {
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "",
+              "type": "summary_text"
+            },
+            "sequence_number": 2,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "23",
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ×",
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 19 = ",
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 5,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "437",
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 6,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_e720c30196e44d0096ff56e969825978_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 7,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 8,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "4",
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_msg_0",
+            "output_index": 1,
+            "sequence_number": 9,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "37",
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_msg_0",
+            "output_index": 1,
+            "sequence_number": 10,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_msg_0",
+            "output_index": 1,
+            "sequence_number": 11,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 12,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_e720c30196e44d0096ff56e969825978_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 13,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.done",
+          "data": {
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 14,
+            "summary_index": 0,
+            "text": "23 × 19 = 437",
+            "type": "response.reasoning_summary_text.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.done",
+          "data": {
+            "item_id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "23 × 19 = 437",
+              "type": "summary_text"
+            },
+            "sequence_number": 15,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "summary": [
+                {
+                  "text": "23 × 19 = 437",
+                  "type": "summary_text"
+                }
+              ],
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 16,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687841,
+              "id": "resp_e720c30196e44d0096ff56e969825978",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:glm-5.3",
+              "object": "response",
+              "output": [
+                {
+                  "content": null,
+                  "id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "summary": [
+                    {
+                      "text": "23 × 19 = 437",
+                      "type": "summary_text"
+                    }
+                  ],
+                  "type": "reasoning"
+                },
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_e720c30196e44d0096ff56e969825978_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 34,
+                "output_tokens": 12,
+                "total_tokens": 46
+              },
+              "user": null
+            },
+            "sequence_number": 17,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 13,
+        "tools": [],
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 12,
+          "total_tokens": 46
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "resp_e720c30196e44d0096ff56e969825978_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "23 × 19 = 437",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_e720c30196e44d0096ff56e969825978_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_bbe710efbe"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2799,
+      "first_byte_ms": 2799,
+      "response": {
+        "created_at": 1791687843,
+        "id": "df4a8343be97f338b62673d090f29d93",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.3",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "df4a8343be97f338b62673d090f29d93_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "Just output it.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_bbe710efbe",
+                "type": "output_text"
+              }
+            ],
+            "id": "df4a8343be97f338b62673d090f29d93_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 44,
+          "output_tokens": 13,
+          "total_tokens": 57
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_bbe710efbe",
+        "reasoning_chars": 15,
+        "tools": [],
+        "usage": {
+          "input_tokens": 44,
+          "output_tokens": 13,
+          "total_tokens": 57
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "df4a8343be97f338b62673d090f29d93_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "Just output it.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_bbe710efbe",
+                "type": "output_text"
+              }
+            ],
+            "id": "df4a8343be97f338b62673d090f29d93_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_bbe710efbe。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 5141,
+      "first_byte_ms": 5092,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687846,
+              "id": "resp_2b5d57f32e1c4e1199155df4721d2a60",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:glm-5.3",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "call_2784cc8c704344df91b3fa40",
+              "content": null,
+              "id": "call_2784cc8c704344df91b3fa40",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 2,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\":\"",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 4,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "probe",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 5,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_b",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "be",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 7,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "7",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 8,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "10",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 9,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "ef",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 10,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "be\"",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 11,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "}",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "output_index": 0,
+            "sequence_number": 12,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\":\"probe_bbe710efbe\"}",
+            "item_id": "call_2784cc8c704344df91b3fa40",
+            "name": "probe_echo",
+            "output_index": 0,
+            "sequence_number": 13,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\":\"probe_bbe710efbe\"}",
+              "call_id": "call_2784cc8c704344df91b3fa40",
+              "content": null,
+              "id": "call_2784cc8c704344df91b3fa40",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 0,
+            "sequence_number": 14,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687846,
+              "id": "resp_2b5d57f32e1c4e1199155df4721d2a60",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:glm-5.3",
+              "object": "response",
+              "output": [
+                {
+                  "arguments": "{\"value\":\"probe_bbe710efbe\"}",
+                  "call_id": "call_2784cc8c704344df91b3fa40",
+                  "content": null,
+                  "id": "call_2784cc8c704344df91b3fa40",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 199,
+                "output_tokens": 18,
+                "total_tokens": 217
+              },
+              "user": null
+            },
+            "sequence_number": 15,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_2784cc8c704344df91b3fa40",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_bbe710efbe"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 199,
+          "output_tokens": 18,
+          "total_tokens": 217
+        },
+        "output": [
+          {
+            "arguments": "{\"value\":\"probe_bbe710efbe\"}",
+            "call_id": "call_2784cc8c704344df91b3fa40",
+            "content": null,
+            "id": "call_2784cc8c704344df91b3fa40",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_bbe710efbe。不要自己假装执行。"
+          },
+          {
+            "arguments": "{\"value\":\"probe_bbe710efbe\"}",
+            "call_id": "call_2784cc8c704344df91b3fa40",
+            "content": null,
+            "id": "call_2784cc8c704344df91b3fa40",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "call_2784cc8c704344df91b3fa40",
+            "output": "result_7afe414bfe"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2945,
+      "first_byte_ms": 2944,
+      "response": {
+        "created_at": 1791687851,
+        "id": "166e2ec53ca86a186504eca0db0cc138",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.3",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_7afe414bfe",
+                "type": "output_text"
+              }
+            ],
+            "id": "166e2ec53ca86a186504eca0db0cc138_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 87,
+          "output_tokens": 10,
+          "total_tokens": 97
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_7afe414bfe",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 87,
+          "output_tokens": 10,
+          "total_tokens": 97
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_7afe414bfe",
+                "type": "output_text"
+              }
+            ],
+            "id": "166e2ec53ca86a186504eca0db0cc138_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 2166,
+      "first_byte_ms": 2166,
+      "response": {
+        "created_at": 1791687854,
+        "id": "4656e1d9b9fe55d388608dc67eaa865b",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.3",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "测试说明：请输入任意文字，系统将自动检测语言并给出回复，用于验证对话功能是否正常。",
+                "type": "output_text"
+              }
+            ],
+            "id": "4656e1d9b9fe55d388608dc67eaa865b_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 32,
+          "output_tokens": 26,
+          "total_tokens": 58
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "测试说明：请输入任意文字，系统将自动检测语言并给出回复，用于验证对话功能是否正常。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 32,
+          "output_tokens": 26,
+          "total_tokens": 58
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "测试说明：请输入任意文字，系统将自动检测语言并给出回复，用于验证对话功能是否正常。",
+                "type": "output_text"
+              }
+            ],
+            "id": "4656e1d9b9fe55d388608dc67eaa865b_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "image",
+      "status": "fail",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 5966,
+      "first_byte_ms": 5966,
+      "response": {
+        "created_at": 1791687856,
+        "id": "d6a1d0127569d174d17d52bf5dcdde01",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.3",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "抱歉，我目前无法查看或处理图片内容（当前模型不支持图像输入）。\n\n如果您想分析图片颜色，可以：\n1. **切换到支持图像的多模态模型**（如支持视觉能力的模型）\n2. **用文字描述图片**，我可以帮您解答\n3. **使用取色工具**（如 Photoshop、在线取色器）获取准确颜色值\n\n请问还有其他可以帮到您的吗？",
+                "type": "output_text"
+              }
+            ],
+            "id": "d6a1d0127569d174d17d52bf5dcdde01_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 75,
+          "output_tokens": 92,
+          "total_tokens": 167
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "抱歉，我目前无法查看或处理图片内容（当前模型不支持图像输入）。\n\n如果您想分析图片颜色，可以：\n1. **切换到支持图像的多模态模型**（如支持视觉能力的模型）\n2. **用文字描述图片**，我可以帮您解答\n3. **使用取色工具**（如 Photoshop、在线取色器）获取准确颜色值\n\n请问还有其他可以帮到您的吗？",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 75,
+          "output_tokens": 92,
+          "total_tokens": 167
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "抱歉，我目前无法查看或处理图片内容（当前模型不支持图像输入）。\n\n如果您想分析图片颜色，可以：\n1. **切换到支持图像的多模态模型**（如支持视觉能力的模型）\n2. **用文字描述图片**，我可以帮您解答\n3. **使用取色工具**（如 Photoshop、在线取色器）获取准确颜色值\n\n请问还有其他可以帮到您的吗？",
+                "type": "output_text"
+              }
+            ],
+            "id": "d6a1d0127569d174d17d52bf5dcdde01_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV9iYmU3MTBlZmJl"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3078,
+      "first_byte_ms": 3078,
+      "response": {
+        "created_at": 1791687862,
+        "id": "1f37ebb2e454f08a26cad36909a4544f",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.3",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "1f37ebb2e454f08a26cad36909a4544f_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "The user asks to output only the test_value from the attachment, and they provide it themselves: test_value=probe_bbe710efbe. There's no actual attachment, but the value is in the prompt. Output the value.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_bbe710efbe",
+                "type": "output_text"
+              }
+            ],
+            "id": "1f37ebb2e454f08a26cad36909a4544f_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 39,
+          "output_tokens": 57,
+          "total_tokens": 96
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_bbe710efbe",
+        "reasoning_chars": 205,
+        "tools": [],
+        "usage": {
+          "input_tokens": 39,
+          "output_tokens": 57,
+          "total_tokens": 96
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "1f37ebb2e454f08a26cad36909a4544f_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "The user asks to output only the test_value from the attachment, and they provide it themselves: test_value=probe_bbe710efbe. There's no actual attachment, but the value is in the prompt. Output the value.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_bbe710efbe",
+                "type": "output_text"
+              }
+            ],
+            "id": "1f37ebb2e454f08a26cad36909a4544f_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_bbe710efbe"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1824,
+      "first_byte_ms": 1824,
+      "response": {
+        "content": [
+          {
+            "text": "probe_bbe710efbe",
+            "type": "text"
+          }
+        ],
+        "id": "5269d014934e5b6da7bdc3e00c073731",
+        "model": "global:glm-5.3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 9
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_bbe710efbe",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 9
+        },
+        "output": [
+          {
+            "text": "probe_bbe710efbe",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 1937,
+      "first_byte_ms": 1849,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "c70e720bddf7f022d9400afe168c1565",
+              "model": "glm-5.3",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "thinking": "",
+              "type": "thinking"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "23",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "×",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "19",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "=",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "4",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "37",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "text": "",
+              "type": "text"
+            },
+            "index": 1,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "4",
+              "type": "text_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "37",
+              "type": "text_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 1,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "end_turn"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 34,
+              "output_tokens": 10
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "437",
+        "reasoning_chars": 9,
+        "tools": [],
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 10
+        },
+        "output": [
+          {
+            "thinking": "23×19=437",
+            "type": "thinking"
+          },
+          {
+            "text": "437",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_bbe710efbe"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1885,
+      "first_byte_ms": 1885,
+      "response": {
+        "content": [
+          {
+            "thinking": "User asked to only output the test code.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_bbe710efbe",
+            "type": "text"
+          }
+        ],
+        "id": "cc3bfb59048846e2c1f92c151047b4e2",
+        "model": "global:glm-5.3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 44,
+          "output_tokens": 18
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_bbe710efbe",
+        "reasoning_chars": 40,
+        "tools": [],
+        "usage": {
+          "input_tokens": 44,
+          "output_tokens": 18
+        },
+        "output": [
+          {
+            "thinking": "User asked to only output the test code.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_bbe710efbe",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_bbe710efbe。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 1734,
+      "first_byte_ms": 1611,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "94eff8636950dfb311fcf8b5abc9995e",
+              "model": "glm-5.3",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "id": "call_6fd7fe6c51ee42959f212407",
+              "input": {},
+              "name": "probe_echo",
+              "type": "tool_use"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "{",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\"value\": \"probe_bbe",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "710efbe\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "}",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "tool_use"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 199,
+              "output_tokens": 18
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "tool_use",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_6fd7fe6c51ee42959f212407",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_bbe710efbe"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 199,
+          "output_tokens": 18
+        },
+        "output": [
+          {
+            "id": "call_6fd7fe6c51ee42959f212407",
+            "input": {
+              "value": "probe_bbe710efbe"
+            },
+            "name": "probe_echo",
+            "type": "tool_use"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_bbe710efbe。不要自己假装执行。"
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "id": "call_6fd7fe6c51ee42959f212407",
+                "input": {
+                  "value": "probe_bbe710efbe"
+                },
+                "name": "probe_echo",
+                "type": "tool_use"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "call_6fd7fe6c51ee42959f212407",
+                "content": "result_65dad526bb"
+              },
+              {
+                "type": "text",
+                "text": "只输出刚才工具返回的结果，不要再调用工具。"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1627,
+      "first_byte_ms": 1627,
+      "response": {
+        "content": [
+          {
+            "text": "result_65dad526bb",
+            "type": "text"
+          }
+        ],
+        "id": "145e9a28d56a35263a7be7a5300e381a",
+        "model": "global:glm-5.3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 240,
+          "output_tokens": 9
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "result_65dad526bb",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 240,
+          "output_tokens": 9
+        },
+        "output": [
+          {
+            "text": "result_65dad526bb",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "fail",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2543,
+      "first_byte_ms": 2543,
+      "response": {
+        "content": [
+          {
+            "text": "我目前无法查看图片内容（当前模型不支持图像输入）。\n\n如需识别图片颜色，请您：\n1. 切换到支持图像的多模态模型\n2. 或者用文字描述图片内容，我可以据此回答",
+            "type": "text"
+          }
+        ],
+        "id": "b0d07841a31b3bbbcc46577ab66aea74",
+        "model": "global:glm-5.3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 75,
+          "output_tokens": 49
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "我目前无法查看图片内容（当前模型不支持图像输入）。\n\n如需识别图片颜色，请您：\n1. 切换到支持图像的多模态模型\n2. 或者用文字描述图片内容，我可以据此回答",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 75,
+          "output_tokens": 49
+        },
+        "output": [
+          {
+            "text": "我目前无法查看图片内容（当前模型不支持图像输入）。\n\n如需识别图片颜色，请您：\n1. 切换到支持图像的多模态模型\n2. 或者用文字描述图片内容，我可以据此回答",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_bbe710efbe"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2778,
+      "first_byte_ms": 2778,
+      "response": {
+        "content": [
+          {
+            "thinking": "User references an attachment, but there's no attachment content visible. They say \"test_value=probe_bbe710efbe\" in the message itself. So output that value.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_bbe710efbe",
+            "type": "text"
+          }
+        ],
+        "id": "d1c5d2cc63481f28f1bea13c84c21727",
+        "model": "global:glm-5.3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 39,
+          "output_tokens": 46
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_bbe710efbe",
+        "reasoning_chars": 157,
+        "tools": [],
+        "usage": {
+          "input_tokens": 39,
+          "output_tokens": 46
+        },
+        "output": [
+          {
+            "thinking": "User references an attachment, but there's no attachment content visible. They say \"test_value=probe_bbe710efbe\" in the message itself. So output that value.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_bbe710efbe",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T03:04:40.228731+00:00"
+}

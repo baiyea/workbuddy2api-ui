@@ -1,0 +1,4247 @@
+{
+  "started_at": "2026-10-11T03:04:40.465372+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:kimi-k3",
+      "id": "global:kimi-k3"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_4b07884c99"
+      },
+      "http_status": 200,
+      "elapsed_ms": 4324,
+      "first_byte_ms": 4324,
+      "response": {
+        "created_at": 1791687881,
+        "id": "67c6a44eb22003d788183bcca674b9df",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "kimi-k3",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "67c6a44eb22003d788183bcca674b9df_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求只输出测试标记，不要解释。需要最终只包含 probe_4b07884c99。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_4b07884c99",
+                "type": "output_text"
+              }
+            ],
+            "id": "67c6a44eb22003d788183bcca674b9df_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 121,
+          "output_tokens": 47,
+          "total_tokens": 168
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_4b07884c99",
+        "reasoning_chars": 42,
+        "tools": [],
+        "usage": {
+          "input_tokens": 121,
+          "output_tokens": 47,
+          "total_tokens": 168
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "67c6a44eb22003d788183bcca674b9df_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求只输出测试标记，不要解释。需要最终只包含 probe_4b07884c99。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_4b07884c99",
+                "type": "output_text"
+              }
+            ],
+            "id": "67c6a44eb22003d788183bcca674b9df_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 4230,
+      "first_byte_ms": 3455,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687884,
+              "id": "resp_95fe35302c4f4bf1bee2e49f6340003c",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:kimi-k3",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.added",
+          "data": {
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "",
+              "type": "summary_text"
+            },
+            "sequence_number": 2,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "用户",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "要求",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "计算",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 5,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 6,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "23",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 7,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "*",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 8,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "19",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 9,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "，",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 10,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "只在",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 11,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "最终",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 12,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "答案",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 13,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "输出",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 14,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "结果",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 15,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "数字",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 16,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 17,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "需要",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 18,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "仅",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 19,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "最终",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 20,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "答案",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 21,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "输出",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 22,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "数字",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 23,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 24,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "计算",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 25,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "：",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 26,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "23",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 27,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "*",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 28,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "19",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 29,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "=",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 30,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "23",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 31,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "*",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 32,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "20",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 33,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "-",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 34,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "23",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 35,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "=",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 36,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "460",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 37,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "-",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 38,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "23",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 39,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "=",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 40,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "437",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 41,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 42,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "最终",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 43,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "只",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 44,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "输出",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 45,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "437",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 46,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 47,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_95fe35302c4f4bf1bee2e49f6340003c_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 48,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 49,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_msg_0",
+            "output_index": 1,
+            "sequence_number": 50,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_msg_0",
+            "output_index": 1,
+            "sequence_number": 51,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 52,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_95fe35302c4f4bf1bee2e49f6340003c_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 53,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.done",
+          "data": {
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 54,
+            "summary_index": 0,
+            "text": "用户要求计算 23*19，只在最终答案输出结果数字。需要仅最终答案输出数字。计算：23*19=23*20-23=460-23=437。最终只输出437。",
+            "type": "response.reasoning_summary_text.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.done",
+          "data": {
+            "item_id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "用户要求计算 23*19，只在最终答案输出结果数字。需要仅最终答案输出数字。计算：23*19=23*20-23=460-23=437。最终只输出437。",
+              "type": "summary_text"
+            },
+            "sequence_number": 55,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "summary": [
+                {
+                  "text": "用户要求计算 23*19，只在最终答案输出结果数字。需要仅最终答案输出数字。计算：23*19=23*20-23=460-23=437。最终只输出437。",
+                  "type": "summary_text"
+                }
+              ],
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 56,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687884,
+              "id": "resp_95fe35302c4f4bf1bee2e49f6340003c",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:kimi-k3",
+              "object": "response",
+              "output": [
+                {
+                  "content": null,
+                  "id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "summary": [
+                    {
+                      "text": "用户要求计算 23*19，只在最终答案输出结果数字。需要仅最终答案输出数字。计算：23*19=23*20-23=460-23=437。最终只输出437。",
+                      "type": "summary_text"
+                    }
+                  ],
+                  "type": "reasoning"
+                },
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_95fe35302c4f4bf1bee2e49f6340003c_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 118,
+                "output_tokens": 62,
+                "total_tokens": 180
+              },
+              "user": null
+            },
+            "sequence_number": 57,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 76,
+        "tools": [],
+        "usage": {
+          "input_tokens": 118,
+          "output_tokens": 62,
+          "total_tokens": 180
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "resp_95fe35302c4f4bf1bee2e49f6340003c_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求计算 23*19，只在最终答案输出结果数字。需要仅最终答案输出数字。计算：23*19=23*20-23=460-23=437。最终只输出437。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_95fe35302c4f4bf1bee2e49f6340003c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_4b07884c99"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3457,
+      "first_byte_ms": 3457,
+      "response": {
+        "created_at": 1791687889,
+        "id": "cb1e142c64c9b20e032c67d4a4460a9c",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "kimi-k3",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "cb1e142c64c9b20e032c67d4a4460a9c_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求只输出刚才的测试码。需要输出 probe_4b07884c99。确保只输出该内容，无额外文字。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_4b07884c99",
+                "type": "output_text"
+              }
+            ],
+            "id": "cb1e142c64c9b20e032c67d4a4460a9c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 158,
+          "output_tokens": 54,
+          "total_tokens": 212
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_4b07884c99",
+        "reasoning_chars": 51,
+        "tools": [],
+        "usage": {
+          "input_tokens": 158,
+          "output_tokens": 54,
+          "total_tokens": 212
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "cb1e142c64c9b20e032c67d4a4460a9c_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求只输出刚才的测试码。需要输出 probe_4b07884c99。确保只输出该内容，无额外文字。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_4b07884c99",
+                "type": "output_text"
+              }
+            ],
+            "id": "cb1e142c64c9b20e032c67d4a4460a9c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 5835,
+      "first_byte_ms": 3832,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687892,
+              "id": "resp_47d78623079d4252bb2e478a276c895d",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:kimi-k3",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.added",
+          "data": {
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "",
+              "type": "summary_text"
+            },
+            "sequence_number": 2,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "用户",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "要求",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "必须",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 5,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "调用",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 6,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " probe",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 7,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "_echo",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 8,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 9,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "工具",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 10,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "一次",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 11,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "，",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 12,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 13,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 14,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "参数",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 15,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "精确",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 16,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "为",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 17,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " probe",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 18,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 19,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "4",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 20,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "b",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 21,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "078",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 22,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "84",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 23,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "c",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 24,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "99",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 25,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "，",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 26,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "不要",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 27,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "假装",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 28,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "执行",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 29,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 30,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "需要",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 31,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "直接",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 32,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "调用",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 33,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "工具",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 34,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 35,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "现在",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 36,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "应",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 37,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "调用",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 38,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " functions",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 39,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".probe",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 40,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "_echo",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 41,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 42,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "需要",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 43,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "确保",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 44,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "参数",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 45,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "精确",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 46,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 47,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "之后",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 48,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "可能",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 49,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "简短",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 50,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "回应",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 51,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 52,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "不要",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 53,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "额外",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 54,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "内容",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 55,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 56,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "执行",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 57,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "工具",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 58,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "调用",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 59,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 60,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "probe_echo_0_cb7ff89e",
+              "content": null,
+              "id": "probe_echo_0_cb7ff89e",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 61,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"value\":\"",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 62,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "probe",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 63,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 64,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "4",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 65,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "b",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 66,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "078",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 67,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "84",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 68,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "c",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 69,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "99",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 70,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 71,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "}",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "output_index": 1,
+            "sequence_number": 72,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.done",
+          "data": {
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 73,
+            "summary_index": 0,
+            "text": "用户要求必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99，不要假装执行。需要直接调用工具。现在应调用 functions.probe_echo。需要确保参数精确。之后可能简短回应。不要额外内容。执行工具调用。",
+            "type": "response.reasoning_summary_text.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.done",
+          "data": {
+            "item_id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "用户要求必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99，不要假装执行。需要直接调用工具。现在应调用 functions.probe_echo。需要确保参数精确。之后可能简短回应。不要额外内容。执行工具调用。",
+              "type": "summary_text"
+            },
+            "sequence_number": 74,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "summary": [
+                {
+                  "text": "用户要求必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99，不要假装执行。需要直接调用工具。现在应调用 functions.probe_echo。需要确保参数精确。之后可能简短回应。不要额外内容。执行工具调用。",
+                  "type": "summary_text"
+                }
+              ],
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 75,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\":\"probe_4b07884c99\"}",
+            "item_id": "probe_echo_0_cb7ff89e",
+            "name": "probe_echo",
+            "output_index": 1,
+            "sequence_number": 76,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\":\"probe_4b07884c99\"}",
+              "call_id": "probe_echo_0_cb7ff89e",
+              "content": null,
+              "id": "probe_echo_0_cb7ff89e",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 1,
+            "sequence_number": 77,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687892,
+              "id": "resp_47d78623079d4252bb2e478a276c895d",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:kimi-k3",
+              "object": "response",
+              "output": [
+                {
+                  "content": null,
+                  "id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "summary": [
+                    {
+                      "text": "用户要求必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99，不要假装执行。需要直接调用工具。现在应调用 functions.probe_echo。需要确保参数精确。之后可能简短回应。不要额外内容。执行工具调用。",
+                      "type": "summary_text"
+                    }
+                  ],
+                  "type": "reasoning"
+                },
+                {
+                  "arguments": "{\"value\":\"probe_4b07884c99\"}",
+                  "call_id": "probe_echo_0_cb7ff89e",
+                  "content": null,
+                  "id": "probe_echo_0_cb7ff89e",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 218,
+                "output_tokens": 117,
+                "total_tokens": 335
+              },
+              "user": null
+            },
+            "sequence_number": 78,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 129,
+        "tools": [
+          {
+            "id": "probe_echo_0_cb7ff89e",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_4b07884c99"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 218,
+          "output_tokens": 117,
+          "total_tokens": 335
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99，不要假装执行。需要直接调用工具。现在应调用 functions.probe_echo。需要确保参数精确。之后可能简短回应。不要额外内容。执行工具调用。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "arguments": "{\"value\":\"probe_4b07884c99\"}",
+            "call_id": "probe_echo_0_cb7ff89e",
+            "content": null,
+            "id": "probe_echo_0_cb7ff89e",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99。不要自己假装执行。"
+          },
+          {
+            "content": null,
+            "id": "resp_47d78623079d4252bb2e478a276c895d_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99，不要假装执行。需要直接调用工具。现在应调用 functions.probe_echo。需要确保参数精确。之后可能简短回应。不要额外内容。执行工具调用。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "arguments": "{\"value\":\"probe_4b07884c99\"}",
+            "call_id": "probe_echo_0_cb7ff89e",
+            "content": null,
+            "id": "probe_echo_0_cb7ff89e",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "probe_echo_0_cb7ff89e",
+            "output": "result_480001b0b2"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 4182,
+      "first_byte_ms": 4182,
+      "response": {
+        "created_at": 1791687898,
+        "id": "19d685efece7ee688d4c244a0ec85a14",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "kimi-k3",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "19d685efece7ee688d4c244a0ec85a14_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "The user wants only output the tool result, no more tools. We have actual result in conversation: result_480001b0b2. Need final only that. Ensure no extra text.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_480001b0b2",
+                "type": "output_text"
+              }
+            ],
+            "id": "19d685efece7ee688d4c244a0ec85a14_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 246,
+          "output_tokens": 63,
+          "total_tokens": 309
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_480001b0b2",
+        "reasoning_chars": 160,
+        "tools": [],
+        "usage": {
+          "input_tokens": 246,
+          "output_tokens": 63,
+          "total_tokens": 309
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "19d685efece7ee688d4c244a0ec85a14_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "The user wants only output the tool result, no more tools. We have actual result in conversation: result_480001b0b2. Need final only that. Ensure no extra text.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_480001b0b2",
+                "type": "output_text"
+              }
+            ],
+            "id": "19d685efece7ee688d4c244a0ec85a14_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 7481,
+      "first_byte_ms": 7481,
+      "response": {
+        "created_at": 1791687906,
+        "id": "b5d1e7a88bfa9032db4626757bcdeefa",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "kimi-k3",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "b5d1e7a88bfa9032db4626757bcdeefa_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求用普通中文写一句测试说明，不要输出 JSON。需要只输出一句中文说明，不使用 JSON。确保最终不是 JSON，只是一句话。内容可以是：这是一句用于验证系统是否能按普通中文输出的测试说明。需要简洁。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一句用于验证系统能否用普通中文作答的测试说明。",
+                "type": "output_text"
+              }
+            ],
+            "id": "b5d1e7a88bfa9032db4626757bcdeefa_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 116,
+          "output_tokens": 81,
+          "total_tokens": 197
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "这是一句用于验证系统能否用普通中文作答的测试说明。",
+        "reasoning_chars": 103,
+        "tools": [],
+        "usage": {
+          "input_tokens": 116,
+          "output_tokens": 81,
+          "total_tokens": 197
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "b5d1e7a88bfa9032db4626757bcdeefa_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求用普通中文写一句测试说明，不要输出 JSON。需要只输出一句中文说明，不使用 JSON。确保最终不是 JSON，只是一句话。内容可以是：这是一句用于验证系统是否能按普通中文输出的测试说明。需要简洁。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一句用于验证系统能否用普通中文作答的测试说明。",
+                "type": "output_text"
+              }
+            ],
+            "id": "b5d1e7a88bfa9032db4626757bcdeefa_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 7308,
+      "first_byte_ms": 7308,
+      "response": {
+        "created_at": 1791687912,
+        "id": "cba7335f9bcc77b24e54a950ba07da0d",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "kimi-k3",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "cba7335f9bcc77b24e54a950ba07da0d_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求识别图片左半和右半颜色，按左到右只输出两个英文颜色词，以逗号分隔。需要分析图片：左边红色，右边蓝色。最终只输出 red,blue 或 red, blue？用户要求以逗号分隔，只输出两个英文颜色词。应输出 \"red,blue\" 无空格更稳妥。确保不多字。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "cba7335f9bcc77b24e54a950ba07da0d_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 144,
+          "output_tokens": 96,
+          "total_tokens": 240
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "red,blue",
+        "reasoning_chars": 130,
+        "tools": [],
+        "usage": {
+          "input_tokens": 144,
+          "output_tokens": 96,
+          "total_tokens": 240
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "cba7335f9bcc77b24e54a950ba07da0d_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求识别图片左半和右半颜色，按左到右只输出两个英文颜色词，以逗号分隔。需要分析图片：左边红色，右边蓝色。最终只输出 red,blue 或 red, blue？用户要求以逗号分隔，只输出两个英文颜色词。应输出 \"red,blue\" 无空格更稳妥。确保不多字。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "cba7335f9bcc77b24e54a950ba07da0d_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV80YjA3ODg0Yzk5"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 4092,
+      "first_byte_ms": 4092,
+      "response": {
+        "created_at": 1791687918,
+        "id": "19042e6c4b913a18ad6829f98685a05d",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "kimi-k3",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "19042e6c4b913a18ad6829f98685a05d_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求只输出附件中的 test_value 值，并且在提示中给出了 test_value=probe_4b07884c99。需要只输出该值，不要额外内容。最终只输出 probe_4b07884c99。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_4b07884c99",
+                "type": "output_text"
+              }
+            ],
+            "id": "19042e6c4b913a18ad6829f98685a05d_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 123,
+          "output_tokens": 73,
+          "total_tokens": 196
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_4b07884c99",
+        "reasoning_chars": 101,
+        "tools": [],
+        "usage": {
+          "input_tokens": 123,
+          "output_tokens": 73,
+          "total_tokens": 196
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "19042e6c4b913a18ad6829f98685a05d_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求只输出附件中的 test_value 值，并且在提示中给出了 test_value=probe_4b07884c99。需要只输出该值，不要额外内容。最终只输出 probe_4b07884c99。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_4b07884c99",
+                "type": "output_text"
+              }
+            ],
+            "id": "19042e6c4b913a18ad6829f98685a05d_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_4b07884c99"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 5358,
+      "first_byte_ms": 5357,
+      "response": {
+        "content": [
+          {
+            "thinking": "The user asks in Chinese to only output the test marker probe_4b07884c99 with no explanation. Need final exactly marker.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_4b07884c99",
+            "type": "text"
+          }
+        ],
+        "id": "69207e3c90631b5db172233eb54ac183",
+        "model": "global:kimi-k3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 121,
+          "output_tokens": 52
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_4b07884c99",
+        "reasoning_chars": 120,
+        "tools": [],
+        "usage": {
+          "input_tokens": 121,
+          "output_tokens": 52
+        },
+        "output": [
+          {
+            "thinking": "The user asks in Chinese to only output the test marker probe_4b07884c99 with no explanation. Need final exactly marker.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_4b07884c99",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 4968,
+      "first_byte_ms": 4627,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "d09b0e748c0e4eed25b0a2a40a129d7a",
+              "model": "kimi-k3",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "thinking": "",
+              "type": "thinking"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "23",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "*",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "19",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " =",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " ",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "437",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ".",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " User",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " wants",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " only",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " final",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " digit",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " result",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ".",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " Output",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " ",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "437",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " only",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ".",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "text": "",
+              "type": "text"
+            },
+            "index": 1,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "437",
+              "type": "text_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 1,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "end_turn"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 118,
+              "output_tokens": 36
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "437",
+        "reasoning_chars": 65,
+        "tools": [],
+        "usage": {
+          "input_tokens": 118,
+          "output_tokens": 36
+        },
+        "output": [
+          {
+            "thinking": "23*19 = 437. User wants only final digit result. Output 437 only.",
+            "type": "thinking"
+          },
+          {
+            "text": "437",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_4b07884c99"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 5737,
+      "first_byte_ms": 5737,
+      "response": {
+        "content": [
+          {
+            "thinking": "用户要求只输出刚才的测试码。测试码是 probe_4b07884c99。只输出该内容，无额外文字。",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_4b07884c99",
+            "type": "text"
+          }
+        ],
+        "id": "b5dae04158fc9f3ada937cd2dad5835c",
+        "model": "global:kimi-k3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 158,
+          "output_tokens": 54
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_4b07884c99",
+        "reasoning_chars": 49,
+        "tools": [],
+        "usage": {
+          "input_tokens": 158,
+          "output_tokens": 54
+        },
+        "output": [
+          {
+            "thinking": "用户要求只输出刚才的测试码。测试码是 probe_4b07884c99。只输出该内容，无额外文字。",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_4b07884c99",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 5908,
+      "first_byte_ms": 4404,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "71280f41bf27ff554ce12a30d4475694",
+              "model": "kimi-k3",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "thinking": "",
+              "type": "thinking"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "用户",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "要求",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "必须",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "调用",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " probe",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "_echo",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " ",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "工具",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "一次",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "，",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "value",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " ",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "参数",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "精确",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "为",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " probe",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "_",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "4",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "b",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "078",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "84",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "c",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "99",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "。",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "需要",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "实际",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "调用",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "工具",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "，",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "不能",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "假装",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "。",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "然后",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "简短",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "确认",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "。",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "确保",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " value",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " ",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "精确",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "。",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "id": "probe_echo_0_75d130ca",
+              "input": {},
+              "name": "probe_echo",
+              "type": "tool_use"
+            },
+            "index": 1,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "{\"value\":\"",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "probe",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "_",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "4",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "b",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "078",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "84",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "c",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "99",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\"",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "}",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 1,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "tool_use"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 218,
+              "output_tokens": 100
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "tool_use",
+        "text": "",
+        "reasoning_chars": 87,
+        "tools": [
+          {
+            "id": "probe_echo_0_75d130ca",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_4b07884c99"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 218,
+          "output_tokens": 100
+        },
+        "output": [
+          {
+            "thinking": "用户要求必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99。需要实际调用工具，不能假装。然后简短确认。确保 value 精确。",
+            "type": "thinking"
+          },
+          {
+            "id": "probe_echo_0_75d130ca",
+            "input": {
+              "value": "probe_4b07884c99"
+            },
+            "name": "probe_echo",
+            "type": "tool_use"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99。不要自己假装执行。"
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "thinking": "用户要求必须调用 probe_echo 工具一次，value 参数精确为 probe_4b07884c99。需要实际调用工具，不能假装。然后简短确认。确保 value 精确。",
+                "type": "thinking"
+              },
+              {
+                "id": "probe_echo_0_75d130ca",
+                "input": {
+                  "value": "probe_4b07884c99"
+                },
+                "name": "probe_echo",
+                "type": "tool_use"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "probe_echo_0_75d130ca",
+                "content": "result_7ed4465591"
+              },
+              {
+                "type": "text",
+                "text": "只输出刚才工具返回的结果，不要再调用工具。"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 4472,
+      "first_byte_ms": 4472,
+      "response": {
+        "content": [
+          {
+            "thinking": "用户要求只输出刚才工具返回结果，不要调用工具。工具返回是 result_7ed4465591。最终只输出该内容。",
+            "type": "thinking"
+          },
+          {
+            "text": "result_7ed4465591",
+            "type": "text"
+          }
+        ],
+        "id": "7ef27230909e16498433c1fad2927d83",
+        "model": "global:kimi-k3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 333,
+          "output_tokens": 53
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "result_7ed4465591",
+        "reasoning_chars": 56,
+        "tools": [],
+        "usage": {
+          "input_tokens": 333,
+          "output_tokens": 53
+        },
+        "output": [
+          {
+            "thinking": "用户要求只输出刚才工具返回结果，不要调用工具。工具返回是 result_7ed4465591。最终只输出该内容。",
+            "type": "thinking"
+          },
+          {
+            "text": "result_7ed4465591",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 6668,
+      "first_byte_ms": 6668,
+      "response": {
+        "content": [
+          {
+            "thinking": "用户要求识别图片左半和右半颜色，只输出两个英文颜色词逗号分隔。观察图片：左半红色，右半蓝色。需要最终仅输出 red,blue。确保没有多余文字。",
+            "type": "thinking"
+          },
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "id": "1dc323b807d0bdc8358ea6c46c6c50a6",
+        "model": "global:kimi-k3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 144,
+          "output_tokens": 62
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "red,blue",
+        "reasoning_chars": 72,
+        "tools": [],
+        "usage": {
+          "input_tokens": 144,
+          "output_tokens": 62
+        },
+        "output": [
+          {
+            "thinking": "用户要求识别图片左半和右半颜色，只输出两个英文颜色词逗号分隔。观察图片：左半红色，右半蓝色。需要最终仅输出 red,blue。确保没有多余文字。",
+            "type": "thinking"
+          },
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:kimi-k3",
+      "model_id": "global:kimi-k3",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:kimi-k3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_4b07884c99"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 5550,
+      "first_byte_ms": 5550,
+      "response": {
+        "content": [
+          {
+            "thinking": "The user in Chinese says: \"Only output the test_value value in the attachment. test_value=probe_4b07884c99\" They included the value explicitly. Need output only probe_4b07884c99. Ensure no extra text.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_4b07884c99",
+            "type": "text"
+          }
+        ],
+        "id": "a3d66556dc67d3b999c623463900865e",
+        "model": "global:kimi-k3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 123,
+          "output_tokens": 76
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_4b07884c99",
+        "reasoning_chars": 200,
+        "tools": [],
+        "usage": {
+          "input_tokens": 123,
+          "output_tokens": 76
+        },
+        "output": [
+          {
+            "thinking": "The user in Chinese says: \"Only output the test_value value in the attachment. test_value=probe_4b07884c99\" They included the value explicitly. Need output only probe_4b07884c99. Ensure no extra text.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_4b07884c99",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T03:06:00.130485+00:00"
+}

@@ -1,0 +1,904 @@
+{
+  "started_at": "2026-10-11T03:07:19.233644+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:gpt-5.3-codex",
+      "id": "global:gpt-5.3-codex"
+    },
+    {
+      "name": "global:gemini-3.5-flash",
+      "id": "global:gemini-3.5-flash"
+    }
+  ],
+  "checks": [
+    "tools"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_4befed523d。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 5540,
+      "first_byte_ms": 5304,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791688039,
+              "id": "resp_c8eca0582d7241ce8db9f56b9bd3647d",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.3-codex",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+              "content": null,
+              "id": "call_355YxiCdowajpZ4RXjr5vLpA",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 2,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\":\"",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 4,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "probe",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 5,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "4",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 7,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "bef",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 8,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "ed",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 9,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "523",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 10,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "d",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 11,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"}",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output_index": 0,
+            "sequence_number": 12,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\":\"probe_4befed523d\"}",
+            "item_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "name": "probe_echo",
+            "output_index": 0,
+            "sequence_number": 13,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\":\"probe_4befed523d\"}",
+              "call_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+              "content": null,
+              "id": "call_355YxiCdowajpZ4RXjr5vLpA",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 0,
+            "sequence_number": 14,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791688039,
+              "id": "resp_c8eca0582d7241ce8db9f56b9bd3647d",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.3-codex",
+              "object": "response",
+              "output": [
+                {
+                  "arguments": "{\"value\":\"probe_4befed523d\"}",
+                  "call_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+                  "content": null,
+                  "id": "call_355YxiCdowajpZ4RXjr5vLpA",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 88,
+                "output_tokens": 93,
+                "total_tokens": 181
+              },
+              "user": null
+            },
+            "sequence_number": 15,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_4befed523d"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 88,
+          "output_tokens": 93,
+          "total_tokens": 181
+        },
+        "output": [
+          {
+            "arguments": "{\"value\":\"probe_4befed523d\"}",
+            "call_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "content": null,
+            "id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_4befed523d。不要自己假装执行。"
+          },
+          {
+            "arguments": "{\"value\":\"probe_4befed523d\"}",
+            "call_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "content": null,
+            "id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "call_355YxiCdowajpZ4RXjr5vLpA",
+            "output": "result_db120c2d6d"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 3697,
+      "first_byte_ms": 3697,
+      "response": {
+        "created_at": 1791688044,
+        "id": "56ba89348ebecb65fe0e0cd60bd89407",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.3-codex",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_db120c2d6d",
+                "type": "output_text"
+              }
+            ],
+            "id": "56ba89348ebecb65fe0e0cd60bd89407_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 106,
+          "output_tokens": 12,
+          "total_tokens": 118
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_db120c2d6d",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 106,
+          "output_tokens": 12,
+          "total_tokens": 118
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_db120c2d6d",
+                "type": "output_text"
+              }
+            ],
+            "id": "56ba89348ebecb65fe0e0cd60bd89407_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_4befed523d。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 5712,
+      "first_byte_ms": 5390,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "ea3d01f1333975fd665617d2e16fabcf",
+              "model": "gpt-5.3-codex",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "id": "call_tTcVIoDPol0l8VbXVDWV5mQN",
+              "input": {},
+              "name": "probe_echo",
+              "type": "tool_use"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "{\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "value",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\":\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "probe",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "_",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "4",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "bef",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "ed",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "523",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "d",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\"}",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "tool_use"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 88,
+              "output_tokens": 94
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "tool_use",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_tTcVIoDPol0l8VbXVDWV5mQN",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_4befed523d"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 88,
+          "output_tokens": 94
+        },
+        "output": [
+          {
+            "id": "call_tTcVIoDPol0l8VbXVDWV5mQN",
+            "input": {
+              "value": "probe_4befed523d"
+            },
+            "name": "probe_echo",
+            "type": "tool_use"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_4befed523d。不要自己假装执行。"
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "id": "call_tTcVIoDPol0l8VbXVDWV5mQN",
+                "input": {
+                  "value": "probe_4befed523d"
+                },
+                "name": "probe_echo",
+                "type": "tool_use"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "call_tTcVIoDPol0l8VbXVDWV5mQN",
+                "content": "result_e283ca9ddb"
+              },
+              {
+                "type": "text",
+                "text": "只输出刚才工具返回的结果，不要再调用工具。"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2716,
+      "first_byte_ms": 2716,
+      "response": {
+        "content": [
+          {
+            "text": "result_e283ca9ddb",
+            "type": "text"
+          }
+        ],
+        "id": "d66aa3f0ab51812b74487c971b9a3dc7",
+        "model": "global:gpt-5.3-codex",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 149,
+          "output_tokens": 38
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "result_e283ca9ddb",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 149,
+          "output_tokens": 38
+        },
+        "output": [
+          {
+            "text": "result_e283ca9ddb",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "error",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_79a8ddd1fd。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 502,
+      "elapsed_ms": 1960,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"}}\n"
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "error",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_79a8ddd1fd。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 502,
+      "elapsed_ms": 2356,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T03:07:41.243413+00:00"
+}

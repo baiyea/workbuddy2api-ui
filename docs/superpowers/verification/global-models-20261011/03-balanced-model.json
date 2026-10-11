@@ -1,0 +1,1984 @@
+{
+  "started_at": "2026-10-11T02:50:29.979436+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:balanced-model",
+      "id": "global:balanced-model"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_fdc8f9ebe2"
+      },
+      "http_status": 200,
+      "elapsed_ms": 1655,
+      "first_byte_ms": 1655,
+      "response": {
+        "created_at": 1791687029,
+        "id": "ed669a6e1cbd199a51e39b0d36c510b3",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "balanced-model",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_fdc8f9ebe2",
+                "type": "output_text"
+              }
+            ],
+            "id": "ed669a6e1cbd199a51e39b0d36c510b3_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 11,
+          "total_tokens": 46
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_fdc8f9ebe2",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 11,
+          "total_tokens": 46
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_fdc8f9ebe2",
+                "type": "output_text"
+              }
+            ],
+            "id": "ed669a6e1cbd199a51e39b0d36c510b3_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 1478,
+      "first_byte_ms": 1441,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687031,
+              "id": "resp_8af11c420c2348ad9a400e874512e00e",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:balanced-model",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_8af11c420c2348ad9a400e874512e00e_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_8af11c420c2348ad9a400e874512e00e_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 2,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_8af11c420c2348ad9a400e874512e00e_msg_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_8af11c420c2348ad9a400e874512e00e_msg_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_8af11c420c2348ad9a400e874512e00e_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 5,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_8af11c420c2348ad9a400e874512e00e_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687031,
+              "id": "resp_8af11c420c2348ad9a400e874512e00e",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:balanced-model",
+              "object": "response",
+              "output": [
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_8af11c420c2348ad9a400e874512e00e_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 32,
+                "output_tokens": 4,
+                "total_tokens": 36
+              },
+              "user": null
+            },
+            "sequence_number": 7,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 32,
+          "output_tokens": 4,
+          "total_tokens": 36
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_8af11c420c2348ad9a400e874512e00e_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_fdc8f9ebe2"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1622,
+      "first_byte_ms": 1622,
+      "response": {
+        "created_at": 1791687032,
+        "id": "6fa20c78eb7e0819fefb95d6f9569421",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "balanced-model",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_fdc8f9ebe2",
+                "type": "output_text"
+              }
+            ],
+            "id": "6fa20c78eb7e0819fefb95d6f9569421_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 48,
+          "output_tokens": 11,
+          "total_tokens": 59
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_fdc8f9ebe2",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 48,
+          "output_tokens": 11,
+          "total_tokens": 59
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_fdc8f9ebe2",
+                "type": "output_text"
+              }
+            ],
+            "id": "6fa20c78eb7e0819fefb95d6f9569421_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_fdc8f9ebe2。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 2154,
+      "first_byte_ms": 2046,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687034,
+              "id": "resp_fbebacd5180747bab25302a8a5b3c482",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:balanced-model",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "probe_echo_0_e876a143",
+              "content": null,
+              "id": "probe_echo_0_e876a143",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 2,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\":",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 4,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": " \"",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 5,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "probe",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_f",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 7,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "dc",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 8,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "8",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 9,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "f",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 10,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "9",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 11,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "ebe",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 12,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "2",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 13,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"}",
+            "item_id": "probe_echo_0_e876a143",
+            "output_index": 0,
+            "sequence_number": 14,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\": \"probe_fdc8f9ebe2\"}",
+            "item_id": "probe_echo_0_e876a143",
+            "name": "probe_echo",
+            "output_index": 0,
+            "sequence_number": 15,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\": \"probe_fdc8f9ebe2\"}",
+              "call_id": "probe_echo_0_e876a143",
+              "content": null,
+              "id": "probe_echo_0_e876a143",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 0,
+            "sequence_number": 16,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687034,
+              "id": "resp_fbebacd5180747bab25302a8a5b3c482",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:balanced-model",
+              "object": "response",
+              "output": [
+                {
+                  "arguments": "{\"value\": \"probe_fdc8f9ebe2\"}",
+                  "call_id": "probe_echo_0_e876a143",
+                  "content": null,
+                  "id": "probe_echo_0_e876a143",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 98,
+                "output_tokens": 25,
+                "total_tokens": 123
+              },
+              "user": null
+            },
+            "sequence_number": 17,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "probe_echo_0_e876a143",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_fdc8f9ebe2"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 98,
+          "output_tokens": 25,
+          "total_tokens": 123
+        },
+        "output": [
+          {
+            "arguments": "{\"value\": \"probe_fdc8f9ebe2\"}",
+            "call_id": "probe_echo_0_e876a143",
+            "content": null,
+            "id": "probe_echo_0_e876a143",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_fdc8f9ebe2。不要自己假装执行。"
+          },
+          {
+            "arguments": "{\"value\": \"probe_fdc8f9ebe2\"}",
+            "call_id": "probe_echo_0_e876a143",
+            "content": null,
+            "id": "probe_echo_0_e876a143",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "probe_echo_0_e876a143",
+            "output": "result_0838aa5089"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 1718,
+      "first_byte_ms": 1717,
+      "response": {
+        "created_at": 1791687036,
+        "id": "57c38ca1dc0f291256eb0e57743073e5",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "balanced-model",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_0838aa5089",
+                "type": "output_text"
+              }
+            ],
+            "id": "57c38ca1dc0f291256eb0e57743073e5_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 108,
+          "output_tokens": 10,
+          "total_tokens": 118
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_0838aa5089",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 108,
+          "output_tokens": 10,
+          "total_tokens": 118
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_0838aa5089",
+                "type": "output_text"
+              }
+            ],
+            "id": "57c38ca1dc0f291256eb0e57743073e5_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "global:balanced-model",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 2244,
+      "first_byte_ms": 2244,
+      "response": {
+        "created_at": 1791687038,
+        "id": "37ef438b1eab20ef49e8bb2d13aca665",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "balanced-model",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "请点击页面右上角的“登录”按钮，输入您的手机号和验证码后，即可进入个人中心查看订单详情。",
+                "type": "output_text"
+              }
+            ],
+            "id": "37ef438b1eab20ef49e8bb2d13aca665_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 30,
+          "output_tokens": 27,
+          "total_tokens": 57
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "请点击页面右上角的“登录”按钮，输入您的手机号和验证码后，即可进入个人中心查看订单详情。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 30,
+          "output_tokens": 27,
+          "total_tokens": 57
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "请点击页面右上角的“登录”按钮，输入您的手机号和验证码后，即可进入个人中心查看订单详情。",
+                "type": "output_text"
+              }
+            ],
+            "id": "37ef438b1eab20ef49e8bb2d13aca665_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1705,
+      "first_byte_ms": 1705,
+      "response": {
+        "created_at": 1791687040,
+        "id": "612ecb96160f0d4d197f7e009f4171cd",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "balanced-model",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "Red, Blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "612ecb96160f0d4d197f7e009f4171cd_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 54,
+          "output_tokens": 6,
+          "total_tokens": 60
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "Red, Blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 54,
+          "output_tokens": 6,
+          "total_tokens": 60
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "Red, Blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "612ecb96160f0d4d197f7e009f4171cd_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV9mZGM4ZjllYmUy"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1988,
+      "first_byte_ms": 1988,
+      "response": {
+        "created_at": 1791687042,
+        "id": "40496dfc7056fd2f5eab49075f071300",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "balanced-model",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_fdc8f9ebe2",
+                "type": "output_text"
+              }
+            ],
+            "id": "40496dfc7056fd2f5eab49075f071300_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 11,
+          "total_tokens": 48
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_fdc8f9ebe2",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 11,
+          "total_tokens": 48
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_fdc8f9ebe2",
+                "type": "output_text"
+              }
+            ],
+            "id": "40496dfc7056fd2f5eab49075f071300_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_fdc8f9ebe2"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1637,
+      "first_byte_ms": 1637,
+      "response": {
+        "content": [
+          {
+            "text": "probe_fdc8f9ebe2",
+            "type": "text"
+          }
+        ],
+        "id": "97c2f4a837619f5f36d69edc91eeb112",
+        "model": "global:balanced-model",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 11
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_fdc8f9ebe2",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 11
+        },
+        "output": [
+          {
+            "text": "probe_fdc8f9ebe2",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 1452,
+      "first_byte_ms": 1444,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "63d80790093f56df59567ee54b7b07f2",
+              "model": "balanced-model",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "text": "",
+              "type": "text"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "437",
+              "type": "text_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "end_turn"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 32,
+              "output_tokens": 4
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 32,
+          "output_tokens": 4
+        },
+        "output": [
+          {
+            "text": "437",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_fdc8f9ebe2"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1849,
+      "first_byte_ms": 1849,
+      "response": {
+        "content": [
+          {
+            "text": "probe_fdc8f9ebe2",
+            "type": "text"
+          }
+        ],
+        "id": "825ecdb90553d3c2d0dd487fdcc514eb",
+        "model": "global:balanced-model",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 48,
+          "output_tokens": 11
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_fdc8f9ebe2",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 48,
+          "output_tokens": 11
+        },
+        "output": [
+          {
+            "text": "probe_fdc8f9ebe2",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_fdc8f9ebe2。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2361,
+      "first_byte_ms": 2357,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "4254939d4f4d3964d6080565223b0c14",
+              "model": "balanced-model",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "id": "probe_echo_0_7ba862df",
+              "input": {},
+              "name": "probe_echo",
+              "type": "tool_use"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "{\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "value",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\":\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "probe",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "_f",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "dc",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "8",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "f",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "9",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "ebe",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "2",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\"}",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "tool_use"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 98,
+              "output_tokens": 24
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "tool_use",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "probe_echo_0_7ba862df",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_fdc8f9ebe2"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 98,
+          "output_tokens": 24
+        },
+        "output": [
+          {
+            "id": "probe_echo_0_7ba862df",
+            "input": {
+              "value": "probe_fdc8f9ebe2"
+            },
+            "name": "probe_echo",
+            "type": "tool_use"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_fdc8f9ebe2。不要自己假装执行。"
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "id": "probe_echo_0_7ba862df",
+                "input": {
+                  "value": "probe_fdc8f9ebe2"
+                },
+                "name": "probe_echo",
+                "type": "tool_use"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "probe_echo_0_7ba862df",
+                "content": "result_dd486dd785"
+              },
+              {
+                "type": "text",
+                "text": "只输出刚才工具返回的结果，不要再调用工具。"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1736,
+      "first_byte_ms": 1736,
+      "response": {
+        "content": [
+          {
+            "text": "result_dd486dd785",
+            "type": "text"
+          }
+        ],
+        "id": "30e55441a237ec4f00da083667b58490",
+        "model": "global:balanced-model",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 159,
+          "output_tokens": 8
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "result_dd486dd785",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 159,
+          "output_tokens": 8
+        },
+        "output": [
+          {
+            "text": "result_dd486dd785",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1627,
+      "first_byte_ms": 1627,
+      "response": {
+        "content": [
+          {
+            "text": "red, blue",
+            "type": "text"
+          }
+        ],
+        "id": "7cd10cb3de2572628608ecff3b51aa5a",
+        "model": "global:balanced-model",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 54,
+          "output_tokens": 6
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "red, blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 54,
+          "output_tokens": 6
+        },
+        "output": [
+          {
+            "text": "red, blue",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:balanced-model",
+      "model_id": "global:balanced-model",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:balanced-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_fdc8f9ebe2"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1651,
+      "first_byte_ms": 1651,
+      "response": {
+        "content": [
+          {
+            "text": "probe_fdc8f9ebe2",
+            "type": "text"
+          }
+        ],
+        "id": "68f34eb0425828d38267eea359e12c33",
+        "model": "global:balanced-model",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 11
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_fdc8f9ebe2",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 11
+        },
+        "output": [
+          {
+            "text": "probe_fdc8f9ebe2",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T02:50:56.945867+00:00"
+}

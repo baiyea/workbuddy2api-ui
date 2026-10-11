@@ -1,0 +1,3563 @@
+{
+  "started_at": "2026-10-11T03:02:00.384108+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:gpt-5.3-codex",
+      "id": "global:gpt-5.3-codex"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_ad26516dc7"
+      },
+      "http_status": 200,
+      "elapsed_ms": 5341,
+      "first_byte_ms": 5341,
+      "response": {
+        "created_at": 1791687720,
+        "id": "176b873fb8ddce96745a45ae14f5707b",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.3-codex",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_ad26516dc7",
+                "type": "output_text"
+              }
+            ],
+            "id": "176b873fb8ddce96745a45ae14f5707b_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 33,
+          "output_tokens": 31,
+          "total_tokens": 64
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_ad26516dc7",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 33,
+          "output_tokens": 31,
+          "total_tokens": 64
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_ad26516dc7",
+                "type": "output_text"
+              }
+            ],
+            "id": "176b873fb8ddce96745a45ae14f5707b_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 3503,
+      "first_byte_ms": 2319,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687725,
+              "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.3-codex",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.added",
+          "data": {
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "",
+              "type": "summary_text"
+            },
+            "sequence_number": 2,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "**Calculating a simple multiplication**\n\nI",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " need",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " to",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 5,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " respond",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 6,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " to",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 7,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " the",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 8,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " user",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 9,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "’s",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 10,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " request",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 11,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " in",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 12,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " a",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 13,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " straightforward",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 14,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " manner",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 15,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 16,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " They",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 17,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " want",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 18,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " the",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 19,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " result",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 20,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " of",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 21,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " the",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 22,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " multiplication",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 23,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 23",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 24,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " times",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 25,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 19",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 26,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ",",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 27,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " and",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 28,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " they",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 29,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " specifically",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 30,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " asked",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 31,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " for",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 32,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " just",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 33,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " the",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 34,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " digits",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 35,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 36,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " So",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 37,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ",",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 38,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " I",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 39,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "’ll",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 40,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " calculate",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 41,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 23",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 42,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " multiplied",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 43,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " by",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 44,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 19",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 45,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ",",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 46,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " which",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 47,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " equals",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 48,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 437",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 49,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 50,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " It's",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 51,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " a",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 52,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " simple",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 53,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " task",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 54,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ",",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 55,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " but",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 56,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " I",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 57,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " want",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 58,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " to",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 59,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ensure",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 60,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " I",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 61,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " present",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 62,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " it",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 63,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " clearly",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 64,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " as",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 65,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " they've",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 66,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " asked",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 67,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ",",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 68,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " without",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 69,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " any",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 70,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " extra",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 71,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " information",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 72,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " or",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 73,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " context",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 74,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 75,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " Just",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 76,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " the",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 77,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " number",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 78,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 437",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 79,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " is",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 80,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " what",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 81,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " they'll",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 82,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " get",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 83,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "!",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 84,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 85,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 86,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_msg_0",
+            "output_index": 1,
+            "sequence_number": 87,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_msg_0",
+            "output_index": 1,
+            "sequence_number": 88,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 89,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 90,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.done",
+          "data": {
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 91,
+            "summary_index": 0,
+            "text": "**Calculating a simple multiplication**\n\nI need to respond to the user’s request in a straightforward manner. They want the result of the multiplication 23 times 19, and they specifically asked for just the digits. So, I’ll calculate 23 multiplied by 19, which equals 437. It's a simple task, but I want to ensure I present it clearly as they've asked, without any extra information or context. Just the number 437 is what they'll get!",
+            "type": "response.reasoning_summary_text.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.done",
+          "data": {
+            "item_id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "**Calculating a simple multiplication**\n\nI need to respond to the user’s request in a straightforward manner. They want the result of the multiplication 23 times 19, and they specifically asked for just the digits. So, I’ll calculate 23 multiplied by 19, which equals 437. It's a simple task, but I want to ensure I present it clearly as they've asked, without any extra information or context. Just the number 437 is what they'll get!",
+              "type": "summary_text"
+            },
+            "sequence_number": 92,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "summary": [
+                {
+                  "text": "**Calculating a simple multiplication**\n\nI need to respond to the user’s request in a straightforward manner. They want the result of the multiplication 23 times 19, and they specifically asked for just the digits. So, I’ll calculate 23 multiplied by 19, which equals 437. It's a simple task, but I want to ensure I present it clearly as they've asked, without any extra information or context. Just the number 437 is what they'll get!",
+                  "type": "summary_text"
+                }
+              ],
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 93,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687725,
+              "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.3-codex",
+              "object": "response",
+              "output": [
+                {
+                  "content": null,
+                  "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "summary": [
+                    {
+                      "text": "**Calculating a simple multiplication**\n\nI need to respond to the user’s request in a straightforward manner. They want the result of the multiplication 23 times 19, and they specifically asked for just the digits. So, I’ll calculate 23 multiplied by 19, which equals 437. It's a simple task, but I want to ensure I present it clearly as they've asked, without any extra information or context. Just the number 437 is what they'll get!",
+                      "type": "summary_text"
+                    }
+                  ],
+                  "type": "reasoning"
+                },
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 31,
+                "output_tokens": 38,
+                "total_tokens": 69
+              },
+              "user": null
+            },
+            "sequence_number": 94,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 435,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 38,
+          "total_tokens": 69
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "**Calculating a simple multiplication**\n\nI need to respond to the user’s request in a straightforward manner. They want the result of the multiplication 23 times 19, and they specifically asked for just the digits. So, I’ll calculate 23 multiplied by 19, which equals 437. It's a simple task, but I want to ensure I present it clearly as they've asked, without any extra information or context. Just the number 437 is what they'll get!",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_0a3ce15b1d904f8d8f5f476f2ea453c1_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_ad26516dc7"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3910,
+      "first_byte_ms": 3910,
+      "response": {
+        "created_at": 1791687729,
+        "id": "50a980481bdab20f67c8a34143f7bf91",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.3-codex",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_ad26516dc7",
+                "type": "output_text"
+              }
+            ],
+            "id": "50a980481bdab20f67c8a34143f7bf91_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 49,
+          "output_tokens": 53,
+          "total_tokens": 102
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_ad26516dc7",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 49,
+          "output_tokens": 53,
+          "total_tokens": 102
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_ad26516dc7",
+                "type": "output_text"
+              }
+            ],
+            "id": "50a980481bdab20f67c8a34143f7bf91_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_ad26516dc7。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 4764,
+      "first_byte_ms": 3892,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687733,
+              "id": "resp_26b8051cdf7e4fd3b336b0e576468bf3",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.3-codex",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+              "content": null,
+              "id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 2,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\":\"",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 4,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "probe",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 5,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_ad",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "265",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 7,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "16",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 8,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "dc",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 9,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "7",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 10,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"}",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output_index": 0,
+            "sequence_number": 11,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\":\"probe_ad26516dc7\"}",
+            "item_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "name": "probe_echo",
+            "output_index": 0,
+            "sequence_number": 12,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\":\"probe_ad26516dc7\"}",
+              "call_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+              "content": null,
+              "id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 0,
+            "sequence_number": 13,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687733,
+              "id": "resp_26b8051cdf7e4fd3b336b0e576468bf3",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.3-codex",
+              "object": "response",
+              "output": [
+                {
+                  "arguments": "{\"value\":\"probe_ad26516dc7\"}",
+                  "call_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+                  "content": null,
+                  "id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 87,
+                "output_tokens": 83,
+                "total_tokens": 170
+              },
+              "user": null
+            },
+            "sequence_number": 14,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_ad26516dc7"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 87,
+          "output_tokens": 83,
+          "total_tokens": 170
+        },
+        "output": [
+          {
+            "arguments": "{\"value\":\"probe_ad26516dc7\"}",
+            "call_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "content": null,
+            "id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_ad26516dc7。不要自己假装执行。"
+          },
+          {
+            "arguments": "{\"value\":\"probe_ad26516dc7\"}",
+            "call_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "content": null,
+            "id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "call_QkLhGaMoqbiTsTKD43DUJD5j",
+            "output": "result_1c3985d191"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 4303,
+      "first_byte_ms": 4303,
+      "response": {
+        "created_at": 1791687737,
+        "id": "5fdd426b7f000f77b07664dc311db95f",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.3-codex",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_1c3985d191",
+                "type": "output_text"
+              }
+            ],
+            "id": "5fdd426b7f000f77b07664dc311db95f_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 104,
+          "output_tokens": 45,
+          "total_tokens": 149
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_1c3985d191",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 104,
+          "output_tokens": 45,
+          "total_tokens": 149
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_1c3985d191",
+                "type": "output_text"
+              }
+            ],
+            "id": "5fdd426b7f000f77b07664dc311db95f_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 4380,
+      "first_byte_ms": 4379,
+      "response": {
+        "created_at": 1791687741,
+        "id": "4e0dd41fa01569ca1e722576a68dda5c",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.3-codex",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一句测试说明，用于确认系统能够正常输出普通中文内容。",
+                "type": "output_text"
+              }
+            ],
+            "id": "4e0dd41fa01569ca1e722576a68dda5c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 29,
+          "output_tokens": 62,
+          "total_tokens": 91
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "这是一句测试说明，用于确认系统能够正常输出普通中文内容。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 29,
+          "output_tokens": 62,
+          "total_tokens": 91
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一句测试说明，用于确认系统能够正常输出普通中文内容。",
+                "type": "output_text"
+              }
+            ],
+            "id": "4e0dd41fa01569ca1e722576a68dda5c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 4247,
+      "first_byte_ms": 4247,
+      "response": {
+        "created_at": 1791687746,
+        "id": "9c2add4bad3cfb2fabaf1ad6643aed6c",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.3-codex",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "9c2add4bad3cfb2fabaf1ad6643aed6c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 121,
+          "total_tokens": 173
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "red,blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 121,
+          "total_tokens": 173
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "9c2add4bad3cfb2fabaf1ad6643aed6c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV9hZDI2NTE2ZGM3"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 5470,
+      "first_byte_ms": 5470,
+      "response": {
+        "created_at": 1791687750,
+        "id": "c383505b80045800a2b43cc3b937d817",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.3-codex",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_ad26516dc7",
+                "type": "output_text"
+              }
+            ],
+            "id": "c383505b80045800a2b43cc3b937d817_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 78,
+          "total_tokens": 112
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_ad26516dc7",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 78,
+          "total_tokens": 112
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_ad26516dc7",
+                "type": "output_text"
+              }
+            ],
+            "id": "c383505b80045800a2b43cc3b937d817_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_ad26516dc7"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3941,
+      "first_byte_ms": 3941,
+      "response": {
+        "content": [
+          {
+            "text": "probe_ad26516dc7",
+            "type": "text"
+          }
+        ],
+        "id": "e8329ab8eab6b1065b1ea98c3413a6ea",
+        "model": "global:gpt-5.3-codex",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 33,
+          "output_tokens": 81
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_ad26516dc7",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 33,
+          "output_tokens": 81
+        },
+        "output": [
+          {
+            "text": "probe_ad26516dc7",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 5437,
+      "first_byte_ms": 4184,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "1b84fda789b7a94a074d400043d56e10",
+              "model": "gpt-5.3-codex",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "thinking": "",
+              "type": "thinking"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "**Calculating multiplication**\n\nI",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " see",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " the",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " user",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " has",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " a",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " request",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " in",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " Chinese",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " asking",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " me",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " to",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " calculate",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " 23",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " multiplied",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " by",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " 19",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " and",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " only",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " output",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " the",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " final",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " result",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " as",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " a",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " number",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ".",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " So",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " I",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "’ll",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " compute",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " that",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ":",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " 23",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " times",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " 19",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " equals",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " 437",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ".",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " I",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " need",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " to",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " make",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " sure",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " I",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " only",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " return",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " the",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " digits",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ",",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " without",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " any",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " extra",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " text",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " or",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " explanation",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ".",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " It",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " makes",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " sense",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " to",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " keep",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " it",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " simple",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " and",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " just",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " show",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " the",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " result",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " clearly",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ",",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " so",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " I",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "’ll",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " present",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " just",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " the",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " number",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " 437",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ".",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "text": "",
+              "type": "text"
+            },
+            "index": 1,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "437",
+              "type": "text_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 1,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "end_turn"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 31,
+              "output_tokens": 49
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "437",
+        "reasoning_chars": 395,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 49
+        },
+        "output": [
+          {
+            "thinking": "**Calculating multiplication**\n\nI see the user has a request in Chinese asking me to calculate 23 multiplied by 19 and only output the final result as a number. So I’ll compute that: 23 times 19 equals 437. I need to make sure I only return the digits, without any extra text or explanation. It makes sense to keep it simple and just show the result clearly, so I’ll present just the number 437.",
+            "type": "thinking"
+          },
+          {
+            "text": "437",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_ad26516dc7"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 5897,
+      "first_byte_ms": 5897,
+      "response": {
+        "content": [
+          {
+            "thinking": "**Providing test code output**\n\nThe user is asking me to output a specific test code without any extra information. They've asked me to remember \"probe_ad26516dc7,\" and it seems like I did remember it. Now, they just want the code itself again. I'm focusing on delivering exactly what they requested: \"probe_ad26516dc7,\" with no additional explanations or context. I'll keep it straightforward!",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_ad26516dc7",
+            "type": "text"
+          }
+        ],
+        "id": "d09acd215c33ba8f020fb1fb9ab68f3b",
+        "model": "global:gpt-5.3-codex",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 49,
+          "output_tokens": 74
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_ad26516dc7",
+        "reasoning_chars": 394,
+        "tools": [],
+        "usage": {
+          "input_tokens": 49,
+          "output_tokens": 74
+        },
+        "output": [
+          {
+            "thinking": "**Providing test code output**\n\nThe user is asking me to output a specific test code without any extra information. They've asked me to remember \"probe_ad26516dc7,\" and it seems like I did remember it. Now, they just want the code itself again. I'm focusing on delivering exactly what they requested: \"probe_ad26516dc7,\" with no additional explanations or context. I'll keep it straightforward!",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_ad26516dc7",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "error",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_ad26516dc7。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 503,
+      "elapsed_ms": 15276,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 6131,
+      "first_byte_ms": 6131,
+      "response": {
+        "content": [
+          {
+            "thinking": "**Processing color query**\n\nI need to respond to a Chinese user's question about the colors on the left and right sides of an image. I'm inspecting it mentally, and it shows that the left half is red and the right half is blue. For the final output, I should use lowercase and format it as \"red,blue\" without any extras. I'll make sure that the answer is concise and accurate!",
+            "type": "thinking"
+          },
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "id": "403508cc1a1339810fed813a9d13f8d2",
+        "model": "global:gpt-5.3-codex",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 65
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "red,blue",
+        "reasoning_chars": 376,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 65
+        },
+        "output": [
+          {
+            "thinking": "**Processing color query**\n\nI need to respond to a Chinese user's question about the colors on the left and right sides of an image. I'm inspecting it mentally, and it shows that the left half is red and the right half is blue. For the final output, I should use lowercase and format it as \"red,blue\" without any extras. I'll make sure that the answer is concise and accurate!",
+            "type": "thinking"
+          },
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.3-codex",
+      "model_id": "global:gpt-5.3-codex",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.3-codex",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_ad26516dc7"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3071,
+      "first_byte_ms": 3071,
+      "response": {
+        "content": [
+          {
+            "text": "probe_ad26516dc7",
+            "type": "text"
+          }
+        ],
+        "id": "75548ea25d0f2bb34db1e05da6308f1b",
+        "model": "global:gpt-5.3-codex",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 100
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_ad26516dc7",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 100
+        },
+        "output": [
+          {
+            "text": "probe_ad26516dc7",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T03:03:16.149131+00:00"
+}

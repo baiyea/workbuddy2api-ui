@@ -1,0 +1,2033 @@
+{
+  "started_at": "2026-10-11T02:54:22.909376+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:gpt-5.6-terra",
+      "id": "global:gpt-5.6-terra"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_68e8edb63c"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2411,
+      "first_byte_ms": 2411,
+      "response": {
+        "created_at": 1791687262,
+        "id": "e3bd96769dfbc9364229ea63c218539f",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-terra",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_68e8edb63c",
+                "type": "output_text"
+              }
+            ],
+            "id": "e3bd96769dfbc9364229ea63c218539f_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 13,
+          "total_tokens": 49
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_68e8edb63c",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 13,
+          "total_tokens": 49
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_68e8edb63c",
+                "type": "output_text"
+              }
+            ],
+            "id": "e3bd96769dfbc9364229ea63c218539f_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 6248,
+      "first_byte_ms": 5968,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687265,
+              "id": "resp_5f04066d608147158d53277eddc4342c",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-terra",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_5f04066d608147158d53277eddc4342c_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_5f04066d608147158d53277eddc4342c_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 2,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_5f04066d608147158d53277eddc4342c_msg_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_5f04066d608147158d53277eddc4342c_msg_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_5f04066d608147158d53277eddc4342c_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 5,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_5f04066d608147158d53277eddc4342c_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687265,
+              "id": "resp_5f04066d608147158d53277eddc4342c",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-terra",
+              "object": "response",
+              "output": [
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_5f04066d608147158d53277eddc4342c_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 31,
+                "output_tokens": 22,
+                "total_tokens": 53
+              },
+              "user": null
+            },
+            "sequence_number": 7,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 22,
+          "total_tokens": 53
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_5f04066d608147158d53277eddc4342c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_68e8edb63c"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3699,
+      "first_byte_ms": 3699,
+      "response": {
+        "created_at": 1791687271,
+        "id": "0572f509d069582bd7815d8df31221ed",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-terra",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_68e8edb63c",
+                "type": "output_text"
+              }
+            ],
+            "id": "0572f509d069582bd7815d8df31221ed_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 30,
+          "total_tokens": 82
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_68e8edb63c",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 30,
+          "total_tokens": 82
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_68e8edb63c",
+                "type": "output_text"
+              }
+            ],
+            "id": "0572f509d069582bd7815d8df31221ed_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_68e8edb63c。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 3250,
+      "first_byte_ms": 2980,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687275,
+              "id": "resp_8acbab93f7a6481fa337164445c6a3d1",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-terra",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+              "content": null,
+              "id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 2,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\":\"",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 4,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "probe",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 5,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "68",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 7,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "e",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 8,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "8",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 9,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "ed",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 10,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "b",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 11,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "63",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 12,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "c",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 13,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"}",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output_index": 0,
+            "sequence_number": 14,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\":\"probe_68e8edb63c\"}",
+            "item_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "name": "probe_echo",
+            "output_index": 0,
+            "sequence_number": 15,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\":\"probe_68e8edb63c\"}",
+              "call_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+              "content": null,
+              "id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 0,
+            "sequence_number": 16,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687275,
+              "id": "resp_8acbab93f7a6481fa337164445c6a3d1",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-terra",
+              "object": "response",
+              "output": [
+                {
+                  "arguments": "{\"value\":\"probe_68e8edb63c\"}",
+                  "call_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+                  "content": null,
+                  "id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 90,
+                "output_tokens": 37,
+                "total_tokens": 127
+              },
+              "user": null
+            },
+            "sequence_number": 17,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_68e8edb63c"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 90,
+          "output_tokens": 37,
+          "total_tokens": 127
+        },
+        "output": [
+          {
+            "arguments": "{\"value\":\"probe_68e8edb63c\"}",
+            "call_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "content": null,
+            "id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_68e8edb63c。不要自己假装执行。"
+          },
+          {
+            "arguments": "{\"value\":\"probe_68e8edb63c\"}",
+            "call_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "content": null,
+            "id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "call_0KohvXgKV2b6gwhfsxwUSgAD",
+            "output": "result_504a4813db"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2605,
+      "first_byte_ms": 2604,
+      "response": {
+        "created_at": 1791687278,
+        "id": "b4969b72a5a2a05d69381c0b3a21f7cb",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-terra",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_504a4813db",
+                "type": "output_text"
+              }
+            ],
+            "id": "b4969b72a5a2a05d69381c0b3a21f7cb_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 109,
+          "output_tokens": 11,
+          "total_tokens": 120
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_504a4813db",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 109,
+          "output_tokens": 11,
+          "total_tokens": 120
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_504a4813db",
+                "type": "output_text"
+              }
+            ],
+            "id": "b4969b72a5a2a05d69381c0b3a21f7cb_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 2708,
+      "first_byte_ms": 2708,
+      "response": {
+        "created_at": 1791687281,
+        "id": "1e9b9a7be14c2fd39a8782c9d2bc4a76",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-terra",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一条用于验证系统功能是否正常的测试说明。",
+                "type": "output_text"
+              }
+            ],
+            "id": "1e9b9a7be14c2fd39a8782c9d2bc4a76_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 29,
+          "output_tokens": 17,
+          "total_tokens": 46
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "这是一条用于验证系统功能是否正常的测试说明。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 29,
+          "output_tokens": 17,
+          "total_tokens": 46
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一条用于验证系统功能是否正常的测试说明。",
+                "type": "output_text"
+              }
+            ],
+            "id": "1e9b9a7be14c2fd39a8782c9d2bc4a76_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 5678,
+      "first_byte_ms": 5678,
+      "response": {
+        "created_at": 1791687283,
+        "id": "ca3926c571f71017c996b714a20d3f51",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-terra",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "ca3926c571f71017c996b714a20d3f51_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "**Inspecting image colors**\n\nI need to look closely at the image, focusing specifically on the colors on either side. The left side is red, and the right side is blue. It's essential to output this accurately, so I’ll make sure to present it exactly as \"red,blue\". Keeping things clear is key! Let's double-check that I've captured those colors correctly before finalizing. Just need to ensure precision in the output!",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "ca3926c571f71017c996b714a20d3f51_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 31,
+          "total_tokens": 83
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "red,blue",
+        "reasoning_chars": 418,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 31,
+          "total_tokens": 83
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "ca3926c571f71017c996b714a20d3f51_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "**Inspecting image colors**\n\nI need to look closely at the image, focusing specifically on the colors on either side. The left side is red, and the right side is blue. It's essential to output this accurately, so I’ll make sure to present it exactly as \"red,blue\". Keeping things clear is key! Let's double-check that I've captured those colors correctly before finalizing. Just need to ensure precision in the output!",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "ca3926c571f71017c996b714a20d3f51_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV82OGU4ZWRiNjNj"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3764,
+      "first_byte_ms": 3764,
+      "response": {
+        "created_at": 1791687289,
+        "id": "58605d5ffdf3502953d1500b2ebaf518",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-terra",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_68e8edb63c",
+                "type": "output_text"
+              }
+            ],
+            "id": "58605d5ffdf3502953d1500b2ebaf518_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 25,
+          "total_tokens": 62
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_68e8edb63c",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 25,
+          "total_tokens": 62
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_68e8edb63c",
+                "type": "output_text"
+              }
+            ],
+            "id": "58605d5ffdf3502953d1500b2ebaf518_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_68e8edb63c"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3452,
+      "first_byte_ms": 3451,
+      "response": {
+        "content": [
+          {
+            "text": "probe_68e8edb63c",
+            "type": "text"
+          }
+        ],
+        "id": "bc19610db66130fb180111e390bd3e68",
+        "model": "global:gpt-5.6-terra",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 13
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_68e8edb63c",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 13
+        },
+        "output": [
+          {
+            "text": "probe_68e8edb63c",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 4238,
+      "first_byte_ms": 4014,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "30ab3263beed21c9831b03a4e1fb0c4d",
+              "model": "gpt-5.6-terra",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "text": "",
+              "type": "text"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "437",
+              "type": "text_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "end_turn"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 31,
+              "output_tokens": 22
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 22
+        },
+        "output": [
+          {
+            "text": "437",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_68e8edb63c"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 4954,
+      "first_byte_ms": 4954,
+      "response": {
+        "content": [
+          {
+            "text": "probe_68e8edb63c",
+            "type": "text"
+          }
+        ],
+        "id": "2a405a7d167d7266bfc54f20e614f87a",
+        "model": "global:gpt-5.6-terra",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 32
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_68e8edb63c",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 32
+        },
+        "output": [
+          {
+            "text": "probe_68e8edb63c",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_68e8edb63c。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2703,
+      "first_byte_ms": 2434,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "62ba3fca970990353a53753c8477b598",
+              "model": "gpt-5.6-terra",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "id": "call_lDVsQLYs2beZ3W8Yq9lHcb1p",
+              "input": {},
+              "name": "probe_echo",
+              "type": "tool_use"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "{\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "value",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\":\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "probe",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "_",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "68",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "e",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "8",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "ed",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "b",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "63",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "c",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\"}",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "tool_use"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 90,
+              "output_tokens": 38
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "tool_use",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_lDVsQLYs2beZ3W8Yq9lHcb1p",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_68e8edb63c"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 90,
+          "output_tokens": 38
+        },
+        "output": [
+          {
+            "id": "call_lDVsQLYs2beZ3W8Yq9lHcb1p",
+            "input": {
+              "value": "probe_68e8edb63c"
+            },
+            "name": "probe_echo",
+            "type": "tool_use"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_68e8edb63c。不要自己假装执行。"
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "id": "call_lDVsQLYs2beZ3W8Yq9lHcb1p",
+                "input": {
+                  "value": "probe_68e8edb63c"
+                },
+                "name": "probe_echo",
+                "type": "tool_use"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "call_lDVsQLYs2beZ3W8Yq9lHcb1p",
+                "content": "result_c302160031"
+              },
+              {
+                "type": "text",
+                "text": "只输出刚才工具返回的结果，不要再调用工具。"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3457,
+      "first_byte_ms": 3457,
+      "response": {
+        "content": [
+          {
+            "text": "result_c302160031",
+            "type": "text"
+          }
+        ],
+        "id": "1887e9e23757acf4593df0cefb75cd68",
+        "model": "global:gpt-5.6-terra",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 152,
+          "output_tokens": 9
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "result_c302160031",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 152,
+          "output_tokens": 9
+        },
+        "output": [
+          {
+            "text": "result_c302160031",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3778,
+      "first_byte_ms": 3778,
+      "response": {
+        "content": [
+          {
+            "thinking": "**Inspecting image details**\n\nI need to take a closer look at the image. There's clearly a red color on the left and blue on the right. It's essential that I get this right, so I will make sure to note it down exactly as \"red, blue.\" That's the specific detail I want to focus on, ensuring I don't overlook anything! Getting the colors right is important, and this simple observation will help.",
+            "type": "thinking"
+          },
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "id": "8787f8ecaa53c459559c489f84107422",
+        "model": "global:gpt-5.6-terra",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 32
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "red,blue",
+        "reasoning_chars": 394,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 32
+        },
+        "output": [
+          {
+            "thinking": "**Inspecting image details**\n\nI need to take a closer look at the image. There's clearly a red color on the left and blue on the right. It's essential that I get this right, so I will make sure to note it down exactly as \"red, blue.\" That's the specific detail I want to focus on, ensuring I don't overlook anything! Getting the colors right is important, and this simple observation will help.",
+            "type": "thinking"
+          },
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-terra",
+      "model_id": "global:gpt-5.6-terra",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-terra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_68e8edb63c"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 4150,
+      "first_byte_ms": 4149,
+      "response": {
+        "content": [
+          {
+            "text": "probe_68e8edb63c",
+            "type": "text"
+          }
+        ],
+        "id": "fe99a1ffb0fad70f34c05a0bab87ec85",
+        "model": "global:gpt-5.6-terra",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 25
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_68e8edb63c",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 25
+        },
+        "output": [
+          {
+            "text": "probe_68e8edb63c",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T02:55:20.125713+00:00"
+}

@@ -1,0 +1,1974 @@
+{
+  "started_at": "2026-10-11T02:53:44.933639+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:gpt-5.6-sol",
+      "id": "global:gpt-5.6-sol"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_28d3ffacc0"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2277,
+      "first_byte_ms": 2277,
+      "response": {
+        "created_at": 1791687225,
+        "id": "c97167645d8fb1f84018b597706ff133",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-sol",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_28d3ffacc0",
+                "type": "output_text"
+              }
+            ],
+            "id": "c97167645d8fb1f84018b597706ff133_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 12,
+          "total_tokens": 47
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_28d3ffacc0",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 12,
+          "total_tokens": 47
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_28d3ffacc0",
+                "type": "output_text"
+              }
+            ],
+            "id": "c97167645d8fb1f84018b597706ff133_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 3297,
+      "first_byte_ms": 3136,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687227,
+              "id": "resp_8d52b2e81a9e465c9dcb0dee0196900b",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-sol",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_8d52b2e81a9e465c9dcb0dee0196900b_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_8d52b2e81a9e465c9dcb0dee0196900b_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 2,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_8d52b2e81a9e465c9dcb0dee0196900b_msg_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_8d52b2e81a9e465c9dcb0dee0196900b_msg_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_8d52b2e81a9e465c9dcb0dee0196900b_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 5,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_8d52b2e81a9e465c9dcb0dee0196900b_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687227,
+              "id": "resp_8d52b2e81a9e465c9dcb0dee0196900b",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-sol",
+              "object": "response",
+              "output": [
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_8d52b2e81a9e465c9dcb0dee0196900b_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 31,
+                "output_tokens": 24,
+                "total_tokens": 55
+              },
+              "user": null
+            },
+            "sequence_number": 7,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 24,
+          "total_tokens": 55
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_8d52b2e81a9e465c9dcb0dee0196900b_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_28d3ffacc0"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2394,
+      "first_byte_ms": 2394,
+      "response": {
+        "created_at": 1791687230,
+        "id": "5d55a7c7020756a05eedebe5084d6f59",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-sol",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_28d3ffacc0",
+                "type": "output_text"
+              }
+            ],
+            "id": "5d55a7c7020756a05eedebe5084d6f59_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 51,
+          "output_tokens": 12,
+          "total_tokens": 63
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_28d3ffacc0",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 51,
+          "output_tokens": 12,
+          "total_tokens": 63
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_28d3ffacc0",
+                "type": "output_text"
+              }
+            ],
+            "id": "5d55a7c7020756a05eedebe5084d6f59_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_28d3ffacc0。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 2760,
+      "first_byte_ms": 2207,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687232,
+              "id": "resp_83c338ad9c034242b33d6cbc1d1f6bf5",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-sol",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+              "content": null,
+              "id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 2,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\":\"",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 4,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "probe",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 5,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "28",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 7,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "d",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 8,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "3",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 9,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "ff",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 10,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "acc",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 11,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "0",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 12,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"}",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output_index": 0,
+            "sequence_number": 13,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\":\"probe_28d3ffacc0\"}",
+            "item_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "name": "probe_echo",
+            "output_index": 0,
+            "sequence_number": 14,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\":\"probe_28d3ffacc0\"}",
+              "call_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+              "content": null,
+              "id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 0,
+            "sequence_number": 15,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687232,
+              "id": "resp_83c338ad9c034242b33d6cbc1d1f6bf5",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-sol",
+              "object": "response",
+              "output": [
+                {
+                  "arguments": "{\"value\":\"probe_28d3ffacc0\"}",
+                  "call_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+                  "content": null,
+                  "id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 89,
+                "output_tokens": 26,
+                "total_tokens": 115
+              },
+              "user": null
+            },
+            "sequence_number": 16,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_28d3ffacc0"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 89,
+          "output_tokens": 26,
+          "total_tokens": 115
+        },
+        "output": [
+          {
+            "arguments": "{\"value\":\"probe_28d3ffacc0\"}",
+            "call_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "content": null,
+            "id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_28d3ffacc0。不要自己假装执行。"
+          },
+          {
+            "arguments": "{\"value\":\"probe_28d3ffacc0\"}",
+            "call_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "content": null,
+            "id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "call_bu1587eT8AZG2hM13Iq0V76Q",
+            "output": "result_1679164137"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2184,
+      "first_byte_ms": 2184,
+      "response": {
+        "created_at": 1791687235,
+        "id": "358643ad0299b9be71d5b22066e95704",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-sol",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_1679164137",
+                "type": "output_text"
+              }
+            ],
+            "id": "358643ad0299b9be71d5b22066e95704_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 106,
+          "output_tokens": 10,
+          "total_tokens": 116
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_1679164137",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 106,
+          "output_tokens": 10,
+          "total_tokens": 116
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_1679164137",
+                "type": "output_text"
+              }
+            ],
+            "id": "358643ad0299b9be71d5b22066e95704_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 2203,
+      "first_byte_ms": 2203,
+      "response": {
+        "created_at": 1791687237,
+        "id": "993d98f5edb97042bd545a2f24e05a0f",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-sol",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一句用于测试的说明。",
+                "type": "output_text"
+              }
+            ],
+            "id": "993d98f5edb97042bd545a2f24e05a0f_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 29,
+          "output_tokens": 12,
+          "total_tokens": 41
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "这是一句用于测试的说明。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 29,
+          "output_tokens": 12,
+          "total_tokens": 41
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一句用于测试的说明。",
+                "type": "output_text"
+              }
+            ],
+            "id": "993d98f5edb97042bd545a2f24e05a0f_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2919,
+      "first_byte_ms": 2919,
+      "response": {
+        "created_at": 1791687240,
+        "id": "d1adca1d76a475c53162505169cb0297",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-sol",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "d1adca1d76a475c53162505169cb0297_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 7,
+          "total_tokens": 59
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "red,blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 7,
+          "total_tokens": 59
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "d1adca1d76a475c53162505169cb0297_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV8yOGQzZmZhY2Mw"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3261,
+      "first_byte_ms": 3261,
+      "response": {
+        "created_at": 1791687243,
+        "id": "4c25be673d87268579853e19d179dc0b",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-sol",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_28d3ffacc0",
+                "type": "output_text"
+              }
+            ],
+            "id": "4c25be673d87268579853e19d179dc0b_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 12,
+          "total_tokens": 48
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_28d3ffacc0",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 12,
+          "total_tokens": 48
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_28d3ffacc0",
+                "type": "output_text"
+              }
+            ],
+            "id": "4c25be673d87268579853e19d179dc0b_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_28d3ffacc0"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2390,
+      "first_byte_ms": 2390,
+      "response": {
+        "content": [
+          {
+            "text": "probe_28d3ffacc0",
+            "type": "text"
+          }
+        ],
+        "id": "3c03b86c3b2d1262f8b33bbe8c6d9927",
+        "model": "global:gpt-5.6-sol",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 12
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_28d3ffacc0",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 12
+        },
+        "output": [
+          {
+            "text": "probe_28d3ffacc0",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2723,
+      "first_byte_ms": 2194,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "acc251fa791c6ca4474f9e6506dd9bae",
+              "model": "gpt-5.6-sol",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "text": "",
+              "type": "text"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "437",
+              "type": "text_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "end_turn"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 31,
+              "output_tokens": 5
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 5
+        },
+        "output": [
+          {
+            "text": "437",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_28d3ffacc0"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2351,
+      "first_byte_ms": 2351,
+      "response": {
+        "content": [
+          {
+            "text": "probe_28d3ffacc0",
+            "type": "text"
+          }
+        ],
+        "id": "1bfb91536cfa8dd4b36b5e567c7ae7c4",
+        "model": "global:gpt-5.6-sol",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 51,
+          "output_tokens": 12
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_28d3ffacc0",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 51,
+          "output_tokens": 12
+        },
+        "output": [
+          {
+            "text": "probe_28d3ffacc0",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_28d3ffacc0。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2098,
+      "first_byte_ms": 1888,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "2dc1aadee3641fbaae30fcf8a0b3737c",
+              "model": "gpt-5.6-sol",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "id": "call_8V0oZ7U5iEwcuWPDHzndM8qQ",
+              "input": {},
+              "name": "probe_echo",
+              "type": "tool_use"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "{\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "value",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\":\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "probe",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "_",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "28",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "d",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "3",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "ff",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "acc",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "0",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\"}",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "tool_use"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 89,
+              "output_tokens": 26
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "tool_use",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_8V0oZ7U5iEwcuWPDHzndM8qQ",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_28d3ffacc0"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 89,
+          "output_tokens": 26
+        },
+        "output": [
+          {
+            "id": "call_8V0oZ7U5iEwcuWPDHzndM8qQ",
+            "input": {
+              "value": "probe_28d3ffacc0"
+            },
+            "name": "probe_echo",
+            "type": "tool_use"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_28d3ffacc0。不要自己假装执行。"
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "id": "call_8V0oZ7U5iEwcuWPDHzndM8qQ",
+                "input": {
+                  "value": "probe_28d3ffacc0"
+                },
+                "name": "probe_echo",
+                "type": "tool_use"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "call_8V0oZ7U5iEwcuWPDHzndM8qQ",
+                "content": "result_5577bacbb7"
+              },
+              {
+                "type": "text",
+                "text": "只输出刚才工具返回的结果，不要再调用工具。"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2023,
+      "first_byte_ms": 2023,
+      "response": {
+        "content": [
+          {
+            "text": "result_5577bacbb7",
+            "type": "text"
+          }
+        ],
+        "id": "55ae76c26a1fabb64145e6f50f98ca38",
+        "model": "global:gpt-5.6-sol",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 152,
+          "output_tokens": 11
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "result_5577bacbb7",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 152,
+          "output_tokens": 11
+        },
+        "output": [
+          {
+            "text": "result_5577bacbb7",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2274,
+      "first_byte_ms": 2273,
+      "response": {
+        "content": [
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "id": "fb8582996688ba6af9900d40ffac42fc",
+        "model": "global:gpt-5.6-sol",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 7
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "red,blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 7
+        },
+        "output": [
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-sol",
+      "model_id": "global:gpt-5.6-sol",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-sol",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_28d3ffacc0"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2361,
+      "first_byte_ms": 2361,
+      "response": {
+        "content": [
+          {
+            "text": "probe_28d3ffacc0",
+            "type": "text"
+          }
+        ],
+        "id": "6ffb14fc58e4f73150e7d3adb4f27182",
+        "model": "global:gpt-5.6-sol",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 12
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_28d3ffacc0",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 12
+        },
+        "output": [
+          {
+            "text": "probe_28d3ffacc0",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T02:54:22.578298+00:00"
+}

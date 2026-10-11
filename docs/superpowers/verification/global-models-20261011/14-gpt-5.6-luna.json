@@ -1,0 +1,1974 @@
+{
+  "started_at": "2026-10-11T02:58:46.886048+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:gpt-5.6-luna",
+      "id": "global:gpt-5.6-luna"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_42fa9c73ee"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2375,
+      "first_byte_ms": 2375,
+      "response": {
+        "created_at": 1791687526,
+        "id": "56781b2a207893d8590ac499c1ca7912",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-luna",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_42fa9c73ee",
+                "type": "output_text"
+              }
+            ],
+            "id": "56781b2a207893d8590ac499c1ca7912_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 12,
+          "total_tokens": 47
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_42fa9c73ee",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 12,
+          "total_tokens": 47
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_42fa9c73ee",
+                "type": "output_text"
+              }
+            ],
+            "id": "56781b2a207893d8590ac499c1ca7912_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 4174,
+      "first_byte_ms": 3956,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687529,
+              "id": "resp_f91db89b9c5a449391dd2b810c1500d3",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-luna",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_f91db89b9c5a449391dd2b810c1500d3_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_f91db89b9c5a449391dd2b810c1500d3_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 2,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_f91db89b9c5a449391dd2b810c1500d3_msg_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_f91db89b9c5a449391dd2b810c1500d3_msg_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_f91db89b9c5a449391dd2b810c1500d3_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 5,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_f91db89b9c5a449391dd2b810c1500d3_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687529,
+              "id": "resp_f91db89b9c5a449391dd2b810c1500d3",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-luna",
+              "object": "response",
+              "output": [
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_f91db89b9c5a449391dd2b810c1500d3_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 31,
+                "output_tokens": 24,
+                "total_tokens": 55
+              },
+              "user": null
+            },
+            "sequence_number": 7,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 24,
+          "total_tokens": 55
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_f91db89b9c5a449391dd2b810c1500d3_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_42fa9c73ee"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3412,
+      "first_byte_ms": 3412,
+      "response": {
+        "created_at": 1791687533,
+        "id": "297f0e108e6bcc4b0a41c205803c2793",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-luna",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_42fa9c73ee",
+                "type": "output_text"
+              }
+            ],
+            "id": "297f0e108e6bcc4b0a41c205803c2793_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 51,
+          "output_tokens": 26,
+          "total_tokens": 77
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_42fa9c73ee",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 51,
+          "output_tokens": 26,
+          "total_tokens": 77
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_42fa9c73ee",
+                "type": "output_text"
+              }
+            ],
+            "id": "297f0e108e6bcc4b0a41c205803c2793_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_42fa9c73ee。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 3034,
+      "first_byte_ms": 2544,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687536,
+              "id": "resp_6a5cbc8251e641ac8e30239670a744c6",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-luna",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+              "content": null,
+              "id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 2,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\":\"",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 4,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "probe",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 5,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "42",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 7,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "fa",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 8,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "9",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 9,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "c",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 10,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "73",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 11,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "ee",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 12,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"}",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output_index": 0,
+            "sequence_number": 13,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\":\"probe_42fa9c73ee\"}",
+            "item_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "name": "probe_echo",
+            "output_index": 0,
+            "sequence_number": 14,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\":\"probe_42fa9c73ee\"}",
+              "call_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+              "content": null,
+              "id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 0,
+            "sequence_number": 15,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687536,
+              "id": "resp_6a5cbc8251e641ac8e30239670a744c6",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-5.6-luna",
+              "object": "response",
+              "output": [
+                {
+                  "arguments": "{\"value\":\"probe_42fa9c73ee\"}",
+                  "call_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+                  "content": null,
+                  "id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 89,
+                "output_tokens": 42,
+                "total_tokens": 131
+              },
+              "user": null
+            },
+            "sequence_number": 16,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_42fa9c73ee"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 89,
+          "output_tokens": 42,
+          "total_tokens": 131
+        },
+        "output": [
+          {
+            "arguments": "{\"value\":\"probe_42fa9c73ee\"}",
+            "call_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "content": null,
+            "id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_42fa9c73ee。不要自己假装执行。"
+          },
+          {
+            "arguments": "{\"value\":\"probe_42fa9c73ee\"}",
+            "call_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "content": null,
+            "id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "call_yxhupMZgSAnM7Uvz6RSMWpTb",
+            "output": "result_8eacab96ef"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2841,
+      "first_byte_ms": 2841,
+      "response": {
+        "created_at": 1791687539,
+        "id": "c608070b4551915ad807b6aeab898002",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-luna",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_8eacab96ef",
+                "type": "output_text"
+              }
+            ],
+            "id": "c608070b4551915ad807b6aeab898002_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 107,
+          "output_tokens": 23,
+          "total_tokens": 130
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_8eacab96ef",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 107,
+          "output_tokens": 23,
+          "total_tokens": 130
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_8eacab96ef",
+                "type": "output_text"
+              }
+            ],
+            "id": "c608070b4551915ad807b6aeab898002_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 2641,
+      "first_byte_ms": 2641,
+      "response": {
+        "created_at": 1791687542,
+        "id": "66d95906d1a3a53dee12c08ebda63a7d",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-luna",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一条测试说明，用于验证系统是否能够正常处理中文文本。",
+                "type": "output_text"
+              }
+            ],
+            "id": "66d95906d1a3a53dee12c08ebda63a7d_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 29,
+          "output_tokens": 20,
+          "total_tokens": 49
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "这是一条测试说明，用于验证系统是否能够正常处理中文文本。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 29,
+          "output_tokens": 20,
+          "total_tokens": 49
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一条测试说明，用于验证系统是否能够正常处理中文文本。",
+                "type": "output_text"
+              }
+            ],
+            "id": "66d95906d1a3a53dee12c08ebda63a7d_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 4942,
+      "first_byte_ms": 4942,
+      "response": {
+        "created_at": 1791687545,
+        "id": "337476a2e7611705b6d4a6c23012d48a",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-luna",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "337476a2e7611705b6d4a6c23012d48a_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 36,
+          "total_tokens": 88
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "red,blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 36,
+          "total_tokens": 88
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "337476a2e7611705b6d4a6c23012d48a_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV80MmZhOWM3M2Vl"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2724,
+      "first_byte_ms": 2724,
+      "response": {
+        "created_at": 1791687550,
+        "id": "a47c9bb96ee210cbd02e547670c52b6b",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-5.6-luna",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_42fa9c73ee",
+                "type": "output_text"
+              }
+            ],
+            "id": "a47c9bb96ee210cbd02e547670c52b6b_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 25,
+          "total_tokens": 61
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_42fa9c73ee",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 25,
+          "total_tokens": 61
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_42fa9c73ee",
+                "type": "output_text"
+              }
+            ],
+            "id": "a47c9bb96ee210cbd02e547670c52b6b_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_42fa9c73ee"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1972,
+      "first_byte_ms": 1972,
+      "response": {
+        "content": [
+          {
+            "text": "probe_42fa9c73ee",
+            "type": "text"
+          }
+        ],
+        "id": "902749cc0c79c35ac119c46a2b5bc581",
+        "model": "global:gpt-5.6-luna",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 12
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_42fa9c73ee",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 35,
+          "output_tokens": 12
+        },
+        "output": [
+          {
+            "text": "probe_42fa9c73ee",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2653,
+      "first_byte_ms": 2501,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "14e828dd7b9cb128db07747a3bd1dc05",
+              "model": "gpt-5.6-luna",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "text": "",
+              "type": "text"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "437",
+              "type": "text_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "end_turn"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 31,
+              "output_tokens": 24
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 24
+        },
+        "output": [
+          {
+            "text": "437",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_42fa9c73ee"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3388,
+      "first_byte_ms": 3388,
+      "response": {
+        "content": [
+          {
+            "text": "probe_42fa9c73ee",
+            "type": "text"
+          }
+        ],
+        "id": "8c039f348320effbcad7aa5bf7272257",
+        "model": "global:gpt-5.6-luna",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 51,
+          "output_tokens": 25
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_42fa9c73ee",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 51,
+          "output_tokens": 25
+        },
+        "output": [
+          {
+            "text": "probe_42fa9c73ee",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_42fa9c73ee。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 3019,
+      "first_byte_ms": 2755,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "676aeca2129b0a8b79dadf6ff49eba04",
+              "model": "gpt-5.6-luna",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "id": "call_HYt34MsuUXm7mNRqacEfaU1A",
+              "input": {},
+              "name": "probe_echo",
+              "type": "tool_use"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "{\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "value",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\":\"",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "probe",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "_",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "42",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "fa",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "9",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "c",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "73",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "ee",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\"}",
+              "type": "input_json_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "tool_use"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 89,
+              "output_tokens": 40
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "tool_use",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_HYt34MsuUXm7mNRqacEfaU1A",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_42fa9c73ee"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 89,
+          "output_tokens": 40
+        },
+        "output": [
+          {
+            "id": "call_HYt34MsuUXm7mNRqacEfaU1A",
+            "input": {
+              "value": "probe_42fa9c73ee"
+            },
+            "name": "probe_echo",
+            "type": "tool_use"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_42fa9c73ee。不要自己假装执行。"
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "id": "call_HYt34MsuUXm7mNRqacEfaU1A",
+                "input": {
+                  "value": "probe_42fa9c73ee"
+                },
+                "name": "probe_echo",
+                "type": "tool_use"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "call_HYt34MsuUXm7mNRqacEfaU1A",
+                "content": "result_f8b732aa28"
+              },
+              {
+                "type": "text",
+                "text": "只输出刚才工具返回的结果，不要再调用工具。"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2438,
+      "first_byte_ms": 2437,
+      "response": {
+        "content": [
+          {
+            "text": "result_f8b732aa28",
+            "type": "text"
+          }
+        ],
+        "id": "4af0f37378793c1b8205b072af6370b0",
+        "model": "global:gpt-5.6-luna",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 152,
+          "output_tokens": 11
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "result_f8b732aa28",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 152,
+          "output_tokens": 11
+        },
+        "output": [
+          {
+            "text": "result_f8b732aa28",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3862,
+      "first_byte_ms": 3862,
+      "response": {
+        "content": [
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "id": "594e8ff2d84bbe50ce3375e472109c33",
+        "model": "global:gpt-5.6-luna",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 32
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "red,blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 32
+        },
+        "output": [
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-5.6-luna",
+      "model_id": "global:gpt-5.6-luna",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-5.6-luna",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_42fa9c73ee"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2405,
+      "first_byte_ms": 2405,
+      "response": {
+        "content": [
+          {
+            "text": "probe_42fa9c73ee",
+            "type": "text"
+          }
+        ],
+        "id": "98f93b3c9e26360cd88f9c55bafce141",
+        "model": "global:gpt-5.6-luna",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 25
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_42fa9c73ee",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 36,
+          "output_tokens": 25
+        },
+        "output": [
+          {
+            "text": "probe_42fa9c73ee",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T02:59:32.880724+00:00"
+}

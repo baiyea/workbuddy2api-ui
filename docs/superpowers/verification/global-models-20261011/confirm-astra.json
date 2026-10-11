@@ -1,0 +1,1087 @@
+{
+  "started_at": "2026-10-11T03:06:49.459012+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:gpt-6-astra",
+      "id": "global:gpt-6-astra"
+    }
+  ],
+  "checks": [
+    "stream",
+    "tools",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-6-astra",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2986,
+      "first_byte_ms": 2810,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791688009,
+              "id": "resp_d7dc9cceec464559a912a59904899700",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-6-astra",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_d7dc9cceec464559a912a59904899700_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_d7dc9cceec464559a912a59904899700_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 2,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_d7dc9cceec464559a912a59904899700_msg_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_d7dc9cceec464559a912a59904899700_msg_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_d7dc9cceec464559a912a59904899700_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 5,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_d7dc9cceec464559a912a59904899700_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791688009,
+              "id": "resp_d7dc9cceec464559a912a59904899700",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-6-astra",
+              "object": "response",
+              "output": [
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_d7dc9cceec464559a912a59904899700_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 31,
+                "output_tokens": 22,
+                "total_tokens": 53
+              },
+              "user": null
+            },
+            "sequence_number": 7,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 22,
+          "total_tokens": 53
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_d7dc9cceec464559a912a59904899700_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-6-astra",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_3a837b6b73。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 3461,
+      "first_byte_ms": 2628,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791688012,
+              "id": "resp_b7b0e79e57a549ba91b85ccfbd8afd08",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-6-astra",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 0,
+                "output_tokens": 0,
+                "total_tokens": 0
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+              "content": null,
+              "id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 2,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\":\"",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 4,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "probe",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 5,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "3",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 7,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "a",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 8,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "837",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 9,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "b",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 10,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "6",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 11,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "b",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 12,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "73",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 13,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"}",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output_index": 0,
+            "sequence_number": 14,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\":\"probe_3a837b6b73\"}",
+            "item_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "name": "probe_echo",
+            "output_index": 0,
+            "sequence_number": 15,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\":\"probe_3a837b6b73\"}",
+              "call_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+              "content": null,
+              "id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 0,
+            "sequence_number": 16,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791688012,
+              "id": "resp_b7b0e79e57a549ba91b85ccfbd8afd08",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gpt-6-astra",
+              "object": "response",
+              "output": [
+                {
+                  "arguments": "{\"value\":\"probe_3a837b6b73\"}",
+                  "call_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+                  "content": null,
+                  "id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 90,
+                "output_tokens": 27,
+                "total_tokens": 117
+              },
+              "user": null
+            },
+            "sequence_number": 17,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 0,
+        "tools": [
+          {
+            "id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_3a837b6b73"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 90,
+          "output_tokens": 27,
+          "total_tokens": 117
+        },
+        "output": [
+          {
+            "arguments": "{\"value\":\"probe_3a837b6b73\"}",
+            "call_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "content": null,
+            "id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-6-astra",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_3a837b6b73。不要自己假装执行。"
+          },
+          {
+            "arguments": "{\"value\":\"probe_3a837b6b73\"}",
+            "call_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "content": null,
+            "id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "call_wGlXaFRQ4psjByJZwsXtGsow",
+            "output": "result_b8176e938e"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 3864,
+      "first_byte_ms": 3864,
+      "response": {
+        "created_at": 1791688015,
+        "id": "80dd66b6791d02daa2a51fd3cff31853",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-6-astra",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_b8176e938e",
+                "type": "output_text"
+              }
+            ],
+            "id": "80dd66b6791d02daa2a51fd3cff31853_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 109,
+          "output_tokens": 43,
+          "total_tokens": 152
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_b8176e938e",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 109,
+          "output_tokens": 43,
+          "total_tokens": 152
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_b8176e938e",
+                "type": "output_text"
+              }
+            ],
+            "id": "80dd66b6791d02daa2a51fd3cff31853_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "responses",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-6-astra",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3779,
+      "first_byte_ms": 3779,
+      "response": {
+        "created_at": 1791688019,
+        "id": "c4832a2256a9d187231a0d88d2404b72",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gpt-6-astra",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "c4832a2256a9d187231a0d88d2404b72_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 38,
+          "total_tokens": 90
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "red,blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 38,
+          "total_tokens": 90
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red,blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "c4832a2256a9d187231a0d88d2404b72_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "error",
+      "request": {
+        "model": "global:gpt-6-astra",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV8zYTgzN2I2Yjcz"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 502,
+      "elapsed_ms": 1287,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"}}\n"
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "error",
+      "request": {
+        "model": "global:gpt-6-astra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 502,
+      "elapsed_ms": 1239,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "error",
+      "request": {
+        "model": "global:gpt-6-astra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_3a837b6b73。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 502,
+      "elapsed_ms": 1241,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-6-astra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 7213,
+      "first_byte_ms": 7213,
+      "response": {
+        "content": [
+          {
+            "thinking": "**Identifying colors for output**\n\nI need to identify the left side as red and the right as blue. I'll aim to produce a clear output showing the colors red and blue, possibly alongside a visual representation, like an image. The right side should be labeled with color code #0000ff, which I know corresponds to blue. It's a straightforward task, but I want to ensure that everything is clearly laid out in the final output.",
+            "type": "thinking"
+          },
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "id": "e1b6ec2974ca0c480aa0e610d083ff5c",
+        "model": "global:gpt-6-astra",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 36
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "red,blue",
+        "reasoning_chars": 423,
+        "tools": [],
+        "usage": {
+          "input_tokens": 52,
+          "output_tokens": 36
+        },
+        "output": [
+          {
+            "thinking": "**Identifying colors for output**\n\nI need to identify the left side as red and the right as blue. I'll aim to produce a clear output showing the colors red and blue, possibly alongside a visual representation, like an image. The right side should be labeled with color code #0000ff, which I know corresponds to blue. It's a straightforward task, but I want to ensure that everything is clearly laid out in the final output.",
+            "type": "thinking"
+          },
+          {
+            "text": "red,blue",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gpt-6-astra",
+      "model_id": "global:gpt-6-astra",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gpt-6-astra",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_3a837b6b73"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 4426,
+      "first_byte_ms": 4425,
+      "response": {
+        "content": [
+          {
+            "text": "probe_3a837b6b73",
+            "type": "text"
+          }
+        ],
+        "id": "1b65738a69b1dec41b5d138f84fb0e81",
+        "model": "global:gpt-6-astra",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 60
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_3a837b6b73",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 37,
+          "output_tokens": 60
+        },
+        "output": [
+          {
+            "text": "probe_3a837b6b73",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T03:07:19.004627+00:00"
+}

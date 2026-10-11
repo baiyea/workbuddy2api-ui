@@ -1,0 +1,3524 @@
+{
+  "started_at": "2026-10-11T02:52:00.533273+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:hy4-preview",
+      "id": "global:hy4-preview"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_d25025e568"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2897,
+      "first_byte_ms": 2897,
+      "response": {
+        "created_at": 1791687120,
+        "id": "e0d326677cefa135d450b3ced5e8bd61",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "hy4-preview",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "e0d326677cefa135d450b3ced5e8bd61_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer user: \"请只输出这个测试标记，不要解释：probe_d25025e568\". They want only output the test marker, no explanation. The marker is \"probe_d25025e568\". So final should be exactly that string, no other text. Ensure no quotes, no explanation. Done.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_d25025e568",
+                "type": "output_text"
+              }
+            ],
+            "id": "e0d326677cefa135d450b3ced5e8bd61_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 83,
+          "output_tokens": 74,
+          "total_tokens": 157
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_d25025e568",
+        "reasoning_chars": 240,
+        "tools": [],
+        "usage": {
+          "input_tokens": 83,
+          "output_tokens": 74,
+          "total_tokens": 157
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "e0d326677cefa135d450b3ced5e8bd61_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer user: \"请只输出这个测试标记，不要解释：probe_d25025e568\". They want only output the test marker, no explanation. The marker is \"probe_d25025e568\". So final should be exactly that string, no other text. Ensure no quotes, no explanation. Done.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_d25025e568",
+                "type": "output_text"
+              }
+            ],
+            "id": "e0d326677cefa135d450b3ced5e8bd61_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 20783,
+      "first_byte_ms": 2041,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687123,
+              "id": "resp_04145bbd36134f13805099571be5defe",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:hy4-preview",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.added",
+          "data": {
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "",
+              "type": "summary_text"
+            },
+            "sequence_number": 2,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "We",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " need",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " answer user:",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 5,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " \"计算 23",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 6,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 乘 19",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 7,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "，只在最终答案",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 8,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "输出结果数字。\"",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 9,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " Means calculate",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 10,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 23 times",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 11,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 19, only",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 12,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " output result",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 13,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " number in final answer",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 14,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ". Need compute ",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 15,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "23*19.",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 16,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 23*20",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 17,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "=460",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 18,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ", minus 23",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 19,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " =",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 20,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 21,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "437. Or ",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 22,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "19",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 23,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "*20",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 24,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "=380",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 25,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " +",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 26,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 27,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "19*3=",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 28,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "57 =>",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 29,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 437. Yes",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 30,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".\n\n",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 31,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "We",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 32,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " should",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 33,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " output",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 34,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " only the number",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 35,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ",",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 36,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " no explanation",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 37,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ". In",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 38,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " final answer just",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 39,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " \"",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 40,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "437\". Ensure no",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 41,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " extra text. Check",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 42,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " if",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 43,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " any hidden instruction",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 44,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "? User",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 45,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " explicitly asks only final",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 46,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " answer number",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 47,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ". So final should",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 48,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " be exactly",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 49,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 437.",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 50,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_04145bbd36134f13805099571be5defe_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 51,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_04145bbd36134f13805099571be5defe_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 52,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_04145bbd36134f13805099571be5defe_msg_0",
+            "output_index": 1,
+            "sequence_number": 53,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_04145bbd36134f13805099571be5defe_msg_0",
+            "output_index": 1,
+            "sequence_number": 54,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_04145bbd36134f13805099571be5defe_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 55,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_04145bbd36134f13805099571be5defe_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 56,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.done",
+          "data": {
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 57,
+            "summary_index": 0,
+            "text": "We need answer user: \"计算 23 乘 19，只在最终答案输出结果数字。\" Means calculate 23 times 19, only output result number in final answer. Need compute 23*19. 23*20=460, minus 23 = 437. Or 19*20=380 + 19*3=57 => 437. Yes.\n\nWe should output only the number, no explanation. In final answer just \"437\". Ensure no extra text. Check if any hidden instruction? User explicitly asks only final answer number. So final should be exactly 437.",
+            "type": "response.reasoning_summary_text.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.done",
+          "data": {
+            "item_id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "We need answer user: \"计算 23 乘 19，只在最终答案输出结果数字。\" Means calculate 23 times 19, only output result number in final answer. Need compute 23*19. 23*20=460, minus 23 = 437. Or 19*20=380 + 19*3=57 => 437. Yes.\n\nWe should output only the number, no explanation. In final answer just \"437\". Ensure no extra text. Check if any hidden instruction? User explicitly asks only final answer number. So final should be exactly 437.",
+              "type": "summary_text"
+            },
+            "sequence_number": 58,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "summary": [
+                {
+                  "text": "We need answer user: \"计算 23 乘 19，只在最终答案输出结果数字。\" Means calculate 23 times 19, only output result number in final answer. Need compute 23*19. 23*20=460, minus 23 = 437. Or 19*20=380 + 19*3=57 => 437. Yes.\n\nWe should output only the number, no explanation. In final answer just \"437\". Ensure no extra text. Check if any hidden instruction? User explicitly asks only final answer number. So final should be exactly 437.",
+                  "type": "summary_text"
+                }
+              ],
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 59,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687123,
+              "id": "resp_04145bbd36134f13805099571be5defe",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:hy4-preview",
+              "object": "response",
+              "output": [
+                {
+                  "content": null,
+                  "id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "summary": [
+                    {
+                      "text": "We need answer user: \"计算 23 乘 19，只在最终答案输出结果数字。\" Means calculate 23 times 19, only output result number in final answer. Need compute 23*19. 23*20=460, minus 23 = 437. Or 19*20=380 + 19*3=57 => 437. Yes.\n\nWe should output only the number, no explanation. In final answer just \"437\". Ensure no extra text. Check if any hidden instruction? User explicitly asks only final answer number. So final should be exactly 437.",
+                      "type": "summary_text"
+                    }
+                  ],
+                  "type": "reasoning"
+                },
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_04145bbd36134f13805099571be5defe_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 81,
+                "output_tokens": 124,
+                "total_tokens": 205
+              },
+              "user": null
+            },
+            "sequence_number": 60,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 415,
+        "tools": [],
+        "usage": {
+          "input_tokens": 81,
+          "output_tokens": 124,
+          "total_tokens": 205
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "resp_04145bbd36134f13805099571be5defe_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer user: \"计算 23 乘 19，只在最终答案输出结果数字。\" Means calculate 23 times 19, only output result number in final answer. Need compute 23*19. 23*20=460, minus 23 = 437. Or 19*20=380 + 19*3=57 => 437. Yes.\n\nWe should output only the number, no explanation. In final answer just \"437\". Ensure no extra text. Check if any hidden instruction? User explicitly asks only final answer number. So final should be exactly 437.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_04145bbd36134f13805099571be5defe_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_d25025e568"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3661,
+      "first_byte_ms": 3661,
+      "response": {
+        "created_at": 1791687143,
+        "id": "d16af46df3ce9d82e3ca1d0ba059e8da",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "hy4-preview",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "d16af46df3ce9d82e3ca1d0ba059e8da_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer user: \"只输出刚才的测试码。\" They previously said: \"请记住测试码 probe_d25025e568\". I replied \"已记住。\" Now they want only output the test code just now. So output exactly \"probe_d25025e568\". Need ensure only that, no extra text. The user says \"只输出刚才的测试码。\" Means \"Only output the test code from just now.\" The test code is probe_d25025e568. So final should be just that string, no quotes, no punctuation, no explanation. Ensure no markdown? They said only output. So final: probe_d25025e568. Done.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_d25025e568",
+                "type": "output_text"
+              }
+            ],
+            "id": "d16af46df3ce9d82e3ca1d0ba059e8da_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 98,
+          "output_tokens": 145,
+          "total_tokens": 243
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_d25025e568",
+        "reasoning_chars": 493,
+        "tools": [],
+        "usage": {
+          "input_tokens": 98,
+          "output_tokens": 145,
+          "total_tokens": 243
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "d16af46df3ce9d82e3ca1d0ba059e8da_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer user: \"只输出刚才的测试码。\" They previously said: \"请记住测试码 probe_d25025e568\". I replied \"已记住。\" Now they want only output the test code just now. So output exactly \"probe_d25025e568\". Need ensure only that, no extra text. The user says \"只输出刚才的测试码。\" Means \"Only output the test code from just now.\" The test code is probe_d25025e568. So final should be just that string, no quotes, no punctuation, no explanation. Ensure no markdown? They said only output. So final: probe_d25025e568. Done.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_d25025e568",
+                "type": "output_text"
+              }
+            ],
+            "id": "d16af46df3ce9d82e3ca1d0ba059e8da_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_d25025e568。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 3454,
+      "first_byte_ms": 2086,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687147,
+              "id": "resp_543d4b4ed0724c5abafd40cce0e0fd91",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:hy4-preview",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.added",
+          "data": {
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "",
+              "type": "summary_text"
+            },
+            "sequence_number": 2,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "用户",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "要求",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "我必须调用 probe",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 5,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "_echo 工具",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 6,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "一次，value ",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 7,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "参数精确为 \"",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 8,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "probe_d25025e568\"。我需要",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 9,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "按照",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 10,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "格式进行函数调用。\n\n格式要求：\n-",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 11,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " 先打印 <",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 12,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "tool",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 13,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "_c",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 14,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "alls>\n- ",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 15,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "然后",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 16,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "返回",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 17,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "对象，",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 18,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "如 <",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 19,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "tool_call",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 20,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ">",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 21,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "{\"name\":",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 22,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " \"probe_echo",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 23,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "\", \"arguments",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 24,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "\":",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 25,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " {\"value\": \"",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 26,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "probe_d25025",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 27,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "e568\"}}</tool_call>\n- 最后",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 28,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "打印 </tool_c",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 29,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "alls>\n\n让我按照",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 30,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "这个格式来",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 31,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "调用",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 32,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "。",
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 33,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+              "content": null,
+              "id": "chatcmpl-tool-95b4c5a6d813b5ab",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "output_index": 1,
+            "sequence_number": 34,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{\"value\": \"probe",
+            "item_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "output_index": 1,
+            "sequence_number": 35,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_d25025e",
+            "item_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "output_index": 1,
+            "sequence_number": 36,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "568\"}",
+            "item_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "output_index": 1,
+            "sequence_number": 37,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.done",
+          "data": {
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 38,
+            "summary_index": 0,
+            "text": "用户要求我必须调用 probe_echo 工具一次，value 参数精确为 \"probe_d25025e568\"。我需要按照格式进行函数调用。\n\n格式要求：\n- 先打印 <tool_calls>\n- 然后返回对象，如 <tool_call>{\"name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}}</tool_call>\n- 最后打印 </tool_calls>\n\n让我按照这个格式来调用。",
+            "type": "response.reasoning_summary_text.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.done",
+          "data": {
+            "item_id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "用户要求我必须调用 probe_echo 工具一次，value 参数精确为 \"probe_d25025e568\"。我需要按照格式进行函数调用。\n\n格式要求：\n- 先打印 <tool_calls>\n- 然后返回对象，如 <tool_call>{\"name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}}</tool_call>\n- 最后打印 </tool_calls>\n\n让我按照这个格式来调用。",
+              "type": "summary_text"
+            },
+            "sequence_number": 39,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "summary": [
+                {
+                  "text": "用户要求我必须调用 probe_echo 工具一次，value 参数精确为 \"probe_d25025e568\"。我需要按照格式进行函数调用。\n\n格式要求：\n- 先打印 <tool_calls>\n- 然后返回对象，如 <tool_call>{\"name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}}</tool_call>\n- 最后打印 </tool_calls>\n\n让我按照这个格式来调用。",
+                  "type": "summary_text"
+                }
+              ],
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 40,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\": \"probe_d25025e568\"}",
+            "item_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "name": "probe_echo",
+            "output_index": 1,
+            "sequence_number": 41,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\": \"probe_d25025e568\"}",
+              "call_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+              "content": null,
+              "id": "chatcmpl-tool-95b4c5a6d813b5ab",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 1,
+            "sequence_number": 42,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687147,
+              "id": "resp_543d4b4ed0724c5abafd40cce0e0fd91",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:hy4-preview",
+              "object": "response",
+              "output": [
+                {
+                  "content": null,
+                  "id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "summary": [
+                    {
+                      "text": "用户要求我必须调用 probe_echo 工具一次，value 参数精确为 \"probe_d25025e568\"。我需要按照格式进行函数调用。\n\n格式要求：\n- 先打印 <tool_calls>\n- 然后返回对象，如 <tool_call>{\"name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}}</tool_call>\n- 最后打印 </tool_calls>\n\n让我按照这个格式来调用。",
+                      "type": "summary_text"
+                    }
+                  ],
+                  "type": "reasoning"
+                },
+                {
+                  "arguments": "{\"value\": \"probe_d25025e568\"}",
+                  "call_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+                  "content": null,
+                  "id": "chatcmpl-tool-95b4c5a6d813b5ab",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 268,
+                "output_tokens": 117,
+                "total_tokens": 385
+              },
+              "user": null
+            },
+            "sequence_number": 43,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 233,
+        "tools": [
+          {
+            "id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_d25025e568"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 268,
+          "output_tokens": 117,
+          "total_tokens": 385
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求我必须调用 probe_echo 工具一次，value 参数精确为 \"probe_d25025e568\"。我需要按照格式进行函数调用。\n\n格式要求：\n- 先打印 <tool_calls>\n- 然后返回对象，如 <tool_call>{\"name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}}</tool_call>\n- 最后打印 </tool_calls>\n\n让我按照这个格式来调用。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "arguments": "{\"value\": \"probe_d25025e568\"}",
+            "call_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "content": null,
+            "id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_d25025e568。不要自己假装执行。"
+          },
+          {
+            "content": null,
+            "id": "resp_543d4b4ed0724c5abafd40cce0e0fd91_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求我必须调用 probe_echo 工具一次，value 参数精确为 \"probe_d25025e568\"。我需要按照格式进行函数调用。\n\n格式要求：\n- 先打印 <tool_calls>\n- 然后返回对象，如 <tool_call>{\"name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}}</tool_call>\n- 最后打印 </tool_calls>\n\n让我按照这个格式来调用。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "arguments": "{\"value\": \"probe_d25025e568\"}",
+            "call_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "content": null,
+            "id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "chatcmpl-tool-95b4c5a6d813b5ab",
+            "output": "result_d7155a9d1a"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 11191,
+      "first_byte_ms": 11191,
+      "response": {
+        "created_at": 1791687150,
+        "id": "07e5345552bd7b09f4f65980511f597c",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "hy4-preview",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "07e5345552bd7b09f4f65980511f597c_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer: user says \"只输出刚才工具返回的结果，不要再调用工具。\" The previous tool returned result_d7155a9d1a. But we need inspect the transcript.\n\nWe called probe_echo with value probe_d25025e568. The tool response was \"result_d7155a9d1a\". Wait, the tool output shows:\n\nTool request object? Actually we sent:\n{\n  \"tool_name\": \"probe_echo\",\n  \"arguments\": {\n    \"value\": \"probe_d25025e568\"\n  }\n}\nThen tool response: `result_d7155a9d1a`.\n\nBut the user earlier said: \"必须调用 probe_echo 工具一次，value 参数精确为 probe_d25025e568。不要自己假装执行。\" Then we called it. The tool returned result_d7155a9d1a. Now user: \"只输出刚才工具返回的结果，不要再调用工具。\" So we must output exactly the returned result, and no extra text? \"只输出\" means only output the result. The result string is `result_d7155a9d1a`. Should we output just that? Yes, no extra explanation, no quotes, no code. Just plain text: result_d7155a9d1a.\n\nWait: Let's double-check the exact tool response. The response block:\n\n```\nresult_d7155a9d1a\n```\n\nIt didn't have \"result\" field? The tool output was a single string. Actually in the previous assistant turn, we called:\n`tool_name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}`\nThen the result was displayed as:\n```\nresult_d7155a9d1a\n```\nNo \"result\" wrapper. Actually the preceding turn had:\n```\nTool Used: probe_echo\n  - value = probe_d25025e568\n\n`result_d7155a9d1a`\n```\nWait, the prompt format: \n\n```\n<tool_calls:6124c78e><tool_call:6124c78e>probe_echo<arg_key:6124c78e>value‌=probe_d25025e568</tool_call:6124c78e></tool_calls:6124c78e></tool_calls:6124c78e>\n```\nAnd output:\n```\nresult_d7155a9d1a\n```\n\nYes, the tool returned exactly `result_d7155a9d1a`. So output that. The user explicitly says only output the result returned by the tool, do not call the tool again. So I should respond with just `result_d7155a9d1a`. No markdown, no explanation. Ensure no extra whitespace? Just the string. I will output exactly:\n\nresult_d7155a9d1a\n\nLet's ensure not to add newline? Plain text response. If I put a newline it's fine, but \"只输出\" means the content should be the result. I'll output the exact string.\n\nWait, is there any risk the result is `result_d7155a9d1a` but maybe the tool output includes more? Let's re-read:\n\nUser: 必须调用 probe_echo 工具一次，value 参数精确为 probe_d25025e568。不要自己假装执行。\n\nMy response requested tool:\n```\n{\n  \"tool_name\": \"probe_echo\",\n  \"arguments\": {\n    \"value\": \"probe_d25025e568\"\n  }\n}\n```\nActually in the XML-like format, I wrote:\n`{\"tool_name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}}`? Wait, no, I wrote:\n<tool_calls:6124c78e><tool_call:6124c78e>probe_echo<arg_key:6124c78e>value‌=probe_d25025e568</tool_call:6124c78e></tool_calls:6124c78e></tool_calls:6124c78e>\nThe system executed and returned:\n```\nresult_d7155a9d1a\n```\nYes. So output returned result.\n\nThus final answer: `result_d7155a9d1a` (maybe with no surrounding backticks). I will just output that string.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_d7155a9d1a",
+                "type": "output_text"
+              }
+            ],
+            "id": "07e5345552bd7b09f4f65980511f597c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 148,
+          "output_tokens": 822,
+          "total_tokens": 970
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_d7155a9d1a",
+        "reasoning_chars": 2872,
+        "tools": [],
+        "usage": {
+          "input_tokens": 148,
+          "output_tokens": 822,
+          "total_tokens": 970
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "07e5345552bd7b09f4f65980511f597c_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer: user says \"只输出刚才工具返回的结果，不要再调用工具。\" The previous tool returned result_d7155a9d1a. But we need inspect the transcript.\n\nWe called probe_echo with value probe_d25025e568. The tool response was \"result_d7155a9d1a\". Wait, the tool output shows:\n\nTool request object? Actually we sent:\n{\n  \"tool_name\": \"probe_echo\",\n  \"arguments\": {\n    \"value\": \"probe_d25025e568\"\n  }\n}\nThen tool response: `result_d7155a9d1a`.\n\nBut the user earlier said: \"必须调用 probe_echo 工具一次，value 参数精确为 probe_d25025e568。不要自己假装执行。\" Then we called it. The tool returned result_d7155a9d1a. Now user: \"只输出刚才工具返回的结果，不要再调用工具。\" So we must output exactly the returned result, and no extra text? \"只输出\" means only output the result. The result string is `result_d7155a9d1a`. Should we output just that? Yes, no extra explanation, no quotes, no code. Just plain text: result_d7155a9d1a.\n\nWait: Let's double-check the exact tool response. The response block:\n\n```\nresult_d7155a9d1a\n```\n\nIt didn't have \"result\" field? The tool output was a single string. Actually in the previous assistant turn, we called:\n`tool_name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}`\nThen the result was displayed as:\n```\nresult_d7155a9d1a\n```\nNo \"result\" wrapper. Actually the preceding turn had:\n```\nTool Used: probe_echo\n  - value = probe_d25025e568\n\n`result_d7155a9d1a`\n```\nWait, the prompt format: \n\n```\n<tool_calls:6124c78e><tool_call:6124c78e>probe_echo<arg_key:6124c78e>value‌=probe_d25025e568</tool_call:6124c78e></tool_calls:6124c78e></tool_calls:6124c78e>\n```\nAnd output:\n```\nresult_d7155a9d1a\n```\n\nYes, the tool returned exactly `result_d7155a9d1a`. So output that. The user explicitly says only output the result returned by the tool, do not call the tool again. So I should respond with just `result_d7155a9d1a`. No markdown, no explanation. Ensure no extra whitespace? Just the string. I will output exactly:\n\nresult_d7155a9d1a\n\nLet's ensure not to add newline? Plain text response. If I put a newline it's fine, but \"只输出\" means the content should be the result. I'll output the exact string.\n\nWait, is there any risk the result is `result_d7155a9d1a` but maybe the tool output includes more? Let's re-read:\n\nUser: 必须调用 probe_echo 工具一次，value 参数精确为 probe_d25025e568。不要自己假装执行。\n\nMy response requested tool:\n```\n{\n  \"tool_name\": \"probe_echo\",\n  \"arguments\": {\n    \"value\": \"probe_d25025e568\"\n  }\n}\n```\nActually in the XML-like format, I wrote:\n`{\"tool_name\": \"probe_echo\", \"arguments\": {\"value\": \"probe_d25025e568\"}}`? Wait, no, I wrote:\n<tool_calls:6124c78e><tool_call:6124c78e>probe_echo<arg_key:6124c78e>value‌=probe_d25025e568</tool_call:6124c78e></tool_calls:6124c78e></tool_calls:6124c78e>\nThe system executed and returned:\n```\nresult_d7155a9d1a\n```\nYes. So output returned result.\n\nThus final answer: `result_d7155a9d1a` (maybe with no surrounding backticks). I will just output that string.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_d7155a9d1a",
+                "type": "output_text"
+              }
+            ],
+            "id": "07e5345552bd7b09f4f65980511f597c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 24019,
+      "first_byte_ms": 24019,
+      "response": {
+        "created_at": 1791687162,
+        "id": "a7ca2496ad81bfb2841a01c9e6855036",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "hy4-preview",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "a7ca2496ad81bfb2841a01c9e6855036_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer user: \"请用普通中文写一句测试说明，不要输出 JSON。\" Need write a test instruction in plain Chinese, one sentence, not output JSON. Need just produce a single sentence? The user asks: \"请用普通中文写一句测试说明，不要输出 JSON。\" Means: Please write a test instruction/explanation in ordinary Chinese, one sentence, do not output JSON.\n\nWe need produce a sentence in Chinese that is a test note/instruction. It shouldn't be JSON. Maybe like \"请运行以下命令以验证功能是否正常：npm test。\" But they asked \"一句测试说明\" - write one sentence of test description. Could be: \"本测试用于检查登录接口在输入正确账号密码时能否返回成功的令牌。\" That's a test explanation. Or \"请执行冒烟测试，确认首页能够正常加载且无JavaScript报错。\" The context: There's a web development policy earlier but user asks generic. Since system says for web development tasks... But user asks write a test note. The instruction says \"请用普通中文写一句测试说明，不要输出 JSON。\" So final answer should be a single sentence in plain Chinese, not JSON. We can just output one sentence. Need not mention JSON. Ensure it's one sentence. Example: \"请运行单元测试并确认所有用例均通过，以验证核心功能没有问题。\" That is one sentence. Or \"本测试用于验证用户提交表单后数据能否正确保存到数据库。\" That is \"一句测试说明\" - a test description. The phrase \"测试说明\" could mean \"test instruction\". Let's parse: \"写一句测试说明\" could mean \"write a sentence of test description/instruction\". Maybe they want a note for QA: \"请在不同浏览器（Chrome、Firefox、Safari）中打开页面，检查布局是否一致。\" That's one sentence? It uses parentheses, but still one sentence. Ensure not JSON. No code block? They said don't output JSON, so output plain text. Maybe \"请执行页面加载的冒烟测试，确认没有控制台错误且主要元素正常显示。\" That is one sentence. Let's craft a clear, ordinary Chinese sentence:\n\n\"请运行冒烟测试，确认页面能够正常打开、主要按钮可点击且浏览器控制台没有报错。\"\n\nCheck if it's one sentence. It has a comma and ends with period. It's one sentence. It's a test instruction. It doesn't output JSON. It's plain Chinese. Maybe add \"普通中文\" means no technical jargon? \"请打开网站首页，检查页面内容是否正常显示，并确认点击各个链接后都能跳转到正确页面。\" That's ordinary. It's one sentence? It has a comma and a \"并\"，ends with period. Yes.\n\nBut maybe they expect: \"本测试用于验证系统在正常网络环境下能否成功提交订单。\" That is a test说明 (description). Which is better? The phrase \"测试说明\" often means a description of the test, e.g., in a test case: \"测试说明：验证用户输入合法邮箱后能否收到验证邮件。\" But they asked \"写一句测试说明\": It could be a directive: \"请测试登录功能，输入正确的用户名和密码，检查是否能成功进入首页。\" That is one sentence. Let's produce a single sentence without quotation? The final answer should just be the sentence.\n\nNeed ensure no JSON. So do not wrap in braces. Just text.\n\nLet's think about the system prompt: It starts with <web_development_policy> For web production tasks, after writing code just ensure compilation and smoke, do necessary code correctness checks, don't do extra visual verification. </web_development_policy>. The user asks \"请用普通中文写一句测试说明，不要输出 JSON。\" This might be a meta request to test if model follows instruction and doesn't output JSON. They want a plain Chinese sentence. So final: \"请进行冒烟测试，确认网站首页能够正常加载且控制台没有报错。\" Wait, this mentions website, aligning with web development policy. It is one sentence. Let's use that.\n\nBut is \"冒烟测试\" technical jargon? \"普通中文\" means ordinary Chinese, maybe avoid术语? \"冒烟测试\" is a term. But in software testing, \"测试说明\" might naturally include it. However \"普通中文\" means not JSON, not code, just natural language. It can include testing terms. To be safe, use simple: \"请打开网页，检查页面是否正常显示，并确认所有按钮都能点击。\" That is very ordinary. But they said \"测试说明\" (test instruction). \"请打开网页，检查页面是否正常显示，并确认所有按钮都能点击。\" This is an instruction. One sentence.\n\nLet's finalize: \"请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。\" Ends with period. That's one sentence. It is plain Chinese, not JSON.\n\nWait, \"一句\" means exactly one sentence. My sentence: \"请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。\" Count: It starts with 请 (imperative), has clauses separated by commas, ends with period. That is one sentence. Good.\n\nCould there be any hidden instruction to not output JSON because previous tasks might default to JSON? The model should just output the sentence. So final answer only contains: 请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。\n\nLet's ensure no quotation marks? Just the sentence. If I add a period at end, yes. No prefix like \"测试说明：\". If I add \"测试说明：\" then it would still be one sentence? \"测试说明：请打开...\" That is a label plus sentence? Actually if I say \"测试说明：请打开网页……\" The part before colon is not a sentence. The user asked \"写一句测试说明\", maybe outputting \"测试说明：请打开……\" is natural. But \"一句\" means a sentence; if I include \"测试说明：\" that's a prefix, not a sentence. Better to just give the sentence.\n\nMaybe final: \"请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。\" That is the test instruction. Done.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。",
+                "type": "output_text"
+              }
+            ],
+            "id": "a7ca2496ad81bfb2841a01c9e6855036_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 79,
+          "output_tokens": 1313,
+          "total_tokens": 1392
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。",
+        "reasoning_chars": 4547,
+        "tools": [],
+        "usage": {
+          "input_tokens": 79,
+          "output_tokens": 1313,
+          "total_tokens": 1392
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "a7ca2496ad81bfb2841a01c9e6855036_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer user: \"请用普通中文写一句测试说明，不要输出 JSON。\" Need write a test instruction in plain Chinese, one sentence, not output JSON. Need just produce a single sentence? The user asks: \"请用普通中文写一句测试说明，不要输出 JSON。\" Means: Please write a test instruction/explanation in ordinary Chinese, one sentence, do not output JSON.\n\nWe need produce a sentence in Chinese that is a test note/instruction. It shouldn't be JSON. Maybe like \"请运行以下命令以验证功能是否正常：npm test。\" But they asked \"一句测试说明\" - write one sentence of test description. Could be: \"本测试用于检查登录接口在输入正确账号密码时能否返回成功的令牌。\" That's a test explanation. Or \"请执行冒烟测试，确认首页能够正常加载且无JavaScript报错。\" The context: There's a web development policy earlier but user asks generic. Since system says for web development tasks... But user asks write a test note. The instruction says \"请用普通中文写一句测试说明，不要输出 JSON。\" So final answer should be a single sentence in plain Chinese, not JSON. We can just output one sentence. Need not mention JSON. Ensure it's one sentence. Example: \"请运行单元测试并确认所有用例均通过，以验证核心功能没有问题。\" That is one sentence. Or \"本测试用于验证用户提交表单后数据能否正确保存到数据库。\" That is \"一句测试说明\" - a test description. The phrase \"测试说明\" could mean \"test instruction\". Let's parse: \"写一句测试说明\" could mean \"write a sentence of test description/instruction\". Maybe they want a note for QA: \"请在不同浏览器（Chrome、Firefox、Safari）中打开页面，检查布局是否一致。\" That's one sentence? It uses parentheses, but still one sentence. Ensure not JSON. No code block? They said don't output JSON, so output plain text. Maybe \"请执行页面加载的冒烟测试，确认没有控制台错误且主要元素正常显示。\" That is one sentence. Let's craft a clear, ordinary Chinese sentence:\n\n\"请运行冒烟测试，确认页面能够正常打开、主要按钮可点击且浏览器控制台没有报错。\"\n\nCheck if it's one sentence. It has a comma and ends with period. It's one sentence. It's a test instruction. It doesn't output JSON. It's plain Chinese. Maybe add \"普通中文\" means no technical jargon? \"请打开网站首页，检查页面内容是否正常显示，并确认点击各个链接后都能跳转到正确页面。\" That's ordinary. It's one sentence? It has a comma and a \"并\"，ends with period. Yes.\n\nBut maybe they expect: \"本测试用于验证系统在正常网络环境下能否成功提交订单。\" That is a test说明 (description). Which is better? The phrase \"测试说明\" often means a description of the test, e.g., in a test case: \"测试说明：验证用户输入合法邮箱后能否收到验证邮件。\" But they asked \"写一句测试说明\": It could be a directive: \"请测试登录功能，输入正确的用户名和密码，检查是否能成功进入首页。\" That is one sentence. Let's produce a single sentence without quotation? The final answer should just be the sentence.\n\nNeed ensure no JSON. So do not wrap in braces. Just text.\n\nLet's think about the system prompt: It starts with <web_development_policy> For web production tasks, after writing code just ensure compilation and smoke, do necessary code correctness checks, don't do extra visual verification. </web_development_policy>. The user asks \"请用普通中文写一句测试说明，不要输出 JSON。\" This might be a meta request to test if model follows instruction and doesn't output JSON. They want a plain Chinese sentence. So final: \"请进行冒烟测试，确认网站首页能够正常加载且控制台没有报错。\" Wait, this mentions website, aligning with web development policy. It is one sentence. Let's use that.\n\nBut is \"冒烟测试\" technical jargon? \"普通中文\" means ordinary Chinese, maybe avoid术语? \"冒烟测试\" is a term. But in software testing, \"测试说明\" might naturally include it. However \"普通中文\" means not JSON, not code, just natural language. It can include testing terms. To be safe, use simple: \"请打开网页，检查页面是否正常显示，并确认所有按钮都能点击。\" That is very ordinary. But they said \"测试说明\" (test instruction). \"请打开网页，检查页面是否正常显示，并确认所有按钮都能点击。\" This is an instruction. One sentence.\n\nLet's finalize: \"请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。\" Ends with period. That's one sentence. It is plain Chinese, not JSON.\n\nWait, \"一句\" means exactly one sentence. My sentence: \"请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。\" Count: It starts with 请 (imperative), has clauses separated by commas, ends with period. That is one sentence. Good.\n\nCould there be any hidden instruction to not output JSON because previous tasks might default to JSON? The model should just output the sentence. So final answer only contains: 请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。\n\nLet's ensure no quotation marks? Just the sentence. If I add a period at end, yes. No prefix like \"测试说明：\". If I add \"测试说明：\" then it would still be one sentence? \"测试说明：请打开...\" That is a label plus sentence? Actually if I say \"测试说明：请打开网页……\" The part before colon is not a sentence. The user asked \"写一句测试说明\", maybe outputting \"测试说明：请打开……\" is natural. But \"一句\" means a sentence; if I include \"测试说明：\" that's a prefix, not a sentence. Better to just give the sentence.\n\nMaybe final: \"请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。\" That is the test instruction. Done.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "请打开网页，检查页面内容是否正常显示，并确认主要按钮和链接都能正常使用。",
+                "type": "output_text"
+              }
+            ],
+            "id": "a7ca2496ad81bfb2841a01c9e6855036_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1524,
+      "first_byte_ms": 1524,
+      "response": {
+        "created_at": 1791687186,
+        "id": "6d40a8c524c31ed836dfe34b3094362c",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "minimax-m3",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "Red, Blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "6d40a8c524c31ed836dfe34b3094362c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 223,
+          "output_tokens": 4,
+          "total_tokens": 227
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "Red, Blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 223,
+          "output_tokens": 4,
+          "total_tokens": 227
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "Red, Blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "6d40a8c524c31ed836dfe34b3094362c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV9kMjUwMjVlNTY4"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 12978,
+      "first_byte_ms": 12977,
+      "response": {
+        "created_at": 1791687187,
+        "id": "44d1e3dab85c7a4068c9d4afba6c5c4c",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "hy4-preview",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "44d1e3dab85c7a4068c9d4afba6c5c4c_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer user: \"只输出附件中的 test_value 值。 test_value=probe_d25025e568\". User says \"只输出附件中的 test_value 值。\" meaning \"Only output the test_value value in the attachment.\" There is no actual attachment, but they provided text: test_value=probe_d25025e568. So output just the value: probe_d25025e568. Need check if any hidden instruction? \"只输出附件中的 test_value 值。 test_value=probe_d25025e568\". They want only the value, no extra text. Should output \"probe_d25025e568\". Ensure no quotes, no explanation. Final answer just that string.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_d25025e568",
+                "type": "output_text"
+              }
+            ],
+            "id": "44d1e3dab85c7a4068c9d4afba6c5c4c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 85,
+          "output_tokens": 151,
+          "total_tokens": 236
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_d25025e568",
+        "reasoning_chars": 528,
+        "tools": [],
+        "usage": {
+          "input_tokens": 85,
+          "output_tokens": 151,
+          "total_tokens": 236
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "44d1e3dab85c7a4068c9d4afba6c5c4c_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer user: \"只输出附件中的 test_value 值。 test_value=probe_d25025e568\". User says \"只输出附件中的 test_value 值。\" meaning \"Only output the test_value value in the attachment.\" There is no actual attachment, but they provided text: test_value=probe_d25025e568. So output just the value: probe_d25025e568. Need check if any hidden instruction? \"只输出附件中的 test_value 值。 test_value=probe_d25025e568\". They want only the value, no extra text. Should output \"probe_d25025e568\". Ensure no quotes, no explanation. Final answer just that string.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_d25025e568",
+                "type": "output_text"
+              }
+            ],
+            "id": "44d1e3dab85c7a4068c9d4afba6c5c4c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_d25025e568"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3261,
+      "first_byte_ms": 3260,
+      "response": {
+        "content": [
+          {
+            "thinking": "We need answer to user: \"请只输出这个测试标记，不要解释：probe_d25025e568\"\nThe user wants us to output only the test marker, no explanation. The marker is \"probe_d25025e568\". Need output exactly that, no extra text. Ensure no code block? They said only output this test marker, don't explain. So final answer should be just probe_d25025e568. Need not include quotes? The marker is probe_d25025e568. I will output that alone.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_d25025e568",
+            "type": "text"
+          }
+        ],
+        "id": "d94ceafe56a5bfc60de1c6a196b1ecf7",
+        "model": "global:hy4-preview",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 83,
+          "output_tokens": 117
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_d25025e568",
+        "reasoning_chars": 408,
+        "tools": [],
+        "usage": {
+          "input_tokens": 83,
+          "output_tokens": 117
+        },
+        "output": [
+          {
+            "thinking": "We need answer to user: \"请只输出这个测试标记，不要解释：probe_d25025e568\"\nThe user wants us to output only the test marker, no explanation. The marker is \"probe_d25025e568\". Need output exactly that, no extra text. Ensure no code block? They said only output this test marker, don't explain. So final answer should be just probe_d25025e568. Need not include quotes? The marker is probe_d25025e568. I will output that alone.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_d25025e568",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 3138,
+      "first_byte_ms": 1384,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "dcee669bf4b0fc0a6806dcab563f5b01",
+              "model": "hy4-preview",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "thinking": "",
+              "type": "thinking"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "We",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " need",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " answer user",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " in",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " Chinese.",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " They",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " ask: \"计算 23",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " 乘 19，只在",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "最终答案输出结果数字。\" Means",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " compute 23 times",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " 19, and",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " only in",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " final answer output the result",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " number. So final answer should",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " be just the number,",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " no explanation",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ". Compute",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ":",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " 23*19 = ",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "23*(",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "20-1",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ")=460",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "-23",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "=437. Need",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " ensure",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " only",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " output",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " number,",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " no extra",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " text. Final: 437",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": ".",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "text": "",
+              "type": "text"
+            },
+            "index": 1,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "437",
+              "type": "text_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 1,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "end_turn"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 81,
+              "output_tokens": 93
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "437",
+        "reasoning_chars": 303,
+        "tools": [],
+        "usage": {
+          "input_tokens": 81,
+          "output_tokens": 93
+        },
+        "output": [
+          {
+            "thinking": "We need answer user in Chinese. They ask: \"计算 23 乘 19，只在最终答案输出结果数字。\" Means compute 23 times 19, and only in final answer output the result number. So final answer should be just the number, no explanation. Compute: 23*19 = 23*(20-1)=460-23=437. Need ensure only output number, no extra text. Final: 437.",
+            "type": "thinking"
+          },
+          {
+            "text": "437",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_d25025e568"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 5958,
+      "first_byte_ms": 5957,
+      "response": {
+        "content": [
+          {
+            "thinking": "We need answer the user: \"只输出刚才的测试码。\" means \"Only output the previous test code.\" We need recall the test code from earlier. The user said in previous turn: \"请记住测试码 probe_d25025e568\". So the test code is `probe_d25025e568`. They ask to only output the test code, no extra text. So output exactly: probe_d25025e568\n\nEnsure no additional commentary. Need verify if any nuance: The phrase \"测试码\" refers to \"probe_d25025e568\". The user says \"只输出刚才的测试码。\" Means output only the test code. So final answer should be just that string, no punctuation? They said only output the code. Should we include backticks? No, just the code. Let's output \"probe_d25025e568\". No newline? Usually newline fine. But to be safe, just the string. If we output exactly the string with maybe no extra spaces. Final.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_d25025e568",
+            "type": "text"
+          }
+        ],
+        "id": "041f1797d68870754176f8466b576a70",
+        "model": "global:hy4-preview",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 98,
+          "output_tokens": 215
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_d25025e568",
+        "reasoning_chars": 788,
+        "tools": [],
+        "usage": {
+          "input_tokens": 98,
+          "output_tokens": 215
+        },
+        "output": [
+          {
+            "thinking": "We need answer the user: \"只输出刚才的测试码。\" means \"Only output the previous test code.\" We need recall the test code from earlier. The user said in previous turn: \"请记住测试码 probe_d25025e568\". So the test code is `probe_d25025e568`. They ask to only output the test code, no extra text. So output exactly: probe_d25025e568\n\nEnsure no additional commentary. Need verify if any nuance: The phrase \"测试码\" refers to \"probe_d25025e568\". The user says \"只输出刚才的测试码。\" Means output only the test code. So final answer should be just that string, no punctuation? They said only output the code. Should we include backticks? No, just the code. Let's output \"probe_d25025e568\". No newline? Usually newline fine. But to be safe, just the string. If we output exactly the string with maybe no extra spaces. Final.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_d25025e568",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_d25025e568。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2557,
+      "first_byte_ms": 1933,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "4a6a703f8fdc38b5410171ac33e79c8d",
+              "model": "hy4-preview",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "thinking": "",
+              "type": "thinking"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "用户",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "要求",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "我调用",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": " probe_echo ",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "工具，value ",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "thinking": "参数精确为 \"probe_d25025e568\"。我需要执行这个工具调用。",
+              "type": "thinking_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "id": "chatcmpl-tool-83cc323c8e463704",
+              "input": {},
+              "name": "probe_echo",
+              "type": "tool_use"
+            },
+            "index": 1,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "{\"value\": \"probe_d",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "25025e568",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "partial_json": "\"}",
+              "type": "input_json_delta"
+            },
+            "index": 1,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 1,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "tool_use"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 268,
+              "output_tokens": 49
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "tool_use",
+        "text": "",
+        "reasoning_chars": 65,
+        "tools": [
+          {
+            "id": "chatcmpl-tool-83cc323c8e463704",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_d25025e568"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 268,
+          "output_tokens": 49
+        },
+        "output": [
+          {
+            "thinking": "用户要求我调用 probe_echo 工具，value 参数精确为 \"probe_d25025e568\"。我需要执行这个工具调用。",
+            "type": "thinking"
+          },
+          {
+            "id": "chatcmpl-tool-83cc323c8e463704",
+            "input": {
+              "value": "probe_d25025e568"
+            },
+            "name": "probe_echo",
+            "type": "tool_use"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_d25025e568。不要自己假装执行。"
+          },
+          {
+            "role": "assistant",
+            "content": [
+              {
+                "thinking": "用户要求我调用 probe_echo 工具，value 参数精确为 \"probe_d25025e568\"。我需要执行这个工具调用。",
+                "type": "thinking"
+              },
+              {
+                "id": "chatcmpl-tool-83cc323c8e463704",
+                "input": {
+                  "value": "probe_d25025e568"
+                },
+                "name": "probe_echo",
+                "type": "tool_use"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "tool_result",
+                "tool_use_id": "chatcmpl-tool-83cc323c8e463704",
+                "content": "result_7a2142775e"
+              },
+              {
+                "type": "text",
+                "text": "只输出刚才工具返回的结果，不要再调用工具。"
+              }
+            ]
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2475,
+      "first_byte_ms": 2475,
+      "response": {
+        "content": [
+          {
+            "thinking": "The user wants only the tool result output: \"result_7a2142775e\"",
+            "type": "thinking"
+          },
+          {
+            "text": "result_7a2142775e",
+            "type": "text"
+          }
+        ],
+        "id": "aa9dbf77bc0fd6445b0aaea0bbb25afe",
+        "model": "global:hy4-preview",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 322,
+          "output_tokens": 29
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "result_7a2142775e",
+        "reasoning_chars": 63,
+        "tools": [],
+        "usage": {
+          "input_tokens": 322,
+          "output_tokens": 29
+        },
+        "output": [
+          {
+            "thinking": "The user wants only the tool result output: \"result_7a2142775e\"",
+            "type": "thinking"
+          },
+          {
+            "text": "result_7a2142775e",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1536,
+      "first_byte_ms": 1536,
+      "response": {
+        "content": [
+          {
+            "text": "Red, blue",
+            "type": "text"
+          }
+        ],
+        "id": "b26bdcb2747bdc6a9611c0092bde1f46",
+        "model": "global:hy4-preview",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 223,
+          "output_tokens": 4
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "Red, blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 223,
+          "output_tokens": 4
+        },
+        "output": [
+          {
+            "text": "Red, blue",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:hy4-preview",
+      "model_id": "global:hy4-preview",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:hy4-preview",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_d25025e568"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 4556,
+      "first_byte_ms": 4556,
+      "response": {
+        "content": [
+          {
+            "thinking": "We need answer user asks: \"只输出附件中的 test_value 值。 test_value=probe_d25025e568\"\nThey say \"只输出附件中的 test_value 值。\" means \"Only output the test_value value from the attachment.\" Then they provide \"test_value=probe_d25025e568\". There's no actual attachment visible in the prompt besides text. They ask to only output the test_value value. The test_value value is \"probe_d25025e568\". Need output only that. Ensure no extra text. Output exactly probe_d25025e568. No quotes, no explanation.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_d25025e568",
+            "type": "text"
+          }
+        ],
+        "id": "725dae8abf252a453ac9dbec28d64816",
+        "model": "global:hy4-preview",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 85,
+          "output_tokens": 132
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_d25025e568",
+        "reasoning_chars": 481,
+        "tools": [],
+        "usage": {
+          "input_tokens": 85,
+          "output_tokens": 132
+        },
+        "output": [
+          {
+            "thinking": "We need answer user asks: \"只输出附件中的 test_value 值。 test_value=probe_d25025e568\"\nThey say \"只输出附件中的 test_value 值。\" means \"Only output the test_value value from the attachment.\" Then they provide \"test_value=probe_d25025e568\". There's no actual attachment visible in the prompt besides text. They ask to only output the test_value value. The test_value value is \"probe_d25025e568\". Need output only that. Ensure no extra text. Output exactly probe_d25025e568. No quotes, no explanation.",
+            "type": "thinking"
+          },
+          {
+            "text": "probe_d25025e568",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T02:53:44.650799+00:00"
+}

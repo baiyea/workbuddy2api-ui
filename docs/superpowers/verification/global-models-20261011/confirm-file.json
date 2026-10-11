@@ -1,0 +1,194 @@
+{
+  "started_at": "2026-10-11T03:07:53.220469+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:default-model",
+      "id": "global:default-model"
+    }
+  ],
+  "checks": [
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:default-model",
+      "model_id": "global:default-model",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:default-model",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV81OGVkZTg3MDAx"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1732,
+      "first_byte_ms": 1732,
+      "response": {
+        "created_at": 1791688072,
+        "id": "1d43ce9e8d0b4277de581de42163e4dd",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "default-model",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_58ede87001",
+                "type": "output_text"
+              }
+            ],
+            "id": "1d43ce9e8d0b4277de581de42163e4dd_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 33,
+          "output_tokens": 7,
+          "total_tokens": 40
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_58ede87001",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 33,
+          "output_tokens": 7,
+          "total_tokens": 40
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_58ede87001",
+                "type": "output_text"
+              }
+            ],
+            "id": "1d43ce9e8d0b4277de581de42163e4dd_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:default-model",
+      "model_id": "global:default-model",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:default-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_58ede87001"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1962,
+      "first_byte_ms": 1962,
+      "response": {
+        "content": [
+          {
+            "text": "probe_58ede87001",
+            "type": "text"
+          }
+        ],
+        "id": "2d90ee231115d502f6e40cd63f10a203",
+        "model": "global:default-model",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 33,
+          "output_tokens": 7
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_58ede87001",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 33,
+          "output_tokens": 7
+        },
+        "output": [
+          {
+            "text": "probe_58ede87001",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T03:07:56.930060+00:00"
+}

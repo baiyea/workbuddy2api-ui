@@ -1,0 +1,398 @@
+{
+  "started_at": "2026-10-11T03:07:41.457047+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:glm-5.2",
+      "id": "global:glm-5.2"
+    },
+    {
+      "name": "global:glm-5.3",
+      "id": "global:glm-5.3"
+    }
+  ],
+  "checks": [
+    "image"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:glm-5.2",
+      "model_id": "global:glm-5.2",
+      "protocol": "responses",
+      "check": "image",
+      "status": "fail",
+      "request": {
+        "model": "global:glm-5.2",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2815,
+      "first_byte_ms": 2815,
+      "response": {
+        "created_at": 1791688061,
+        "id": "19e4cf022dc5babd3b38a39e54c8963e",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.2",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "我无法看到或分析图片内容。当前模型不支持图像处理，请您切换到支持多模态的模型，或尝试用文字描述图片中的颜色信息，我将尽力提供帮助。",
+                "type": "output_text"
+              }
+            ],
+            "id": "19e4cf022dc5babd3b38a39e54c8963e_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 69,
+          "output_tokens": 39,
+          "total_tokens": 108
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "我无法看到或分析图片内容。当前模型不支持图像处理，请您切换到支持多模态的模型，或尝试用文字描述图片中的颜色信息，我将尽力提供帮助。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 69,
+          "output_tokens": 39,
+          "total_tokens": 108
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "我无法看到或分析图片内容。当前模型不支持图像处理，请您切换到支持多模态的模型，或尝试用文字描述图片中的颜色信息，我将尽力提供帮助。",
+                "type": "output_text"
+              }
+            ],
+            "id": "19e4cf022dc5babd3b38a39e54c8963e_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.2",
+      "model_id": "global:glm-5.2",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "fail",
+      "request": {
+        "model": "global:glm-5.2",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2225,
+      "first_byte_ms": 2225,
+      "response": {
+        "content": [
+          {
+            "text": "I'm sorry, but I'm unable to view images as the current model does not support image processing. Please try using a multimodal model or provide a description of the colors instead.",
+            "type": "text"
+          }
+        ],
+        "id": "2d1d9c227bae268dfafd3ba89d769299",
+        "model": "global:glm-5.2",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 69,
+          "output_tokens": 37
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "I'm sorry, but I'm unable to view images as the current model does not support image processing. Please try using a multimodal model or provide a description of the colors instead.",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 69,
+          "output_tokens": 37
+        },
+        "output": [
+          {
+            "text": "I'm sorry, but I'm unable to view images as the current model does not support image processing. Please try using a multimodal model or provide a description of the colors instead.",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "responses",
+      "check": "image",
+      "status": "fail",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3556,
+      "first_byte_ms": 3556,
+      "response": {
+        "created_at": 1791688065,
+        "id": "72c76166ad46fa40a95d3de8cc602952",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.3",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "72c76166ad46fa40a95d3de8cc602952_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "No image available; must inform user.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "抱歉，我目前无法查看或处理图片。请您切换到支持多模态的模型，或者用文字描述图片内容，我很乐意帮您分析。",
+                "type": "output_text"
+              }
+            ],
+            "id": "72c76166ad46fa40a95d3de8cc602952_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 75,
+          "output_tokens": 43,
+          "total_tokens": 118
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "抱歉，我目前无法查看或处理图片。请您切换到支持多模态的模型，或者用文字描述图片内容，我很乐意帮您分析。",
+        "reasoning_chars": 37,
+        "tools": [],
+        "usage": {
+          "input_tokens": 75,
+          "output_tokens": 43,
+          "total_tokens": 118
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "72c76166ad46fa40a95d3de8cc602952_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "No image available; must inform user.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "抱歉，我目前无法查看或处理图片。请您切换到支持多模态的模型，或者用文字描述图片内容，我很乐意帮您分析。",
+                "type": "output_text"
+              }
+            ],
+            "id": "72c76166ad46fa40a95d3de8cc602952_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:glm-5.3",
+      "model_id": "global:glm-5.3",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "fail",
+      "request": {
+        "model": "global:glm-5.3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2932,
+      "first_byte_ms": 2931,
+      "response": {
+        "content": [
+          {
+            "text": "由于当前模型不支持图片输入，我无法看到您发送的图片内容。\n\n建议您：\n- 切换到支持多模态的模型（如支持视觉输入的版本）来分析图片\n- 或者用文字描述图片左右两半的颜色，我可以帮您翻译成对应的英文颜色词\n\n例如，如果您告诉我“左边是红色，右边是蓝色”，我可以确认英文为 \"red, blue\"。",
+            "type": "text"
+          }
+        ],
+        "id": "dcca21ae402b310b74506dad2a0cb1c4",
+        "model": "global:glm-5.3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 75,
+          "output_tokens": 87
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "由于当前模型不支持图片输入，我无法看到您发送的图片内容。\n\n建议您：\n- 切换到支持多模态的模型（如支持视觉输入的版本）来分析图片\n- 或者用文字描述图片左右两半的颜色，我可以帮您翻译成对应的英文颜色词\n\n例如，如果您告诉我“左边是红色，右边是蓝色”，我可以确认英文为 \"red, blue\"。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 75,
+          "output_tokens": 87
+        },
+        "output": [
+          {
+            "text": "由于当前模型不支持图片输入，我无法看到您发送的图片内容。\n\n建议您：\n- 切换到支持多模态的模型（如支持视觉输入的版本）来分析图片\n- 或者用文字描述图片左右两半的颜色，我可以帮您翻译成对应的英文颜色词\n\n例如，如果您告诉我“左边是红色，右边是蓝色”，我可以确认英文为 \"red, blue\"。",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T03:07:53.008973+00:00"
+}

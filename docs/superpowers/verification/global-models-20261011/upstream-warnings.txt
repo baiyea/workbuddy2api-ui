@@ -1,0 +1,4 @@
+core-1  | 2026/10/11 10:55:21 WARN: [upstream] chat_stream uid=[redacted] upstream 400 client body={"code":11102,"msg":"model [deep-model] service info not found","requestId":"[redacted]"}
+core-1  | 2026/10/11 10:55:21 WARN: [upstream] chat_stream uid=[redacted] upstream 400 client body={"code":11102,"msg":"model [deep-model] service info not found","requestId":"[redacted]"}
+core-1  | 2026/10/11 10:55:22 WARN: [upstream] chat_stream uid=[redacted] upstream 400 client body={"code":11102,"msg":"model [deep-model] service info not found","requestId":"[redacted]"}
+core-1  | 2026/10/11 11:03:06 WARN: [upstream] chat_stream uid=[redacted] upstream 524 server body=

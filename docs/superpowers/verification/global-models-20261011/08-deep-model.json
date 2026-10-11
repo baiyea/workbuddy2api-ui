@@ -1,0 +1,101 @@
+{
+  "started_at": "2026-10-11T02:55:20.395342+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:deep-model",
+      "id": "global:deep-model"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:deep-model",
+      "model_id": "global:deep-model",
+      "protocol": "responses",
+      "check": "text",
+      "status": "error",
+      "request": {
+        "model": "global:deep-model",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_5db58ffc6c"
+      },
+      "http_status": 503,
+      "elapsed_ms": 956,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"}}\n"
+    },
+    {
+      "model_name": "global:deep-model",
+      "model_id": "global:deep-model",
+      "protocol": "chat",
+      "check": "diagnostic_baseline",
+      "status": "error",
+      "request": {
+        "model": "global:deep-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "只输出 probe_5db58ffc6c"
+          }
+        ]
+      },
+      "http_status": 503,
+      "elapsed_ms": 533,
+      "error": "{\"error\":{\"code\":\"no_healthy_account\",\"message\":\"all accounts are temporarily unavailable, please retry later\",\"type\":\"api_error\"}}"
+    },
+    {
+      "model_name": "global:deep-model",
+      "model_id": "global:deep-model",
+      "protocol": "responses",
+      "check": "remaining",
+      "status": "skipped",
+      "reason": "Text baseline did not pass; avoid further quota consumption"
+    },
+    {
+      "model_name": "global:deep-model",
+      "model_id": "global:deep-model",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "error",
+      "request": {
+        "model": "global:deep-model",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_5db58ffc6c"
+          }
+        ]
+      },
+      "http_status": 503,
+      "elapsed_ms": 436,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    },
+    {
+      "model_name": "global:deep-model",
+      "model_id": "global:deep-model",
+      "protocol": "anthropic",
+      "check": "remaining",
+      "status": "skipped",
+      "reason": "Text baseline did not pass; avoid further quota consumption"
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T02:55:22.347863+00:00"
+}

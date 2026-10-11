@@ -1,0 +1,1233 @@
+{
+  "started_at": "2026-10-11T03:03:16.364670+00:00",
+  "base_url": "http://127.0.0.1:42099",
+  "models": [
+    {
+      "name": "global:gemini-3.5-flash",
+      "id": "global:gemini-3.5-flash"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_f770a9fb19"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2395,
+      "first_byte_ms": 2395,
+      "response": {
+        "created_at": 1791687795,
+        "id": "456418ab1b9f1fb33fcae076402c0b16",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gemini-3.5-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_f770a9fb19",
+                "type": "output_text"
+              }
+            ],
+            "id": "456418ab1b9f1fb33fcae076402c0b16_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 27,
+          "output_tokens": 162,
+          "total_tokens": 189
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_f770a9fb19",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 27,
+          "output_tokens": 162,
+          "total_tokens": 189
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_f770a9fb19",
+                "type": "output_text"
+              }
+            ],
+            "id": "456418ab1b9f1fb33fcae076402c0b16_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 3031,
+      "first_byte_ms": 2836,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791687798,
+              "id": "resp_03e94cb72067467e8289c2a0e76354b1",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gemini-3.5-flash",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_03e94cb72067467e8289c2a0e76354b1_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_03e94cb72067467e8289c2a0e76354b1_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 2,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_03e94cb72067467e8289c2a0e76354b1_msg_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_03e94cb72067467e8289c2a0e76354b1_msg_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_03e94cb72067467e8289c2a0e76354b1_msg_0",
+            "output_index": 0,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 5,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_03e94cb72067467e8289c2a0e76354b1_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 0,
+            "sequence_number": 6,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791687798,
+              "id": "resp_03e94cb72067467e8289c2a0e76354b1",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "global:gemini-3.5-flash",
+              "object": "response",
+              "output": [
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_03e94cb72067467e8289c2a0e76354b1_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 24,
+                "output_tokens": 241,
+                "total_tokens": 265
+              },
+              "user": null
+            },
+            "sequence_number": 7,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 24,
+          "output_tokens": 241,
+          "total_tokens": 265
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_03e94cb72067467e8289c2a0e76354b1_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_f770a9fb19"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2517,
+      "first_byte_ms": 2517,
+      "response": {
+        "created_at": 1791687801,
+        "id": "4ded56260daa12042df3543869834e1e",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gemini-3.5-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_f770a9fb19",
+                "type": "output_text"
+              }
+            ],
+            "id": "4ded56260daa12042df3543869834e1e_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 121,
+          "total_tokens": 152
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_f770a9fb19",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 121,
+          "total_tokens": 152
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_f770a9fb19",
+                "type": "output_text"
+              }
+            ],
+            "id": "4ded56260daa12042df3543869834e1e_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "error",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_f770a9fb19。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 502,
+      "elapsed_ms": 2423,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"}}\n"
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 4482,
+      "first_byte_ms": 4482,
+      "response": {
+        "created_at": 1791687806,
+        "id": "345d6462be381204749c5160683aac41",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gemini-3.5-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "请按照测试用例步骤依次执行操作，并详细记录测试过程中出现的任何系统异常或报错信息。",
+                "type": "output_text"
+              }
+            ],
+            "id": "345d6462be381204749c5160683aac41_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 19,
+          "output_tokens": 447,
+          "total_tokens": 466
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "请按照测试用例步骤依次执行操作，并详细记录测试过程中出现的任何系统异常或报错信息。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 19,
+          "output_tokens": 447,
+          "total_tokens": 466
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "请按照测试用例步骤依次执行操作，并详细记录测试过程中出现的任何系统异常或报错信息。",
+                "type": "output_text"
+              }
+            ],
+            "id": "345d6462be381204749c5160683aac41_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "input_image",
+                "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC",
+                "detail": "low"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 8823,
+      "first_byte_ms": 8823,
+      "response": {
+        "created_at": 1791687810,
+        "id": "b0712feb8d6da401c801ab932c25829c",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gemini-3.5-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red, blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "b0712feb8d6da401c801ab932c25829c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 1114,
+          "output_tokens": 167,
+          "total_tokens": 1281
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "red, blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 1114,
+          "output_tokens": 167,
+          "total_tokens": 1281
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "red, blue",
+                "type": "output_text"
+              }
+            ],
+            "id": "b0712feb8d6da401c801ab932c25829c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV9mNzcwYTlmYjE5"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3157,
+      "first_byte_ms": 3157,
+      "response": {
+        "created_at": 1791687819,
+        "id": "cd0073049dc4ebd20501ee26f631f899",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "gemini-3.5-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_f770a9fb19",
+                "type": "output_text"
+              }
+            ],
+            "id": "cd0073049dc4ebd20501ee26f631f899_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 30,
+          "output_tokens": 201,
+          "total_tokens": 231
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_f770a9fb19",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 30,
+          "output_tokens": 201,
+          "total_tokens": 231
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_f770a9fb19",
+                "type": "output_text"
+              }
+            ],
+            "id": "cd0073049dc4ebd20501ee26f631f899_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_f770a9fb19"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2663,
+      "first_byte_ms": 2663,
+      "response": {
+        "content": [
+          {
+            "text": "probe_f770a9fb19",
+            "type": "text"
+          }
+        ],
+        "id": "c991ef6329dca65c5f90739484fe5d6b",
+        "model": "global:gemini-3.5-flash",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 27,
+          "output_tokens": 166
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_f770a9fb19",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 27,
+          "output_tokens": 166
+        },
+        "output": [
+          {
+            "text": "probe_f770a9fb19",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "计算 23 乘 19，只在最终答案输出结果数字。"
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2237,
+      "first_byte_ms": 2100,
+      "response": [
+        {
+          "event": "message_start",
+          "data": {
+            "message": {
+              "content": [],
+              "id": "c0bfb75065d246240196100b9b0897b7",
+              "model": "gemini-3.5-flash",
+              "role": "assistant",
+              "type": "message",
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null
+              }
+            },
+            "type": "message_start"
+          }
+        },
+        {
+          "event": "content_block_start",
+          "data": {
+            "content_block": {
+              "text": "",
+              "type": "text"
+            },
+            "index": 0,
+            "type": "content_block_start"
+          }
+        },
+        {
+          "event": "content_block_delta",
+          "data": {
+            "delta": {
+              "text": "437",
+              "type": "text_delta"
+            },
+            "index": 0,
+            "type": "content_block_delta"
+          }
+        },
+        {
+          "event": "content_block_stop",
+          "data": {
+            "index": 0,
+            "type": "content_block_stop"
+          }
+        },
+        {
+          "event": "message_delta",
+          "data": {
+            "delta": {
+              "stop_reason": "end_turn"
+            },
+            "type": "message_delta",
+            "usage": {
+              "input_tokens": 24,
+              "output_tokens": 176
+            }
+          }
+        },
+        {
+          "event": "message_stop",
+          "data": {
+            "type": "message_stop"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "437",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 24,
+          "output_tokens": 176
+        },
+        "output": [
+          {
+            "text": "437",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "reasoning_observed",
+      "status": "not_observed",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_f770a9fb19"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2513,
+      "first_byte_ms": 2513,
+      "response": {
+        "content": [
+          {
+            "text": "probe_f770a9fb19",
+            "type": "text"
+          }
+        ],
+        "id": "1ea2174ab6198b2f79dbefabe0b685c2",
+        "model": "global:gemini-3.5-flash",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 181
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_f770a9fb19",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 31,
+          "output_tokens": 181
+        },
+        "output": [
+          {
+            "text": "probe_f770a9fb19",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "tool_call",
+      "status": "error",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_f770a9fb19。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true
+      },
+      "http_status": 502,
+      "elapsed_ms": 2667,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "image",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "图片中左半和右半分别是什么颜色？按左到右只输出两个英文颜色词，以逗号分隔。"
+              },
+              {
+                "type": "image",
+                "source": {
+                  "type": "base64",
+                  "media_type": "image/png",
+                  "data": "iVBORw0KGgoAAAANSUhEUgAAAFAAAAAoCAIAAADmAupWAAAARUlEQVR4nO3PsQ0AAAzCMP5/mp7BUEvZI6fJpNG2qy0wMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw8FvwAYjsdDWqHWo9AAAAAElFTkSuQmCC"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2894,
+      "first_byte_ms": 2894,
+      "response": {
+        "content": [
+          {
+            "text": "red, blue",
+            "type": "text"
+          }
+        ],
+        "id": "0b8b3fa979b86310fa93a74ff9f3abd0",
+        "model": "global:gemini-3.5-flash",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 1114,
+          "output_tokens": 238
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "red, blue",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 1114,
+          "output_tokens": 238
+        },
+        "output": [
+          {
+            "text": "red, blue",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "global:gemini-3.5-flash",
+      "model_id": "global:gemini-3.5-flash",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_f770a9fb19"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2987,
+      "first_byte_ms": 2987,
+      "response": {
+        "content": [
+          {
+            "text": "probe_f770a9fb19",
+            "type": "text"
+          }
+        ],
+        "id": "2bab23b2b0511e7f7a7ac9e2795560e8",
+        "model": "global:gemini-3.5-flash",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 30,
+          "output_tokens": 174
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_f770a9fb19",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 30,
+          "output_tokens": 174
+        },
+        "output": [
+          {
+            "text": "probe_f770a9fb19",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T03:03:59.228459+00:00"
+}
