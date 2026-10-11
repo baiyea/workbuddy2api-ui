@@ -33,7 +33,7 @@ flowchart LR
 | --- | --- | --- |
 | 文本、多轮历史、普通 JSON、SSE | 格式、事件顺序、错误包、完成状态 | 生成内容 |
 | function 工具、tool_result、Responses custom 工具 | 定义、参数、call_id、工具回填、每请求状态 | 模型选择/生成工具调用；客户端执行工具 |
-| 图片、可转换的内联文件或 URL | 转换库支持的内容形状 | 读取及理解；不保证所有模型支持 |
+| 图片 URL、可转换的内联文本/PDF | 转换库支持的内容形状；内联内容有界解析，不抓取远程文件 URL | 读取及理解；不保证所有模型支持 |
 | reasoning / thinking | 请求意图和上游实际返回的推理内容映射 | 是否输出推理及可用档位 |
 | JSON Schema / JSON 模式 | 转换到上游字段并保留约束 | 是否严格遵守；网关不验证修复生成结果 |
 | Files API / 上传 / file_id 仓库 | 本次不提供；无法解析的引用明确报错 | 以后独立建设或使用有相应能力的上游 |
@@ -79,7 +79,8 @@ flowchart TD
 ```
 
 - 单帧 SSE 上限沿用 8 MiB；整条上游 SSE 累计上限为 32 MiB。RelayKit 会为最终 response 聚合内容，因此仅限制单帧不足以约束内存。
-- 内容实时转发，不等待完整答案。Claude 同一 chunk 中同时出现 reasoning、text、tool_calls 时按顺序拆分喂库，避免库只选择其中一个分支。
+- 文本、推理与工具参数按增量转发。Claude 同一 chunk 中同时出现 reasoning、text、tool_calls 时拆分喂库，避免库只选择其中一个分支。最终完整 Handler 回归发现库在切换文本时会清除未完工具状态，因此工具开始后的交错 text/thinking 暂存至工具参数收齐，再按两者原相对顺序喂库；工具参数仍即时输出。暂存计入同一累计上限，失败或取消不输出成功终态。代价是该交错情形的文本/推理显示延迟，README 明确说明。
+- 适配请求通过可信进程内 context 直接读取 Handler 收到的原始流，在旧 Stream/Aggregate 处理之前执行上述校验和限额；普通响应仅将验证后的帧交给现有聚合逻辑。原 Chat/no-bridge 路径不启用此行为。
 - 使用 nullable 计数独立保存最后一次明确累计用量，0 可以覆盖旧值；晚到帧缺失的字段不清除已有值，从未提供的字段保持 null，不估算、不累加累计值。total 采用最后明确值（包括 0）；从未提供 total 时，仅输入/输出均已知才求和，否则 null。
 - `finish_reason` 后仍接受 usage-only 帧；输出终态延迟至 Handler 正常返回。`[DONE]` 自身不证明成功；有合法 finish_reason 的正常 EOF 可接受，缺失 finish_reason、残帧、后续非法数据、取消、解析/写入/flush 错误均不得成功结束。
 - 输出 Responses `sequence_number`；正常事件由库生成，Responses 推理按库的 summary 语义呈现，不另改成 DeepSeek 特有事件。
