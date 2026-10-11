@@ -102,11 +102,11 @@ def main():
                             'filename': 'inline.pdf', 'file_data': 'data:application/pdf;base64,JVBERi0xLjQK'}})]:
         post('/v1/responses', {'model': 'global:mock-model', 'input': [{'role': 'user', 'content': [
             {'type': 'input_file', 'filename': 'inline.pdf', 'file_data': data}]}]}, headers=auth)
-        assert state()['requests'][-1]['messages'][0]['content'] == [expected]
+        assert next(m['content'] for m in state()['requests'][-1]['messages'] if m['role'] == 'user') == [expected]
     for detail in ('low', 'high', 'auto'):
         post('/v1/responses', {'model': 'global:mock-model', 'input': [{'role': 'user', 'content': [
             {'type': 'input_image', 'image_url': 'https://fixture.invalid/image.png', 'detail': detail}]}]}, headers=auth)
-        assert state()['requests'][-1]['messages'][0]['content'] == [
+        assert next(m['content'] for m in state()['requests'][-1]['messages'] if m['role'] == 'user') == [
             {'type': 'image_url', 'image_url': {'url': 'https://fixture.invalid/image.png', 'detail': detail}}]
     print('PASS: inline text/PDF and image detail observed after full Handler', flush=True)
     # Unsupported state and authentication fail before the mock receives anything.

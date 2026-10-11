@@ -312,3 +312,19 @@ func TestProtocolRawMultilineDataParity(t *testing.T) {
 		}
 	}
 }
+
+func TestProtocolRawClaudeToolInputBoundAndDeferredFailure(t *testing.T) {
+	start := `data: {"id":"chat-review","choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"id":"call_a","type":"function","function":{"name":"check","arguments":"{\"q\":\""}}]}}]}` + "\n\n"
+	fragment := `data: {"choices":[{"index":0,"delta":{"tool_calls":[{"index":0,"function":{"arguments":"` + strings.Repeat("x", 1<<18) + `"}}]}}]}` + "\n\n"
+	for _, stream := range []bool{false, true} {
+		counted := &reviewCountingReader{Reader: io.MultiReader(strings.NewReader(start), strings.NewReader(strings.Repeat(fragment, 129)))}
+		w, _ := reviewRealHandler(t, types.RelayFormatClaude, stream, counted, "")
+		if reviewSuccess(w) || counted.n > (32<<20)+(32<<10) || !counted.closed {
+			t.Fatal(stream, counted.n, w.Code)
+		}
+	}
+	w, _ := reviewRealHandler(t, types.RelayFormatClaude, true, io.MultiReader(strings.NewReader(start+reviewText), reviewReadFailure{}), "")
+	if strings.Contains(w.Body.String(), "message_stop") || strings.Contains(w.Body.String(), "hello") || !strings.Contains(w.Body.String(), "event: error") {
+		t.Fatal(w.Body.String())
+	}
+}

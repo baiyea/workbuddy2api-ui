@@ -126,8 +126,9 @@ OpenAI SDK 的 Base URL 使用 `http://127.0.0.1:7863/v1`；Anthropic SDK 使用
 | --- | --- |
 | `GET /v1/models`、`POST /v1/chat/completions` | 现有模型列表、对话和 SSE 流式调用 |
 | `POST /v1/responses` | 无状态创建；文本/完整历史、function/custom 工具及结果回填、库可转换的图片/内联文件、明文 reasoning summary、JSON/SSE；`text.format` JSON 模式/JSON Schema 传递至上游，不校验或修复生成结果 |
-- 内联文件解析支持有界的 base64 text/JSON/PDF；不下载远程文件 URL。Claude 工具参数实时传送；工具开始后穿插的文本/思考会暂存到参数完整，再按顺序输出，避免丢失后续工具片段。
 | `POST /v1/messages`（Beta） | 文本/历史、模型自主选择的工具及结果回填、HTTP(S) 图片或 PNG/JPEG/GIF/WebP base64、内联 text/plain 或 base64 PDF、无签名明文 thinking、JSON/SSE；`thinking.budget_tokens` 转为 effort，不能保证精确推理 token 预算 |
+
+内联文件解析支持有界的 base64 text/JSON/PDF；不下载远程文件 URL。Claude 工具参数实时传送；工具开始后穿插的文本/思考会暂存到参数完整，再按顺序输出，避免丢失后续工具片段。
 
 Responses 不提供 response 存储/检索/删除、后台执行、WebSocket 或 Files API。`previous_response_id`、`conversation`、模板 `prompt`、`context_management`、`store:true`、`background:true` 返回 400；多轮请发送完整历史。文件仓库引用、加密推理及无法转换的关键字段也会明确拒绝。
 
