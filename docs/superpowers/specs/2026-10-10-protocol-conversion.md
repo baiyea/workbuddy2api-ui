@@ -1,6 +1,6 @@
 # Responses / Anthropic 协议转换设计
 
-**状态：用户已确认按实施计划开发，进行中。** 不创建 worktree 或新分支；开发和隔离验证不改变实际服务。
+**状态：本地开发、评审及隔离集成验收已完成。** 实施阶段未创建 worktree 或新分支；开发和隔离验证未改变实际服务。证据见 `../verification/protocol-conversion-completion-audit.md`。
 
 ## 目标与取舍
 
