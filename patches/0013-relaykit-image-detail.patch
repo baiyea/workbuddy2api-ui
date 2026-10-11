@@ -1,0 +1,15 @@
+diff --git a/third_party/relaykit/relayconvert/internal/oai_responses/to_oai_chat_req.go b/third_party/relaykit/relayconvert/internal/oai_responses/to_oai_chat_req.go
+--- a/third_party/relaykit/relayconvert/internal/oai_responses/to_oai_chat_req.go
++++ b/third_party/relaykit/relayconvert/internal/oai_responses/to_oai_chat_req.go
+@@ -532,6 +532,11 @@
+ 
+ func responsesImagePartToChatImageURL(part map[string]any) any {
+ 	if imageURL, ok := part["image_url"]; ok {
++		if detail, present := part["detail"]; present {
++			if url, ok := imageURL.(string); ok {
++				return map[string]any{"url": url, "detail": detail}
++			}
++		}
+ 		return imageURL
+ 	}
+ 	imageURL := map[string]any{}

@@ -172,3 +172,30 @@ RelayKit tests/vet and `bash scripts/check.sh` in a fresh overlay. Run
 console/core/mock stream and final SDK aggregation. Remove the patch when a
 replacement pinned snapshot emits these content-part events and the library
 and actual SDK regressions pass without it. Original vendored bytes stay frozen.
+
+## 0012-adapter-raw-response
+
+Trusted protocol adapters install a context-only raw response callback. The original
+Handler invokes it before legacy Stream/Aggregate and their read-ahead stats reader;
+public headers and JSON cannot enable it. Original Chat/no-bridge requests retain
+the old path. The adapter enforces raw 8 MiB/frame and 32 MiB/stream limits, validates
+terminal evidence and read errors before success, and closes/cancels on failure.
+A bounded stats observer retains best-effort existing metrics without hiding errors.
+AggregateValidated reuses aggregation after validation, preserving partial cumulative
+usage (including zero), empty argument strings and truncated raw Responses arguments.
+It does not repair generated JSON. Normal Aggregate is unchanged.
+
+Regressions live in extensions/internal/server/protocol_raw_test.go and exercise the
+real Handler with synthetic transports. Run fresh core test/vet/race, the full check
+script and both pinned SDKs through newly built isolated acceptance images. Remove
+this patch only when the frozen Handler offers an equivalent trusted raw contract
+and the real-boundary regressions pass without it.
+
+## 0013-relaykit-image-detail
+
+Preserve sibling Responses input_image.detail when image_url is a string, using the
+representable Chat {url, detail} shape. Host admission accepts only low/high/auto.
+The real Handler regression checks actual outgoing payloads and rejects invalid
+values before transport. Run nested RelayKit test/vet and the isolated gateway media
+observations. Remove only when a replacement pinned snapshot preserves this field
+and these regressions pass without the patch. Original vendor bytes stay frozen.

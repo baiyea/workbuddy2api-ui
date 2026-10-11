@@ -256,6 +256,12 @@ func validateResponsesContent(raw json.RawMessage, path string) error {
 			if json.Unmarshal(b["image_url"], &url) != nil || url == nil || *url == "" {
 				return errors.New(p + ".image_url 无效")
 			}
+			if raw, ok := b["detail"]; ok {
+				var detail string
+				if json.Unmarshal(raw, &detail) != nil || (detail != "low" && detail != "high" && detail != "auto") {
+					return errors.New(p + ".detail 必须为 low/high/auto")
+				}
+			}
 		case "input_file":
 			if _, ok := b["file_id"]; ok {
 				return errors.New(p + ".file_id 不受支持")

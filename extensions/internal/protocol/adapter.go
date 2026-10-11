@@ -10,6 +10,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"workbuddy2api/internal/upstream"
+
 	"github.com/QuantumNous/new-api/relaykit/dto"
 	"github.com/QuantumNous/new-api/relaykit/relayconvert"
 	"github.com/QuantumNous/new-api/relaykit/relayconvert/convmeta"
@@ -91,11 +93,40 @@ func Serve(w http.ResponseWriter, r *http.Request, next http.Handler, apiKey str
 			return
 		}
 		sink := &streamWriter{dst: w, header: make(http.Header), ctx: ctx, cancel: cancel, meta: meta, format: format, state: state, model: model}
+		req = req.WithContext(upstream.WithRawResponse(req.Context(), func(_ http.ResponseWriter, body io.Reader) error {
+			_, err := io.CopyBuffer(sink, body, make([]byte, 32<<10))
+			if err != nil {
+				return sink.fail(err, false)
+			}
+			return nil
+		}))
 		next.ServeHTTP(sink, req)
 		sink.finish()
 		return
 	}
 	capture := &responseBuffer{header: make(http.Header), ctx: ctx, cancel: cancel}
+	req = req.WithContext(upstream.WithRawResponse(req.Context(), func(_ http.ResponseWriter, body io.Reader) error {
+		var raw bytes.Buffer
+		validator := &streamWriter{ctx: ctx, cancel: cancel, format: format, validateOnly: true, validated: &raw}
+		_, err := io.CopyBuffer(validator, body, make([]byte, 32<<10))
+		if err == nil {
+			err = validator.validateEnd()
+		}
+		if err != nil {
+			capture.err = err
+			cancel()
+			return err
+		}
+		output, err := upstream.AggregateValidated(bytes.NewReader(raw.Bytes()))
+		if err == nil {
+			err = json.NewEncoder(capture).Encode(output)
+		}
+		if err != nil {
+			capture.err = err
+			cancel()
+		}
+		return err
+	}))
 	next.ServeHTTP(capture, req)
 	if capture.err != nil || ctx.Err() != nil || capture.status < 200 || capture.status >= 300 {
 		WriteError(w, errorStatus(capture.status), failureMessage, format)

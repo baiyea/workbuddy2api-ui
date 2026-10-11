@@ -10,3 +10,5 @@
 0009-relaykit-responses-history.patch
 0010-relaykit-claude-history.patch
 0011-relaykit-responses-text-parts.patch
+0012-adapter-raw-response.patch
+0013-relaykit-image-detail.patch

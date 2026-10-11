@@ -80,6 +80,35 @@ def main():
         assert observed['response_format'] == {'type': 'json_schema', 'json_schema': {
             'type': 'json_schema', 'name': 'answer', 'schema': schema, 'strict': True}}, observed
     print('PASS: JSON Schema observed at mock after full Handler, JSON and SSE', flush=True)
+    # SDK-generated histories must survive the original Handler and PrepareBody.
+    for kind in filter(None, sys.argv[2:]):
+        marker = 'fixture-interleaved-' + kind
+        histories = [r for r in state()['requests'] if marker in json.dumps(r.get('messages', []))
+                     and any(m.get('role') == 'tool' for m in r.get('messages', []))]
+        assert histories, marker
+        messages = histories[-1]['messages']
+        assistants = [m for m in messages if m['role'] == 'assistant']
+        calls = [c for m in assistants for c in m.get('tool_calls', [])]
+        assert [(c['id'], c['function']['name'], c['function']['arguments']) for c in calls] == [
+            ('call_a', 'check', '{"q":"hi"}'), ('call_b', 'check', '{"q":"bye"}')], messages
+        assert [(m['tool_call_id'], m['content']) for m in messages if m['role'] == 'tool'] == [
+            ('call_a', 'result-a'), ('call_b', 'result-b')], messages
+        assert 'interleaved-think-later' == ''.join(m.get('reasoning_content', '') for m in assistants), messages
+        assert 'interleaved-text' in json.dumps(assistants) and '-later' in json.dumps(assistants), messages
+    if any(sys.argv[2:]):
+        print('PASS: enabled SDK-generated paired tool/text/reasoning histories observed after full Handler', flush=True)
+    for data, expected in [('data:text/plain;base64,aGk=', {'type': 'text', 'text': 'hi'}),
+                           ('data:application/pdf;base64,JVBERi0xLjQK', {'type': 'file', 'file': {
+                            'filename': 'inline.pdf', 'file_data': 'data:application/pdf;base64,JVBERi0xLjQK'}})]:
+        post('/v1/responses', {'model': 'global:mock-model', 'input': [{'role': 'user', 'content': [
+            {'type': 'input_file', 'filename': 'inline.pdf', 'file_data': data}]}]}, headers=auth)
+        assert state()['requests'][-1]['messages'][0]['content'] == [expected]
+    for detail in ('low', 'high', 'auto'):
+        post('/v1/responses', {'model': 'global:mock-model', 'input': [{'role': 'user', 'content': [
+            {'type': 'input_image', 'image_url': 'https://fixture.invalid/image.png', 'detail': detail}]}]}, headers=auth)
+        assert state()['requests'][-1]['messages'][0]['content'] == [
+            {'type': 'image_url', 'image_url': {'url': 'https://fixture.invalid/image.png', 'detail': detail}}]
+    print('PASS: inline text/PDF and image detail observed after full Handler', flush=True)
     # Unsupported state and authentication fail before the mock receives anything.
     before = len(state()['requests'])
     post('/v1/responses', dict(body, previous_response_id='resp_saved'), headers=auth, status=400)

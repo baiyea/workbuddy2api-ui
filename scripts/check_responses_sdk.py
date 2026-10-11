@@ -63,6 +63,26 @@ def check(client, model):
         client.responses.create(**dict(args, input=[result.output[0].model_dump(exclude_none=True), output]))
         print(f'  {kind} ID/arguments/raw deltas/final aggregate/history: PASS', flush=True)
 
+    args = dict(model=model, input='fixture-interleaved-responses', store=False,
+                tools=[{'type': 'function', 'name': 'check', 'parameters': {'type': 'object'}}])
+    def verify_parallel(reply):
+        calls = [b for b in reply.output if b.type == 'function_call']
+        assert [(b.call_id, b.name, b.arguments) for b in calls] == [
+            ('call_a', 'check', '{"q":"hi"}'), ('call_b', 'check', '{"q":"bye"}')]
+        assert reply.output_text == 'interleaved-text-later'
+        assert ''.join(s.text for b in reply.output if b.type == 'reasoning' for s in b.summary) == 'interleaved-think-later'
+        assert reply.status == 'completed'
+    verify_parallel(client.responses.create(**args))
+    with client.responses.stream(**args) as stream:
+        list(stream)
+        result = stream.get_final_response()
+    verify_parallel(result)
+    history = [{'role': 'user', 'content': 'fixture-interleaved-responses'}] + [b.model_dump(exclude_none=True) for b in result.output]
+    history += [{'type': 'function_call_output', 'call_id': 'call_a', 'output': 'result-a'},
+                {'type': 'function_call_output', 'call_id': 'call_b', 'output': 'result-b'}]
+    client.responses.create(**dict(args, input=history))
+    print('  parallel/interleaved text/reasoning/tools aggregate and generated history: PASS', flush=True)
+
     schema = {'type': 'object', 'properties': {'answer': {'type': 'string'}},
               'required': ['answer'], 'additionalProperties': False}
     client.responses.create(**request, text={'format': {'type': 'json_schema', 'name': 'answer',

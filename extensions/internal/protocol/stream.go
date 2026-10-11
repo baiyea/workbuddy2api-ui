@@ -35,11 +35,16 @@ type streamWriter struct {
 	sequence                 int
 	started, done            bool
 	err                      error
+	validateOnly             bool
+	validated                *bytes.Buffer
+	claudeToolsStarted       bool
+	deferredClaude           []dto.ChatCompletionsStreamResponseChoiceDelta
 }
 
 type streamToolFields struct {
 	id, name         string
 	typed, arguments bool
+	input            []byte
 }
 
 func (s *streamWriter) observeTools(raw json.RawMessage) error {
@@ -77,6 +82,12 @@ func (s *streamWriter) observeTools(raw json.RawMessage) error {
 				tool.name = name
 			}
 			tool.arguments = tool.arguments || call.Function.Arguments != nil
+			if s.format == types.RelayFormatClaude && call.Function.Arguments != nil {
+				if len(*call.Function.Arguments) > maxResponseBytes-len(tool.input) {
+					return errors.New("tool input exceeds limit")
+				}
+				tool.input = append(tool.input, *call.Function.Arguments...)
+			}
 		}
 		if call.Type != "" {
 			if call.Type != "function" {
@@ -191,7 +202,7 @@ func (s *streamWriter) frame(raw []byte) error {
 		if len(envelope.Usage) == 0 || string(envelope.Usage) == "null" {
 			return errors.New("empty stream chunk")
 		}
-		return nil
+		return s.capturePayload(payload)
 	}
 	choice := envelope.Choices[0]
 	if choice == nil || choice.Index != 0 || s.reason != "" {
@@ -209,6 +220,9 @@ func (s *streamWriter) frame(raw []byte) error {
 			return errors.New("invalid finish reason")
 		}
 		s.reason = *choice.Finish
+	}
+	if s.validateOnly {
+		return s.capturePayload(payload)
 	}
 	var chunk dto.ChatCompletionsStreamResponse
 	if json.Unmarshal(payload, &chunk) != nil {
@@ -238,6 +252,14 @@ func (s *streamWriter) frame(raw []byte) error {
 			parts = append(parts, *delta)
 		}
 		for _, part := range parts {
+			// Keep tool blocks live until all argument fragments arrive; then release intervening text.
+			if s.claudeToolsStarted && len(part.ToolCalls) == 0 {
+				s.deferredClaude = append(s.deferredClaude, part)
+				continue
+			}
+			if len(part.ToolCalls) > 0 {
+				s.claudeToolsStarted = true
+			}
 			chunk.Choices[0].Delta = part
 			if err := s.convert(&chunk); err != nil {
 				return err
@@ -307,7 +329,7 @@ func (s *streamWriter) fail(err error, disconnected bool) error {
 	s.err = err
 	s.cancel()
 	s.pending = nil
-	if disconnected {
+	if disconnected || s.validateOnly {
 		return err
 	}
 	if !s.started {
@@ -332,20 +354,18 @@ func (s *streamWriter) finish() {
 		s.fail(err, true)
 		return
 	}
-	if (s.status != 0 && (s.status < 200 || s.status >= 300)) || len(bytes.TrimSpace(s.pending)) > 0 || s.reason == "" {
-		s.fail(errors.New("failed or truncated stream"), false)
+	if err := s.validateEnd(); err != nil {
+		s.fail(err, false)
 		return
 	}
-	if s.reason == "tool_calls" && len(s.tools) == 0 {
-		s.fail(errors.New("missing tool calls"), false)
-		return
-	}
-	for _, tool := range s.tools {
-		if tool.id == "" || tool.name == "" || !tool.typed || !tool.arguments {
-			s.fail(errors.New("incomplete tool call"), false)
+	for _, part := range s.deferredClaude {
+		chunk := &dto.ChatCompletionsStreamResponse{Id: s.id, Model: s.model, Choices: []dto.ChatCompletionsStreamResponseChoice{{Delta: part}}}
+		if err := s.convert(chunk); err != nil {
+			s.fail(err, false)
 			return
 		}
 	}
+	s.deferredClaude = nil
 	chunk := &dto.ChatCompletionsStreamResponse{Id: s.id, Model: s.model, Choices: []dto.ChatCompletionsStreamResponseChoice{{FinishReason: &s.reason}}}
 	if err := s.convert(chunk); err != nil {
 		s.fail(err, false)
@@ -358,4 +378,44 @@ func (s *streamWriter) finish() {
 	if err != nil {
 		s.fail(err, false)
 	}
+}
+
+func (s *streamWriter) validateEnd() error {
+	if (s.status != 0 && (s.status < 200 || s.status >= 300)) || len(bytes.TrimSpace(s.pending)) > 0 || s.reason == "" {
+		return errors.New("failed or truncated stream")
+	}
+	if s.reason == "tool_calls" && len(s.tools) == 0 {
+		return errors.New("missing tool calls")
+	}
+	for _, tool := range s.tools {
+		if s.format == types.RelayFormatClaude {
+			var input map[string]any
+			if json.Unmarshal(tool.input, &input) != nil || input == nil {
+				return errors.New("invalid Claude tool input")
+			}
+		}
+		if tool.id == "" || tool.name == "" || !tool.typed || !tool.arguments {
+			return errors.New("incomplete tool call")
+		}
+	}
+
+	return nil
+}
+
+// Aggregate consumes one JSON payload per line; preserve valid multiline SSE framing.
+func (s *streamWriter) capturePayload(payload []byte) error {
+	if s.validated == nil {
+		return nil
+	}
+	var compact bytes.Buffer
+	if err := json.Compact(&compact, payload); err != nil {
+		return err
+	}
+	if compact.Len()+8 > maxResponseBytes-s.validated.Len() {
+		return errors.New("validated stream exceeds limit")
+	}
+	s.validated.WriteString("data: ")
+	s.validated.Write(compact.Bytes())
+	s.validated.WriteString("\n\n")
+	return nil
 }

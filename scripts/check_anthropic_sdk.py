@@ -159,6 +159,32 @@ def check_tools(client, model, expected_input, expected_output):
     print('  tool JSON/raw deltas/final aggregate/history request: PASS', flush=True)
 
 
+def check_interleaved(client, model):
+    request = dict(model=model, max_tokens=64,
+                   messages=[{'role': 'user', 'content': 'fixture-interleaved-claude'}],
+                   tools=[{'name': 'check', 'input_schema': {'type': 'object'}}])
+    def verify(reply):
+        calls = [b for b in reply.content if b.type == 'tool_use']
+        assert [(b.id, b.name, b.input) for b in calls] == [
+            ('call_a', 'check', {'q': 'hi'}), ('call_b', 'check', {'q': 'bye'})]
+        assert ''.join(b.text for b in reply.content if b.type == 'text') == 'interleaved-text-later'
+        assert ''.join(b.thinking for b in reply.content if b.type == 'thinking') == 'interleaved-think-later'
+        assert reply.stop_reason == 'tool_use'
+    verify(client.messages.create(**request))
+    with client.messages.stream(**request) as stream:
+        events = list(stream)
+        result = stream.get_final_message()
+    verify(result)
+    starts = [e for e in events if e.type == 'content_block_start']
+    assert [e.index for e in starts] == list(range(len(starts)))
+    assert sum(e.type == 'message_stop' for e in events) == 1
+    history = request['messages'] + [{'role': 'assistant', 'content': [b.model_dump(exclude_none=True) for b in result.content]},
+        {'role': 'user', 'content': [{'type': 'tool_result', 'tool_use_id': 'call_a', 'content': 'result-a'},
+                                    {'type': 'tool_result', 'tool_use_id': 'call_b', 'content': 'result-b'}]}]
+    client.messages.create(**dict(request, messages=history))
+    print('  parallel/interleaved text/thinking/tool aggregate and generated history: PASS', flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", type=local_url)
@@ -186,6 +212,8 @@ def main():
                 check(client, args.model if args.url else "cn:mock-model",
                       "mock-runtime-ok" if args.url else "你好", input_tokens, output_tokens)
                 check_tools(client, args.model if args.url else 'cn:mock-model', input_tokens, output_tokens)
+                if args.url:
+                    check_interleaved(client, args.model)
             except AssertionError as error:
                 failures.append(f"{label}: {error}")
     if failures:

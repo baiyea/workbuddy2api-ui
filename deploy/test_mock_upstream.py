@@ -53,6 +53,22 @@ class MockUpstreamTests(unittest.TestCase):
             state = json.load(response)
         self.assertEqual(state['requests'][-1]['response_format'], schema)
 
+    def test_parallel_tools_interleave_text_and_reasoning(self):
+        body = {'model': 'mock-model', 'messages': [{'role': 'user', 'content': 'fixture-interleaved'}],
+                'tools': [{'type': 'function', 'function': {'name': 'check'}}]}
+        request = urllib.request.Request(self.url + '/console/chat/completions', data=json.dumps(body).encode())
+        with self.client.open(request, timeout=2) as response:
+            raw = response.read().decode()
+        frames = [json.loads(line[6:]) for line in raw.splitlines() if line.startswith('data: {')]
+        calls = {}
+        for frame in frames:
+            for call in frame['choices'][0]['delta'].get('tool_calls', []):
+                calls.setdefault(call['index'], '')
+                calls[call['index']] += call['function'].get('arguments', '')
+        self.assertEqual(calls, {0: '{"q":"hi"}', 1: '{"q":"bye"}'})
+        self.assertIn('interleaved-text', raw)
+        self.assertIn('interleaved-think', raw)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -72,6 +72,14 @@ class Handler(BaseHTTPRequestHandler):
             finish = 'tool_calls'
         else:
             payload = frame(delta)
+        if tool and 'fixture-interleaved' in json.dumps(request.get('messages', [])):
+            payload = frame({'tool_calls': [
+                {'index': 0, 'id': 'call_a', 'type': 'function', 'function': {'name': 'check', 'arguments': '{"q":'}},
+                {'index': 1, 'id': 'call_b', 'type': 'function', 'function': {'name': 'check', 'arguments': '{"q":'}}]})
+            payload += frame({'content': 'interleaved-text', 'reasoning_content': 'interleaved-think'})
+            payload += frame({'tool_calls': [{'index': 1, 'function': {'arguments': '"bye"}'}}]})
+            payload += frame({'reasoning_content': '-later', 'content': '-later',
+                              'tool_calls': [{'index': 0, 'function': {'arguments': '"hi"}'}}]})
         payload += frame({}, finish, {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2, "credit": 0})
         payload += b'data: [DONE]\n\n'
         self.send_response(200)

@@ -1,0 +1,84 @@
+diff --git a/internal/server/handler.go b/internal/server/handler.go
+--- a/internal/server/handler.go
++++ b/internal/server/handler.go
+@@ -624,11 +624,17 @@
+ 		if sessKey != "" && h.cfg.Session != nil {
+ 			h.cfg.Session.Bind(sessKey, acct.UID)
+ 		}
+-		if peek.Stream {
++		if peek.Stream || upstream.RawResponse(r.Context()) != nil {
+ 			// 流式：透传结束后立即关闭上游 body，避免 defer 在轮转场景下堆积 fd。
+ 			st.status = http.StatusOK
+ 			stats := newChatStatsReaderSince(rc, st.start)
+-			_ = upstream.Stream(w, stats)
++			if raw := upstream.RawResponse(r.Context()); raw != nil {
++				if err := raw(w, &rawStatsReader{Reader: rc, stats: stats}); err != nil {
++					st.status = http.StatusBadGateway
++				}
++			} else {
++				_ = upstream.Stream(w, stats)
++			}
+ 			st.ttfb = stats.TTFB()
+ 			st.toks, _ = stats.Tokens()
+ 			// 成本账本：末帧 usage 带 credit 与 token 总数时记录实测单价，
+diff --git a/internal/upstream/sse.go b/internal/upstream/sse.go
+--- a/internal/upstream/sse.go
++++ b/internal/upstream/sse.go
+@@ -16,6 +16,12 @@
+ // 分片/半行由 bufio.Reader.ReadString 处理；遇到 "data: [DONE]" 结束。
+ // tool_calls 以流式 delta 到达（按 index 合并：首片带 id/type/name，后续只带 arguments 片段）。
+ func Aggregate(r io.Reader) (map[string]any, error) {
++	return aggregate(r, false)
++}
++
++// AggregateValidated preserves fields already validated by a trusted protocol adapter.
++func AggregateValidated(r io.Reader) (map[string]any, error) { return aggregate(r, true) }
++func aggregate(r io.Reader, validated bool) (map[string]any, error) {
+ 	br := bufio.NewReaderSize(r, 64*1024)
+ 	var (
+ 		id, model     string
+@@ -56,7 +62,18 @@
+ 						created = v
+ 					}
+ 					if u, ok := chunk["usage"].(map[string]any); ok {
+-						usage = u
++						if !validated {
++							usage = u
++						} else {
++							if usage == nil {
++								usage = map[string]any{}
++							}
++							for key, value := range u {
++								if value != nil {
++									usage[key] = value
++								}
++							}
++						}
+ 					}
+ 					if ch, ok := chunk["choices"].([]any); ok {
+ 						for _, ci := range ch {
+@@ -95,6 +112,15 @@
+ 											toolOrder = append(toolOrder, idx)
+ 										}
+ 										mergeToolCallDelta(merged, call)
++										if validated {
++											fn, _ := call["function"].(map[string]any)
++											if args, ok := fn["arguments"].(string); ok && args == "" {
++												dest := merged["function"].(map[string]any)
++												if _, exists := dest["arguments"]; !exists {
++													dest["arguments"] = ""
++												}
++											}
++										}
+ 									}
+ 								}
+ 							}
+@@ -140,7 +166,7 @@
+ 		// P1b：finish_reason==length 且 tool_call 的 arguments 是残缺 JSON（解析失败）
+ 		// 时不把脏参数交给客户端——残留分片会被客户端解析成非法 JSON 卡死会话。
+ 		// 完整参数原样保留（正例零改动）；空参数（无参工具）不是截断，同样保留。
+-		if finishReason == "length" {
++		if finishReason == "length" && !validated {
+ 			calls = dropTruncatedToolCalls(calls)
+ 		}
+ 		if len(calls) > 0 {

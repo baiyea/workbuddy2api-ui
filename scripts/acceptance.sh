@@ -472,6 +472,7 @@ if [[ -n "${WB2A_RESPONSES_SDK_PYTHON:-}" ]]; then
     --url "http://127.0.0.1:$legacy_port" --key legacy-api --model global:mock-model
 fi
 compose_for "$legacy_project" "$legacy_port" exec -T core python3 - "http://127.0.0.1:$legacy_port" \
+  "${WB2A_SDK_PYTHON:+claude}" "${WB2A_RESPONSES_SDK_PYTHON:+responses}" \
   < "$repo_root/scripts/check_protocol_gateway.py"
 
 acceptance_passed=true
