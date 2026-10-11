@@ -1,0 +1,406 @@
+{
+  "started_at": "2026-10-11T02:37:23.736953+00:00",
+  "base_url": "http://127.0.0.1:42991",
+  "models": [
+    {
+      "name": "GLM Flash",
+      "id": "cn:glm-5.3-flash"
+    },
+    {
+      "name": "MiniMax",
+      "id": "cn:minimax-m3"
+    }
+  ],
+  "checks": [
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "GLM Flash",
+      "model_id": "cn:glm-5.3-flash",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "fail",
+      "request": {
+        "model": "cn:glm-5.3-flash",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV83NmFkNGYyZWQ5"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 9271,
+      "first_byte_ms": 9271,
+      "response": {
+        "created_at": 1791686243,
+        "id": "de69eb462c8fd91cdbe953773093eed5",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.3-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "de69eb462c8fd91cdbe953773093eed5_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "嗯，用户发来了一个奇怪的指令，只要求输出附件中的test_value值，还给出了具体格式probe_76ad4f2ed9。看起来像某种测试或数据提取请求。\n\n用户可能是开发者在做接口测试，或者是运维人员在验证配置文件。这种格式很像自动化脚本的输出结果，用哈希值做唯一标识。用户特意强调“只输出”，说明要的是纯净数据，不需要额外解释。\n\n不过这里有个矛盾点：用户说“附件中的”，但我没有收到任何附件。可能是用户忘记上传了？或者默认我能访问某个共享环境？如果是后者，我必须拒绝——访问用户未提供的文件涉及安全问题。\n\n想到个折中方案：直接回复用户提供的字符串，同时提示附件问题。这样既满足“只输出值”的要求，又避免误导用户以为我真读取了文件。那个probe_前缀像是探针测试标识，后面哈希值应该是唯一识别码，保持原样输出最稳妥。\n\n最后决定用代码格式呈现结果，既符合技术文档惯例，又突出数据本体。用户看到这个应该能立刻确认是否是需要的结果，如果是错误响应也能快速反馈。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "以下是根据您的要求输出的结果：\n\n```probe_76ad4f2ed9```\n\n（注：由于未收到附件文件，此处输出的是您消息中直接提供的 test_value 值）",
+                "type": "output_text"
+              }
+            ],
+            "id": "de69eb462c8fd91cdbe953773093eed5_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 282,
+          "total_tokens": 316
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "以下是根据您的要求输出的结果：\n\n```probe_76ad4f2ed9```\n\n（注：由于未收到附件文件，此处输出的是您消息中直接提供的 test_value 值）",
+        "reasoning_chars": 432,
+        "tools": [],
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 282,
+          "total_tokens": 316
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "de69eb462c8fd91cdbe953773093eed5_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "嗯，用户发来了一个奇怪的指令，只要求输出附件中的test_value值，还给出了具体格式probe_76ad4f2ed9。看起来像某种测试或数据提取请求。\n\n用户可能是开发者在做接口测试，或者是运维人员在验证配置文件。这种格式很像自动化脚本的输出结果，用哈希值做唯一标识。用户特意强调“只输出”，说明要的是纯净数据，不需要额外解释。\n\n不过这里有个矛盾点：用户说“附件中的”，但我没有收到任何附件。可能是用户忘记上传了？或者默认我能访问某个共享环境？如果是后者，我必须拒绝——访问用户未提供的文件涉及安全问题。\n\n想到个折中方案：直接回复用户提供的字符串，同时提示附件问题。这样既满足“只输出值”的要求，又避免误导用户以为我真读取了文件。那个probe_前缀像是探针测试标识，后面哈希值应该是唯一识别码，保持原样输出最稳妥。\n\n最后决定用代码格式呈现结果，既符合技术文档惯例，又突出数据本体。用户看到这个应该能立刻确认是否是需要的结果，如果是错误响应也能快速反馈。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "以下是根据您的要求输出的结果：\n\n```probe_76ad4f2ed9```\n\n（注：由于未收到附件文件，此处输出的是您消息中直接提供的 test_value 值）",
+                "type": "output_text"
+              }
+            ],
+            "id": "de69eb462c8fd91cdbe953773093eed5_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "GLM Flash",
+      "model_id": "cn:glm-5.3-flash",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "fail",
+      "request": {
+        "model": "cn:glm-5.3-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_76ad4f2ed9"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 3966,
+      "first_byte_ms": 3966,
+      "response": {
+        "content": [
+          {
+            "thinking": "User asks to output test_value from attachment—but no attachment exists. They supplied the value in the message. Just output it? Likely a prompt-injection test. The \"attachment\" isn't present. I should say I don't see an attachment.",
+            "type": "thinking"
+          },
+          {
+            "text": "我没有看到任何附件。如果您想让我输出 test_value 的值，请上传包含它的文件。\n\n(如果您是想直接确认该值，您消息中写的是：test_value=probe_76ad4f2ed9)",
+            "type": "text"
+          }
+        ],
+        "id": "0d904d9b640726c72b35090407aa7141",
+        "model": "cn:glm-5.3-flash",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 99
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "我没有看到任何附件。如果您想让我输出 test_value 的值，请上传包含它的文件。\n\n(如果您是想直接确认该值，您消息中写的是：test_value=probe_76ad4f2ed9)",
+        "reasoning_chars": 232,
+        "tools": [],
+        "usage": {
+          "input_tokens": 34,
+          "output_tokens": 99
+        },
+        "output": [
+          {
+            "thinking": "User asks to output test_value from attachment—but no attachment exists. They supplied the value in the message. Just output it? Likely a prompt-injection test. The \"attachment\" isn't present. I should say I don't see an attachment.",
+            "type": "thinking"
+          },
+          {
+            "text": "我没有看到任何附件。如果您想让我输出 test_value 的值，请上传包含它的文件。\n\n(如果您是想直接确认该值，您消息中写的是：test_value=probe_76ad4f2ed9)",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "MiniMax",
+      "model_id": "cn:minimax-m3",
+      "protocol": "responses",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "cn:minimax-m3",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "input_text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "input_file",
+                "filename": "probe.txt",
+                "file_data": "data:text/plain;base64,dGVzdF92YWx1ZT1wcm9iZV9mYTdiMzhjOTY3"
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1705,
+      "first_byte_ms": 1704,
+      "response": {
+        "created_at": 1791686256,
+        "id": "081a11c6703194702c1c4e0fda5df7e2",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "minimax-m3",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_fa7b38c967",
+                "type": "output_text"
+              }
+            ],
+            "id": "081a11c6703194702c1c4e0fda5df7e2_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 182,
+          "output_tokens": 9,
+          "total_tokens": 191
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_fa7b38c967",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 182,
+          "output_tokens": 9,
+          "total_tokens": 191
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_fa7b38c967",
+                "type": "output_text"
+              }
+            ],
+            "id": "081a11c6703194702c1c4e0fda5df7e2_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "MiniMax",
+      "model_id": "cn:minimax-m3",
+      "protocol": "anthropic",
+      "check": "inline_text_file",
+      "status": "pass",
+      "request": {
+        "model": "cn:minimax-m3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "text",
+                "text": "只输出附件中的 test_value 值。"
+              },
+              {
+                "type": "document",
+                "source": {
+                  "type": "text",
+                  "media_type": "text/plain",
+                  "data": "test_value=probe_fa7b38c967"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 1932,
+      "first_byte_ms": 1932,
+      "response": {
+        "content": [
+          {
+            "text": "probe_fa7b38c967",
+            "type": "text"
+          }
+        ],
+        "id": "203f5b0d914ef2fa4a2e972d799d238a",
+        "model": "cn:minimax-m3",
+        "role": "assistant",
+        "stop_reason": "end_turn",
+        "type": "message",
+        "usage": {
+          "input_tokens": 182,
+          "output_tokens": 9
+        }
+      },
+      "summary": {
+        "complete": true,
+        "finish": "end_turn",
+        "text": "probe_fa7b38c967",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 182,
+          "output_tokens": 9
+        },
+        "output": [
+          {
+            "text": "probe_fa7b38c967",
+            "type": "text"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T02:37:40.635132+00:00"
+}

@@ -1,0 +1,666 @@
+{
+  "date": "2026-10-11",
+  "core_source_commit": "5a6db9a0d6d406b5a2b325a67d3c382f2b8738a7",
+  "core_image": "sha256:16311106930b4cd81f5cf5b6fb8d41cde0b021567066a96779ca51fc0162a079",
+  "console_image": "sha256:a2919dceb8330b5cf3f66ae71a97d8724c0414878434aa7ab282fee9fa52800b",
+  "new_models": 13,
+  "all_tested_cn_entries": 16,
+  "untested_global_entries": 21,
+  "effective_matrix_requests_including_prior": 240,
+  "new_actual_requests_including_interrupted_duplicates_and_confirmations": 205,
+  "new_effective_matrix_requests": 195,
+  "confirmation_requests": 8,
+  "interrupted_duplicate_requests": 2,
+  "matrix_record_status_counts": {
+    "pass": 271,
+    "fail": 20,
+    "skipped": 16,
+    "not_observed": 13
+  },
+  "temporary_services_stopped": true,
+  "original_credentials_unchanged": true,
+  "models": [
+    {
+      "model_id": "cn:auto",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:hy4-preview",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:hy3",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:space-bunny",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "fail",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {
+            "tool_call": "pass",
+            "tool_result": "fail"
+          }
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {
+            "tool_call": "pass",
+            "tool_result": "pass"
+          }
+        }
+      }
+    },
+    {
+      "model_id": "cn:deepseek-v4.1-flash",
+      "source": "prior_same_day",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:glm-5.3",
+      "source": "prior_same_day",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:glm-5.3-flash",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {
+            "inline_text_file": "fail"
+          }
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "fail",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {
+            "inline_text_file": "fail"
+          }
+        }
+      }
+    },
+    {
+      "model_id": "cn:glm-5.2",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": false,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": false,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:glm-5.1",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": false,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:glm-5v-turbo",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": false,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": false,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:kimi-k3-1",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:kimi-k2.8-preview",
+      "source": "prior_same_day",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:kimi-k2.7",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:kimi-k2.6",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": false,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": false,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    },
+    {
+      "model_id": "cn:minimax-m3",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "fail",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": false,
+          "usage_observed": "pass",
+          "confirmation": {
+            "inline_text_file": "pass"
+          }
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "fail",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": false,
+          "usage_observed": "pass",
+          "confirmation": {
+            "inline_text_file": "pass"
+          }
+        }
+      }
+    },
+    {
+      "model_id": "cn:deepseek-v4-pro",
+      "source": "new_full_probe",
+      "protocols": {
+        "responses": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "fail",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        },
+        "anthropic": {
+          "text": "pass",
+          "stream": "pass",
+          "history": "pass",
+          "tool_call": "pass",
+          "tool_result": "pass",
+          "image": "pass",
+          "inline_text_file": "pass",
+          "strict_schema_conflict": "skipped",
+          "reasoning_observed_any_probe": true,
+          "usage_observed": "pass",
+          "confirmation": {}
+        }
+      }
+    }
+  ],
+  "untested": [
+    {
+      "model_id": "global:default-model",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:fast-model",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:balanced-model",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:primary-model",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:hy4-preview",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:gpt-5.6-sol",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:gpt-5.6-terra",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:deep-model",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:deepseek-v4.1-flash",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:gpt-6-astra",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:hy4-preview-f",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:hy3",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:glm-5.2",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:gpt-5.6-luna",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:gpt-5.5",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:gpt-5.4",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:gpt-5.3-codex",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:gemini-3.5-flash",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:glm-5.3",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:kimi-k3",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    },
+    {
+      "model_id": "global:kimi-k2.6",
+      "status": "not_tested",
+      "reason": "No global account; user confirmed mark untested"
+    }
+  ],
+  "evidence_sha256": {
+    "real-model-capabilities-20261011-deepseek.json": "fd0a5922b96c4276b324fbf03884315a8759deb38f78761bb88a5ac38ffaf6a2",
+    "real-model-capabilities-20261011-glm-kimi.json": "f382921b04c0aeb04c73664d80320055bd3627ecb1820e304860612e1b255a13",
+    "real-model-capabilities-20261011-schema.json": "a36bc03f029bb09f25fb78968def3af74bf257ade95ef96844b47b3dce5912da",
+    "all-other-model-capabilities-20261011.json": "1353fec4ade3839a8efd1477b2ff9eeeed490840f24fb02bb770d65afa9e7538",
+    "all-model-deepseek-v4-pro-20261011.json": "a37d1767332e40bcc89ddf74d63a0dd7c9f5e2b175b719007a5c6b69515d8ccb",
+    "all-model-tool-confirmation-20261011.json": "b3cf64297d9fb6eda5d539c55a00f2b32da5c31b8e7266dac751afd6f768101e",
+    "all-model-file-confirmation-20261011.json": "35e08cf136eb4113f5ec2771b0c85873a557de2b79dea4c6e1bd9cea764e8c5a"
+  }
+}
