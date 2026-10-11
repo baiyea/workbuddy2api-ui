@@ -4,7 +4,7 @@ Windows/macOS 托盘应用，在本机启动同一套 core、console 和六类�
 
 ## 使用者
 
-安装包包含对应平台的 Go 服务、Python 解释器、标准库和任务脚本，无需自行安装 Docker、Go、Node.js 或 Python，也不会在应用首次启动时下载这些依赖。Windows 安装包配置离线 WebView2 安装资源；该部分在构建时取得。
+安装包包含对应平台的 Go 服务、Python 解释器、标准库和任务脚本，无需自行安装 Docker、Go、Node.js 或 Python，也不会在应用首次启动时下载这些依赖。应用只创建原生托盘，管理页面使用系统默认浏览器；Windows 安装包不携带、下载或安装 WebView2。
 
 托盘打开本地控制台，管理密钥仅预填登录框，用户仍需点击登录。端口被其他程序占用时提示错误，不会停止其他程序。账号和状态保存在用户应用数据目录，资源目录不用于保存账号。
 
@@ -131,3 +131,5 @@ cargo test --manifest-path desktop/Cargo.toml --test runtime -- --ignored
 原生目标准备时会实际运行随包 Python，导入 `ssl`、`hashlib`、`urllib.request` 和全部生产任务模块，并检查可加载 CA；只导入，不请求上游。交叉目标只完成构建和资源布局检查，输出明确的未执行提示。
 
 单测、Python 导入验证和交叉编译都不等于 Windows/macOS 安装后端到端通过，也不证明真实账号授权或任务奖励到账。运行器、浏览器登录、退出清理和数据保留需由隔离集成验收补充记录。
+
+Windows 减包验收还需检查安装包不含 WebView2 安装器，并在未安装 WebView2 的干净 Windows 环境验证安装、托盘启动、默认浏览器打开、原生错误提示和退出后的进程清理。已安装 WebView2 的开发机通过测试，不能替代这一验收。

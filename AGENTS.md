@@ -231,7 +231,7 @@ bash scripts/release.sh
 - 客户端源码、锁文件、资源准备与构建入口均在 `desktop/`；Windows x64、macOS arm64/x64 使用原生 Go 服务和随包 Python，与服务器 Docker 交付独立。
 - `python3 desktop/scripts/prepare.py` 从冻结快照物化并构建资源，在构建期校验锁定依赖 SHA-256；应用运行时不下载环境。跨目标资源准备不代表对应平台运行验收。
 - 安装后的应用名固定为 `wb2api-desktop`；`npm --prefix desktop run build` 读取已准备资源的目标与 Tauri 版本，生成 `wb2api-desktop-{windows|macos}-{x64|arm64}-{版本号}.*`。交付构建使用此命令，底层 `tauri build` 不负责统一文件名。
-- Tauri 只创建托盘，监听 `127.0.0.1`，console 使用 7863，core 使用动态内部端口。账号、历史、密钥与日志写入系统应用数据目录，不写入安装资源。
+- Tauri 只创建托盘，管理页面由系统默认浏览器打开，错误提示使用原生对话框，不创建 WebView。Windows 的 `webviewInstallMode` 为 `skip`，不携带、下载或安装 WebView2；无 WebView2 的兼容性须在干净 Windows 环境验收。监听 `127.0.0.1`，console 使用 7863，core 使用动态内部端口。账号、历史、密钥与日志写入系统应用数据目录，不写入安装资源。
 - 管理密钥通过本机 URL 查询参数预填，前端立即清参，用户点击登录；保留管理会话、同源和 CSRF。不得记录含密钥的 URL，不得将预填改为自动登录。
 - `WB2A_DESKTOP=true` 启用父进程 stdin 生命周期。退出先取消任务并持久化，再由 Unix 进程组或 Windows Job Object 回收后代；Windows 子进程在创建时原子加入 Job，禁止退回先启动后绑定的竞态实现。
 - 新 core 行为仍放 `extensions/` 或 `patches/`；不改变生产 Compose、发布架构和真实服务。桌面资源、工具缓存、构建输出均不提交。
