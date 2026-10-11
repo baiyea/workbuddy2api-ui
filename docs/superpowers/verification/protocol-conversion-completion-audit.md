@@ -1,6 +1,6 @@
 # 协议转换交付核验
 
-当前状态：正常流程与隔离集成已通过，但最终整体评审复现了 7 个重要问题，交付门槛尚未通过。现进行一次完整修复，之后必须用新源码和镜像重新验证，并完成范围限定的复审。不能将本记录解读为功能已经完成、发布、部署或真实模型能力验证。
+当前状态：最终整体评审发现的 7 个重要问题已修复并通过范围限定的独立复审；本地回归、竞态及双 SDK 原生测试通过。Docker Desktop 已退出，用户选择自行启动后通知；新源码的 Linux 全量检查、新镜像及实际 console/core/mock 双 SDK 容器验收仍待执行。交付门槛尚未通过，不能将本记录解读为功能已经完成、发布、部署或真实模型能力验证。
 
 | 目标 / 约束 | 权威证据 | 当前结论 |
 | --- | --- | --- |
@@ -8,9 +8,9 @@
 | 固定复用 RelayKit，不另造转换器 | SOURCE.json；final-source-integrity.json 的 162 文件与固定 Git blob 核验；公开转换入口；0008–0011 补丁 | 已完成 |
 | 原始冻结快照与库来源保持 | baseline 8cbf7ae 至 e213c4b 的 upstream/upstream.lock diff 为空；vendor 原始文件哈希全部一致 | 已完成 |
 | 同两个服务、账号池、Handler、一键部署 | 生产 Compose/config diff 为空；Task3 bridge/no-bridge wiring 回归；实际隔离启动/重建 | 已完成 |
-| Responses 无状态入口与工具/明文历史 | Task3 回归含实际 SSE 最终输出 6 种顺序回填；任务评审及修复复审；final-review.md | 入口和历史已验证；内联文件解析与 image detail 待修复 |
-| Anthropic 增强及混合历史 | Task4 入口/嵌套校验/0010 库回归；错误输出修复与独立复审；final-review.md | 入口和历史已验证；流式工具参数与混合片段待修复 |
-| 用量、结束、大小与取消 | Task2 共用层测试/竞态/评审；真实 mock 网关退出和断连取消；final-review.md 的完整 Handler 反例 | 未完成：原始流边界、终止证据与部分累计用量须修复 |
+| Responses 无状态入口与工具/明文历史 | Task3 回归；final-fix-report.md / final-fix-rereview.md 的真实 Handler 及双 SDK 出站断言 | 修复及本地验证通过，待新镜像验收 |
+| Anthropic 增强及混合历史 | Task4 回归；最终修复的完整工具 JSON、并行和交错片段 SDK 断言 | 修复及本地验证通过，待新镜像验收 |
+| 用量、结束、大小与取消 | 最终修复真实 Handler RED/GREEN，原始流限额/终态/部分用量矩阵及独立复审 | 修复及本地验证通过，待新镜像验收 |
 | JSON Schema 转换后确实到达上游 | task-5-gateway-final-logs/acceptance.log：JSON/SSE 两种 full Handler payload 精确断言 | 已完成；不保证模型结果符合 schema |
 | 不增加 Files 存储或生成结果修复 | 设计与 README 边界、路径/字段拒绝回归、补丁范围 | 已完成；最终整体审查继续核对 |
 | 公共/内部/管理认证、owner、CSRF、同源 | Task2–4 回归；最终管理 auth/CSRF/origin/trusted ID/分 owner 退出验收 | 已完成 |
@@ -21,12 +21,14 @@
 | 随包声明 | 实际 core 镜像读取四文件/哈希；desktop 真实复制函数回归；控制台已有页脚署名 | 已完成 |
 | README/AGENTS 能力边界 | Task5 文档 diff 与独立评审，明确不完整兼容和库/模型限制 | 已完成 |
 | 全部任务逐项评审 | Task1–5 reports/reviews/fix reviews；Task5 仅一个非阻断覆盖改进建议 | 已完成 |
-| 最终整个改动评审、处理建议 | final-review.md 与完整 Handler 复现日志 | 7 个重要问题待修复和复审；1 个历史观测覆盖建议一并补齐 |
+| 最终整个改动评审、处理建议 | final-review.md、final-fix-report.md、final-fix-rereview.md | 7 个重要问题及 1 个覆盖建议均 ADDRESSED，无新增重要问题 |
 | 保留用户改动 / 不发布部署 | 当前只余用户 .gitignore 与原有未跟踪 probe/deferred/upstream-convert；所有实际服务保持；未 push/publish/deploy | 已核对，交付前再核对 |
 
 ## 验证版本说明
 
 生产源码与完整 Go/Linux 检查版本为 e73cc7a；ad1d61e 仅改网关验收的一行精确期望，4d73a51 与 e213c4b 仅整理报告/评审。最终隔离验收使用既有机制复用精确镜像并核对 runtime identity，不声称重新构建了 ad1 源码。详细日志和镜像 ID 见 ../implementation/protocol-conversion/task-5-report.md。
+
+以上是最终修复前的 Linux/容器证据，不能证明修复后的集成完成。修复生产提交为 851130d，测试和说明补充后复审 HEAD 为 3f4e6be。新本地证据见 final-fix-report.md；最终新镜像验收仍未运行。final-fix-source-integrity.json 再次确认 162 个库原始文件哈希匹配，冻结快照与生产 Compose 无变动。
 
 ## 代为裁定及边界
 
