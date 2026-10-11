@@ -1851,6 +1851,151 @@
             ]
           }
         }
+      },
+      "targeted_retry_20261011": {
+        "summary": "gemini-astra-retry-20261011/summary.md",
+        "observations": [
+          {
+            "protocol": "responses",
+            "check": "stream",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "responses",
+            "check": "tool_call",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "responses",
+            "check": "tool_result",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "responses",
+            "check": "image",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "responses",
+            "check": "inline_text_file",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "stream",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "tool_call",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "tool_result",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "image",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "inline_text_file",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round1.json"
+          },
+          {
+            "protocol": "responses",
+            "check": "stream",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          },
+          {
+            "protocol": "responses",
+            "check": "tool_call",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          },
+          {
+            "protocol": "responses",
+            "check": "tool_result",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          },
+          {
+            "protocol": "responses",
+            "check": "image",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          },
+          {
+            "protocol": "responses",
+            "check": "inline_text_file",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "stream",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "tool_call",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "tool_result",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "image",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "inline_text_file",
+            "status": "pass",
+            "http_status": 200,
+            "report": "gemini-astra-retry-20261011/astra-round2.json"
+          }
+        ]
       }
     },
     {
@@ -2947,6 +3092,25 @@
             ]
           }
         }
+      },
+      "targeted_retry_20261011": {
+        "summary": "gemini-astra-retry-20261011/summary.md",
+        "observations": [
+          {
+            "protocol": "responses",
+            "check": "tool_call",
+            "status": "error",
+            "http_status": 502,
+            "report": "gemini-astra-retry-20261011/gemini-round1.json"
+          },
+          {
+            "protocol": "anthropic",
+            "check": "tool_call",
+            "status": "error",
+            "http_status": 502,
+            "report": "gemini-astra-retry-20261011/gemini-round1.json"
+          }
+        ]
       }
     },
     {
@@ -3396,7 +3560,20 @@
     "global-models-20261011/confirm-file.json": "cce1bcac433cd4ae0161b58c2c3f858d866ae3f8825b0c069b3d0a0238460e66",
     "global-models-20261011/confirm-images.json": "5ccb4f2bf00c15ded88fcde5471577cb41fa1c929349d954add09b6a0a459af8",
     "global-models-20261011/confirm-tools.json": "d7135dc144d3d95c7098fd85a6f16e32cde6f653b9969a787d11b186c9e7f1da",
-    "global-models-20261011/upstream-warnings.txt": "4b1a8e93e0b382127115901391c3a6f17e2dbd06115d8d204a49d38fb54c588c"
+    "global-models-20261011/upstream-warnings.txt": "4b1a8e93e0b382127115901391c3a6f17e2dbd06115d8d204a49d38fb54c588c",
+    "gemini-astra-retry-20261011/astra-round1.json": "c805fd2ada767b5129869c79695d9724f3d4e257d32dc128d019b3ba247ae3e0",
+    "gemini-astra-retry-20261011/astra-round1.md": "7a7bb596f20facf626cae763541f7c0d23f25554897f62abcc2da4d17433889f",
+    "gemini-astra-retry-20261011/astra-round2.json": "f6597a6396d6e09a4c4d926e92c11755e7f612cfc2645057455c082ed445ae29",
+    "gemini-astra-retry-20261011/astra-round2.md": "ddef2981319075d7cdf3fb35806b86102aca985e80d3ad315dcca54bd056b710",
+    "gemini-astra-retry-20261011/capture-metadata.json": "14c871b86f04990a13aab77bcd8b9987495d26c55728cc50e438c219d9085f5d",
+    "gemini-astra-retry-20261011/gemini-controls.json": "e23f80804ab57a0865446ba05df12eca92d0cbccf2b8d79de0da5c085611e99f",
+    "gemini-astra-retry-20261011/gemini-raw-redacted.sse": "2870fc7fff92473305d796bccaad760a4052c17a1347c085b8ee1732f7749bf0",
+    "gemini-astra-retry-20261011/gemini-round1.json": "d54eab2aaac2859c64e9f286d7f2fc17bc4c2995c53276d69a50b13b446617e3",
+    "gemini-astra-retry-20261011/gemini-round1.md": "5feaee6eedb938e66b8d00560bda282fe240ff50c3aeaaa3b220e062254b0ff4",
+    "gemini-astra-retry-20261011/raw-replay.txt": "6ea1f4292429c917c9d9c2ac1333fbf8aeb7df8552e17c3fd06fafb9084250b5",
+    "gemini-astra-retry-20261011/raw_replay_test.go": "5710776600760dbd655d07d9d6faf0f73b525ec2b7d0a038c1354ba39497d49b",
+    "gemini-astra-retry-20261011/redacted-replay.txt": "9c3e4b407eec1ec278d43a33cd4e60df1060acfd35bd56b67049fc7cbd821d49",
+    "gemini-astra-retry-20261011/summary.md": "cee9e3d9f4bc887085c39c6b3f38904b0a05cc519c8d1cb8691e51f19f71073d"
   },
   "attempted_global_entries": 21,
   "attempted_all_entries": 37,
@@ -3428,5 +3605,16 @@
     "fail": 20,
     "skipped": 16,
     "not_observed": 13
+  },
+  "targeted_retry_20261011": {
+    "gateway_requests": 25,
+    "astra_passed_requests": 20,
+    "gemini_converted_tool_requests_502": 4,
+    "gemini_chat_stream_tool_request_200": 1,
+    "services_stopped": true,
+    "original_credentials_unchanged": true,
+    "production_code_changed": false,
+    "historical_observations_preserved": true,
+    "summary": "gemini-astra-retry-20261011/summary.md"
   }
 }

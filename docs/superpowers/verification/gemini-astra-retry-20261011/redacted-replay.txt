@@ -1,0 +1,9 @@
+=== RUN   TestGeminiCapturedExtraFields
+    gemini_raw_replay_test.go:50: captured delta rejected: json: unknown field "extra_fields"
+    gemini_raw_replay_test.go:84: openai_responses captured: invalid delta
+    gemini_raw_replay_test.go:84: openai_responses offline_without_extra_fields: <nil>
+    gemini_raw_replay_test.go:84: claude captured: invalid delta
+    gemini_raw_replay_test.go:84: claude offline_without_extra_fields: <nil>
+--- PASS: TestGeminiCapturedExtraFields (0.00s)
+PASS
+ok  	workbuddy2api/internal/protocol	0.092s

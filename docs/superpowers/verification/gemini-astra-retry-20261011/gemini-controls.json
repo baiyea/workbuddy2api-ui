@@ -1,0 +1,193 @@
+{
+  "at": "2026-10-11T04:41:05.183254+00:00",
+  "records": [
+    {
+      "protocol": "chat",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_63469a8195。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "type": "function",
+            "function": {
+              "name": "probe_echo",
+              "description": "测试用回显函数；通过它提交给定 value。",
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        ],
+        "max_tokens": 1536,
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 2645,
+      "response": [
+        {
+          "event": "",
+          "data": {
+            "choices": [
+              {
+                "delta": {
+                  "role": "assistant",
+                  "tool_calls": [
+                    {
+                      "function": {
+                        "arguments": "{\"value\":\"probe_63469a8195\"}",
+                        "name": "probe_echo"
+                      },
+                      "id": "call_934810",
+                      "index": 0,
+                      "type": "function"
+                    }
+                  ]
+                },
+                "finish_reason": null,
+                "index": 0
+              }
+            ],
+            "created": 1791693655,
+            "id": "8109b59060058fe6806166640125716d",
+            "model": "gemini-3.5-flash",
+            "object": "chat.completion.chunk",
+            "usage": null
+          }
+        },
+        {
+          "event": "",
+          "data": {
+            "choices": [
+              {
+                "delta": {
+                  "role": "assistant"
+                },
+                "finish_reason": "tool_calls",
+                "index": 0
+              }
+            ],
+            "created": 1791693655,
+            "id": "8109b59060058fe6806166640125716d",
+            "model": "gemini-3.5-flash",
+            "object": "chat.completion.chunk",
+            "usage": {
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 0,
+              "cached_tokens": 0,
+              "completion_thinking_tokens": 96,
+              "completion_tokens": 123,
+              "completion_tokens_details": {
+                "accepted_prediction_tokens": 0,
+                "audio_tokens": 0,
+                "cached_tokens": 0,
+                "reasoning_tokens": 96,
+                "rejected_prediction_tokens": 0
+              },
+              "credit": 0.12,
+              "prompt_cache_hit_tokens": 0,
+              "prompt_cache_miss_tokens": 66,
+              "prompt_cache_write_tokens": 0,
+              "prompt_tokens": 66,
+              "prompt_tokens_details": {
+                "accepted_prediction_tokens": 0,
+                "audio_tokens": 0,
+                "cached_tokens": 0,
+                "reasoning_tokens": 0,
+                "rejected_prediction_tokens": 0
+              },
+              "total_tokens": 189
+            }
+          }
+        },
+        {
+          "event": "",
+          "data": "[DONE]"
+        }
+      ]
+    },
+    {
+      "protocol": "responses",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_63469a8195。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": false,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 502,
+      "elapsed_ms": 2932,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"}}\n"
+    },
+    {
+      "protocol": "anthropic",
+      "request": {
+        "model": "global:gemini-3.5-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_63469a8195。不要自己假装执行。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": false
+      },
+      "http_status": 502,
+      "elapsed_ms": 2875,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    }
+  ]
+}

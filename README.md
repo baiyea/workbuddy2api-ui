@@ -71,13 +71,13 @@
 <a href="https://github.com/baiyea/workbuddy2api-ui/releases">下载地址</a>
 安装后常驻系统托盘，网页和API接口只在本机开放。
 
-| 你的电脑 | 对应安装包 |
-| --- | --- |
+| 你的电脑                               | 对应安装包                                  |
+| -------------------------------------- | ------------------------------------------- |
 | Apple Silicon Mac，macOS 12 或更新版本 | `wb2api-desktop-macos-arm64-<版本号>.dmg` |
-| Intel Mac，macOS 12 或更新版本 | `wb2api-desktop-macos-x64-<版本号>.dmg` |
-| Windows x64 | `wb2api-desktop-windows-x64-<版本号>.exe` |
+| Intel Mac，macOS 12 或更新版本         | `wb2api-desktop-macos-x64-<版本号>.dmg`   |
+| Windows x64                            | `wb2api-desktop-windows-x64-<版本号>.exe` |
 
-目前桌面端处于**开发预览阶段**：macOS 已完成开发打包，尚未正式签名公证；Windows 安装包与真机验证仍在准备。当前没有正式发布的安装包下载入口。
+桌面端安装包通过 [GitHub Releases](https://github.com/baiyea/workbuddy2api-ui/releases) 提供。目前未配置 Windows 代码签名或 macOS 签名与公证，系统可能提示无法验证开发者。
 
 → [查看桌面端获取、构建及使用说明](desktop/README.md)
 
@@ -108,66 +108,36 @@ docker compose logs console
 
 先到“对话测试”选择模型、发一条消息，确认账号可以使用。再到“API 接入”，将页面提供的地址、API Key 和模型名称填入目标应用。
 
-| 需要填写的内容 | 从哪里获取 |
-| --- | --- |
-| 服务地址（Base URL） | 控制台“API 接入”；桌面端的 OpenAI 地址为 `http://127.0.0.1:7863/v1` |
-| API Key | 同一页面查看，与网页登录用的管理密钥不同 |
-| 模型名称 | 使用控制台显示的完整模型名称 |
-
-**我常用的 AI 工具能接入吗？**
-
-先看它是否支持自定义服务地址，以及所需功能是否与下表匹配。工具由客户端执行，模型是否调用工具、理解媒体或返回推理内容取决于所选模型与上游。接口名称不代表完整 OpenAI、Anthropic 或 Claude Code 兼容；更多客户端的接入效果欢迎反馈实测结果。
+| 需要填写的内容       | 从哪里获取                                                             |
+| -------------------- | ---------------------------------------------------------------------- |
+| 服务地址（Base URL） | 控制台“API 接入”；桌面端的 OpenAI 地址为`http://127.0.0.1:7863/v1` |
+| API Key              | 同一页面查看，与网页登录用的管理密钥不同                               |
+| 模型名称             | 使用控制台显示的完整模型名称                                           |
 
 ### API 调用与范围
 
-OpenAI SDK 的 Base URL 使用 `http://127.0.0.1:7863/v1`；Anthropic SDK 使用站点根地址 `http://127.0.0.1:7863`。使用 `/v1/models` 返回的完整模型 ID；以下 `global:模型ID` 需要替换。
-
-| 端点 | 当前能力与限制 |
-| --- | --- |
-| `GET /v1/models`、`POST /v1/chat/completions` | 现有模型列表、对话和 SSE 流式调用 |
-| `POST /v1/responses` | 无状态创建；文本/完整历史、function/custom 工具及结果回填、库可转换的图片/内联文件、明文 reasoning summary、JSON/SSE；`text.format` JSON 模式/JSON Schema 传递至上游，不校验或修复生成结果 |
-| `POST /v1/messages`（Beta） | 文本/历史、模型自主选择的工具及结果回填、HTTP(S) 图片或 PNG/JPEG/GIF/WebP base64、内联 text/plain 或 base64 PDF、无签名明文 thinking、JSON/SSE；`thinking.budget_tokens` 转为 effort，不能保证精确推理 token 预算 |
-
-内联文件解析支持有界的 base64 text/JSON/PDF；不下载远程文件 URL。Claude 工具参数实时传送；工具开始后穿插的文本/思考会暂存到参数完整，再按顺序输出，避免丢失后续工具片段。
-
-Responses 不提供 response 存储/检索/删除、后台执行、WebSocket 或 Files API。`previous_response_id`、`conversation`、模板 `prompt`、`context_management`、`store:true`、`background:true` 返回 400；多轮请发送完整历史。文件仓库引用、加密推理及无法转换的关键字段也会明确拒绝。
-
-Messages 固定使用 `anthropic-version: 2023-06-01`，不接受 `anthropic-beta`、查询参数或压缩请求体。显式 `tool_choice`、工具 `strict`/服务端工具字段、cache/citations 元数据、非空 thinking 签名/redacted thinking、`thinking.display`、`tool_result.is_error:true`、`output_format` 及服务端状态字段返回带路径的 400；`output_config` 仅支持 effort。工具 input_schema 会传递，但 Messages 不提供 schema 输出约束。未知用量保持 `null`，不会估算或补零。
-
 ```bash
+# 替换 API Key，并从 /v1/models 返回结果中选用完整模型 ID。
 curl http://127.0.0.1:7863/v1/models -H 'Authorization: Bearer 你的APIKey'
 
+# OpenAI Chat Completions API
 curl http://127.0.0.1:7863/v1/chat/completions \
   -H 'Authorization: Bearer 你的APIKey' -H 'Content-Type: application/json' \
   -d '{"model":"global:模型ID","messages":[{"role":"user","content":"你好"}]}'
 
+# OpenAI Responses API
 curl -N http://127.0.0.1:7863/v1/responses \
   -H 'Authorization: Bearer 你的APIKey' -H 'Content-Type: application/json' \
   -d '{"model":"global:模型ID","input":"你好","store":false,"stream":true}'
 
+# Anthropic API
 curl -N http://127.0.0.1:7863/v1/messages \
   -H 'x-api-key: 你的APIKey' -H 'anthropic-version: 2023-06-01' \
   -H 'Content-Type: application/json' \
   -d '{"model":"global:模型ID","max_tokens":1024,"messages":[{"role":"user","content":"你好"}],"stream":true}'
 ```
 
-### 逐项测试模型能力
-
-`scripts/probe_model_capabilities.py` 使用 Python 标准库，按模型名称和 `/v1/models` 中的完整 ID 测试 Responses / Messages。它会发起真实请求并消耗额度；串行运行、不自动重试、不实际执行工具。先将 API Key 放入当前终端的 `WB2A_API_KEY` 环境变量，再执行：
-
-```bash
-python scripts/probe_model_capabilities.py \
-  --base-url http://127.0.0.1:7863/v1 \
-  --model "DeepSeek=cn:deepseek-v4.1-flash" \
-  --model "GLM=cn:glm-5.3" \
-  --output docs/superpowers/verification/my-model-probe.json
-```
-
-国际区也复用此脚本，例如 `--model "GPT=global:gpt-5.6-sol"`；需要已登录对应国际账号。测试时使用 `/v1/models` 返回的完整 ID，保留国内 `cn:` 与国际 `global:` 前缀，避免混淆同名模型。
-
-也可用 `--key-file 路径` 读取包含 `api_key` 的本地 JSON，密钥不会写进报告。`--output` 必须使用 `.json` 扩展名，结果同时保存 JSON 请求/响应证据与同名 Markdown 表格；任一报告已存在时默认拒绝覆盖，显式 `--overwrite` 才可覆盖两者。`--checks text stream history tools schema image inline_file` 可选择测试项，`--timeout` 和 `--max-output-tokens` 控制单次请求预算。PowerShell 可将示例写在一行执行。
-
-文本基线未通过（包括完成但输出为空或标记不匹配）时会跳过该协议的后续调用，并用原 Chat 接口对每个模型最多做一次诊断，区分入口故障和模型可用性。`pass` / `fail` 是该用例的断言结果，`error` 表示 HTTP/传输/解析错误或 SSE 错误事件，`not_observed` 表示未观察到，不能直接推断“不支持”；`skipped` 会附原因。Schema 用例以冲突提示检查约束是否实际生效，一次通过也不保证严格遵守。Messages 的输出 Schema 当前由网关明确不支持，脚本标记跳过，不归因于模型。出现 `fail` 或 `error` 时脚本退出码为 1。
+[API 接入与兼容范围](docs/api.md#api-调用与范围) · [逐项测试模型能力](docs/api.md#逐项测试模型能力) · [各模型支持情况](docs/superpowers/verification/all-model-capability-table-20261011.md)
 
 ### 自动获取积分
 
@@ -183,14 +153,14 @@ python scripts/probe_model_capabilities.py \
 
 ## 功能特性
 
-| 功能 | 你可以用它做什么 |
-| --- | --- |
-| 统一 API 入口 | 将账号的模型能力接入符合接口要求的应用和脚本 |
-| 多账号管理 | 在一个页面里完成授权，查看各账号的可用状态 |
-| 网页对话测试 | 接入其他应用前，先确认模型是否可用、回答是否正常 |
-| 六类自动任务 | 按已有排程运行任务，减少重复操作 |
-| 执行记录与积分观察 | 查看任务结果，区分已确认奖励和待确认状态 |
-| 桌面端与 Docker 服务端 | 根据本机使用或服务器运行的需要选择安装方式 |
+| 功能                   | 你可以用它做什么                                 |
+| ---------------------- | ------------------------------------------------ |
+| 统一 API 入口          | 将账号的模型能力接入符合接口要求的应用和脚本     |
+| 多账号管理             | 在一个页面里完成授权，查看各账号的可用状态       |
+| 网页对话测试           | 接入其他应用前，先确认模型是否可用、回答是否正常 |
+| 六类自动任务           | 按已有排程运行任务，减少重复操作                 |
+| 执行记录与积分观察     | 查看任务结果，区分已确认奖励和待确认状态         |
+| 桌面端与 Docker 服务端 | 根据本机使用或服务器运行的需要选择安装方式       |
 
 wb2api 是非官方开源项目，请使用本人授权的账号并遵守上游平台规则。模型、额度与活动是否可用，取决于账号和上游服务；请妥善保管密钥，不要公开分享账号数据或带密钥的日志。
 

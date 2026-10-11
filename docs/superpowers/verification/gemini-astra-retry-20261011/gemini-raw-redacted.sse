@@ -1,0 +1,7 @@
+: heartbeat
+data: {"id":"46f33038accef5277e1c74f51816157b","model":"gemini-3.5-flash","object":"chat.completion.chunk","created":1791693799,"choices":[{"index":0,"delta":{"role":"assistant","content":"","reasoning_content":"","function_call":null,"refusal":"","tool_calls":[{"id":"call_361082","type":"function","function":{"name":"probe_echo","arguments":"{\"value\":\"probe_63469a8195\"}"},"index":0}],"extra_fields":{"reasoning_detail":{"content_signature":"","toolcall_signature":"[REDACTED_NONEMPTY_SIGNATURE]","text":"","model":"ep-gemini35flash"},"_meta":null}},"logprobs":null,"finish_reason":""}],"usage":null}
+
+data: {"id":"46f33038accef5277e1c74f51816157b","model":"gemini-3.5-flash","object":"chat.completion.chunk","created":1791693799,"choices":[{"index":0,"delta":{"role":"assistant","content":"","reasoning_content":"","function_call":{"name":"","arguments":""},"refusal":"","tool_calls":[],"extra_fields":null},"logprobs":null,"finish_reason":"tool_calls"}],"usage":{"prompt_tokens":66,"completion_tokens":93,"total_tokens":159,"completion_tokens_details":{"accepted_prediction_tokens":0,"audio_tokens":0,"reasoning_tokens":66,"rejected_prediction_tokens":0,"cached_tokens":0},"prompt_tokens_details":{"accepted_prediction_tokens":0,"audio_tokens":0,"reasoning_tokens":0,"rejected_prediction_tokens":0,"cached_tokens":0},"prompt_cache_hit_tokens":0,"prompt_cache_miss_tokens":66,"cache_read_input_tokens":0,"cache_creation_input_tokens":0,"prompt_cache_write_tokens":0,"completion_thinking_tokens":66,"credit":0.09,"cached_tokens":0}}
+
+data: [DONE]
+

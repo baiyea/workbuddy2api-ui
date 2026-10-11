@@ -1,0 +1,15 @@
+{
+  "raw_sha256": "14f3105eb165e053971f12ec83bfd6aea5654da70d17f39f5c7aa2a66432952e",
+  "raw_bytes": 2030,
+  "signatures": [
+    {
+      "chars": 492,
+      "sha256": "bfc1cb1b96d3b64e2a15b4f8e3425812a38755a88a12c4962db5dd36807ba3a2"
+    }
+  ],
+  "redacted_fields": [
+    "choices[].delta.extra_fields.reasoning_detail.toolcall_signature"
+  ],
+  "capture_global_enabled": true,
+  "production_code_changed": false
+}

@@ -2,3 +2,5 @@
 /upstream/** -text
 /extensions/third_party/relaykit/** -text
 /patches/** -text whitespace=-blank-at-eol,-space-before-tab
+# SSE evidence needs its final blank line to delimit the last event.
+/docs/superpowers/verification/**/*.sse -text whitespace=cr-at-eol,-blank-at-eof
