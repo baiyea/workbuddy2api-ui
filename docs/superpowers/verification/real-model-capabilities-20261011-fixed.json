@@ -1,0 +1,1989 @@
+{
+  "started_at": "2026-10-11T02:17:12.695476+00:00",
+  "base_url": "http://127.0.0.1:43709",
+  "models": [
+    {
+      "name": "DeepSeek",
+      "id": "cn:deepseek-v4.1-flash"
+    },
+    {
+      "name": "GLM",
+      "id": "cn:glm-5.3"
+    },
+    {
+      "name": "Kimi",
+      "id": "cn:kimi-k2.8-preview"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "text",
+      "status": "pass",
+      "request": {
+        "model": "cn:deepseek-v4.1-flash",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_72bfacbec9"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2102,
+      "first_byte_ms": 2102,
+      "response": {
+        "created_at": 1791685032,
+        "id": "60a91f5da99d3d46da75eefa152ff34c",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "deepseek-v4.1-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "60a91f5da99d3d46da75eefa152ff34c_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer in Chinese? User says \"请只输出这个测试标记，不要解释：probe_72bfacbec9\" Means output only test marker no explanation. So final should be exactly probe_72bfacbec9. Ensure no extra.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_72bfacbec9",
+                "type": "output_text"
+              }
+            ],
+            "id": "60a91f5da99d3d46da75eefa152ff34c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 48,
+          "output_tokens": 62,
+          "total_tokens": 110
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_72bfacbec9",
+        "reasoning_chars": 179,
+        "tools": [],
+        "usage": {
+          "input_tokens": 48,
+          "output_tokens": 62,
+          "total_tokens": 110
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "60a91f5da99d3d46da75eefa152ff34c_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer in Chinese? User says \"请只输出这个测试标记，不要解释：probe_72bfacbec9\" Means output only test marker no explanation. So final should be exactly probe_72bfacbec9. Ensure no extra.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_72bfacbec9",
+                "type": "output_text"
+              }
+            ],
+            "id": "60a91f5da99d3d46da75eefa152ff34c_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "stream",
+      "status": "pass",
+      "request": {
+        "model": "cn:deepseek-v4.1-flash",
+        "max_output_tokens": 1536,
+        "input": "计算 23 乘 19，只在最终答案输出结果数字。",
+        "stream": true
+      },
+      "http_status": 200,
+      "elapsed_ms": 1878,
+      "first_byte_ms": 1260,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791685034,
+              "id": "resp_71277a2198614e9db2182472ef1d7a79",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "cn:deepseek-v4.1-flash",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.added",
+          "data": {
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "",
+              "type": "summary_text"
+            },
+            "sequence_number": 2,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "We",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " need",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " answer",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 5,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " in",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 6,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " Chinese",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 7,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " likely",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 8,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 9,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " User",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 10,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " asks",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 11,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " compute",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 12,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 13,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "23",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 14,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "*",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 15,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "19",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 16,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ",",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 17,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " only",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 18,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " final",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 19,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " answer",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 20,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " output",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 21,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " result",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 22,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " number",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 23,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 24,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " Need",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 25,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " comply",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 26,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 27,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 28,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "23",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 29,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "*",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 30,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "19",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 31,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " =",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 32,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " ",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 33,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "437",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 34,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 35,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " Final",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 36,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " only",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 37,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " number",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 38,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 39,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": [],
+              "id": "resp_71277a2198614e9db2182472ef1d7a79_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "in_progress",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 40,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.content_part.added",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "",
+              "type": "output_text"
+            },
+            "sequence_number": 41,
+            "type": "response.content_part.added"
+          }
+        },
+        {
+          "event": "response.output_text.delta",
+          "data": {
+            "content_index": 0,
+            "delta": "437",
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_msg_0",
+            "output_index": 1,
+            "sequence_number": 42,
+            "type": "response.output_text.delta"
+          }
+        },
+        {
+          "event": "response.output_text.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_msg_0",
+            "output_index": 1,
+            "sequence_number": 43,
+            "text": "437",
+            "type": "response.output_text.done"
+          }
+        },
+        {
+          "event": "response.content_part.done",
+          "data": {
+            "content_index": 0,
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_msg_0",
+            "output_index": 1,
+            "part": {
+              "annotations": [],
+              "text": "437",
+              "type": "output_text"
+            },
+            "sequence_number": 44,
+            "type": "response.content_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": [
+                {
+                  "annotations": [],
+                  "text": "437",
+                  "type": "output_text"
+                }
+              ],
+              "id": "resp_71277a2198614e9db2182472ef1d7a79_msg_0",
+              "quality": "",
+              "role": "assistant",
+              "size": "",
+              "status": "completed",
+              "type": "message"
+            },
+            "output_index": 1,
+            "sequence_number": 45,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.done",
+          "data": {
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 46,
+            "summary_index": 0,
+            "text": "We need answer in Chinese likely. User asks compute 23*19, only final answer output result number. Need comply. 23*19 = 437. Final only number.",
+            "type": "response.reasoning_summary_text.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.done",
+          "data": {
+            "item_id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "We need answer in Chinese likely. User asks compute 23*19, only final answer output result number. Need comply. 23*19 = 437. Final only number.",
+              "type": "summary_text"
+            },
+            "sequence_number": 47,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "summary": [
+                {
+                  "text": "We need answer in Chinese likely. User asks compute 23*19, only final answer output result number. Need comply. 23*19 = 437. Final only number.",
+                  "type": "summary_text"
+                }
+              ],
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 48,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791685034,
+              "id": "resp_71277a2198614e9db2182472ef1d7a79",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "cn:deepseek-v4.1-flash",
+              "object": "response",
+              "output": [
+                {
+                  "content": null,
+                  "id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "summary": [
+                    {
+                      "text": "We need answer in Chinese likely. User asks compute 23*19, only final answer output result number. Need comply. 23*19 = 437. Final only number.",
+                      "type": "summary_text"
+                    }
+                  ],
+                  "type": "reasoning"
+                },
+                {
+                  "content": [
+                    {
+                      "annotations": [],
+                      "text": "437",
+                      "type": "output_text"
+                    }
+                  ],
+                  "id": "resp_71277a2198614e9db2182472ef1d7a79_msg_0",
+                  "quality": "",
+                  "role": "assistant",
+                  "size": "",
+                  "status": "completed",
+                  "type": "message"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 45,
+                "output_tokens": 39,
+                "total_tokens": 84
+              },
+              "user": null
+            },
+            "sequence_number": 49,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "437",
+        "reasoning_chars": 143,
+        "tools": [],
+        "usage": {
+          "input_tokens": 45,
+          "output_tokens": 39,
+          "total_tokens": 84
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "resp_71277a2198614e9db2182472ef1d7a79_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "We need answer in Chinese likely. User asks compute 23*19, only final answer output result number. Need comply. 23*19 = 437. Final only number.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "437",
+                "type": "output_text"
+              }
+            ],
+            "id": "resp_71277a2198614e9db2182472ef1d7a79_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "reasoning_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "usage_observed",
+      "status": "pass",
+      "source_check": "stream"
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "history",
+      "status": "pass",
+      "request": {
+        "model": "cn:deepseek-v4.1-flash",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "请记住测试码 probe_72bfacbec9"
+          },
+          {
+            "role": "assistant",
+            "content": "已记住。"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才的测试码。"
+          }
+        ]
+      },
+      "http_status": 200,
+      "elapsed_ms": 2104,
+      "first_byte_ms": 2104,
+      "response": {
+        "created_at": 1791685036,
+        "id": "50a91238ff8ef498b82035f6f778066e",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "deepseek-v4.1-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "50a91238ff8ef498b82035f6f778066e_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "我们需要回答用户中文：“只输出刚才的测试码。” 刚才的测试码是 probe_72bfacbec9。需要只输出这个。要确保没有多余文字。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_72bfacbec9",
+                "type": "output_text"
+              }
+            ],
+            "id": "50a91238ff8ef498b82035f6f778066e_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 55,
+          "output_tokens": 46,
+          "total_tokens": 101
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "probe_72bfacbec9",
+        "reasoning_chars": 67,
+        "tools": [],
+        "usage": {
+          "input_tokens": 55,
+          "output_tokens": 46,
+          "total_tokens": 101
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "50a91238ff8ef498b82035f6f778066e_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "我们需要回答用户中文：“只输出刚才的测试码。” 刚才的测试码是 probe_72bfacbec9。需要只输出这个。要确保没有多余文字。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "probe_72bfacbec9",
+                "type": "output_text"
+              }
+            ],
+            "id": "50a91238ff8ef498b82035f6f778066e_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "tool_call",
+      "status": "pass",
+      "request": {
+        "model": "cn:deepseek-v4.1-flash",
+        "max_output_tokens": 1536,
+        "input": "必须调用 probe_echo 工具一次，value 参数精确为 probe_72bfacbec9。不要自己假装执行。",
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "stream": true,
+        "tool_choice": {
+          "type": "function",
+          "name": "probe_echo"
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 2081,
+      "first_byte_ms": 1364,
+      "response": [
+        {
+          "event": "response.created",
+          "data": {
+            "response": {
+              "created_at": 1791685038,
+              "id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "cn:deepseek-v4.1-flash",
+              "object": "response",
+              "output": [],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "in_progress",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": null,
+                "output_tokens": null,
+                "total_tokens": null
+              },
+              "user": null
+            },
+            "sequence_number": 0,
+            "type": "response.created"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 1,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.added",
+          "data": {
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "",
+              "type": "summary_text"
+            },
+            "sequence_number": 2,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.added"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "The",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 3,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " user",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 4,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " wants",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 5,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " me",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 6,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " to",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 7,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " call",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 8,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " probe",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 9,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 10,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "echo",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 11,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " once",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 12,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " with",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 13,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " value",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 14,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " \"",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 15,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "pro",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 16,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "be",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 17,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 18,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "72",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 19,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "bf",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 20,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "ac",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 21,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "bec",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 22,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "9",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 23,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": "\".",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 24,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " Let",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 25,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " me",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 26,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " do",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 27,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": " that",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 28,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.delta",
+          "data": {
+            "delta": ".",
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 29,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_text.delta"
+          }
+        },
+        {
+          "event": "response.output_item.added",
+          "data": {
+            "item": {
+              "arguments": "",
+              "call_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+              "content": null,
+              "id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "in_progress",
+              "type": "function_call"
+            },
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 30,
+            "type": "response.output_item.added"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "{",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 31,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 32,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "value",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 33,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 34,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": ": ",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 35,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 36,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "pro",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 37,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "be",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 38,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "_",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 39,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "72",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 40,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "bf",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 41,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "ac",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 42,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "bec",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 43,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "9",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 44,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "\"",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 45,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.delta",
+          "data": {
+            "delta": "}",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output_index": 1,
+            "sequence_number": 46,
+            "type": "response.function_call_arguments.delta"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_text.done",
+          "data": {
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "sequence_number": 47,
+            "summary_index": 0,
+            "text": "The user wants me to call probe_echo once with value \"probe_72bfacbec9\". Let me do that.",
+            "type": "response.reasoning_summary_text.done"
+          }
+        },
+        {
+          "event": "response.reasoning_summary_part.done",
+          "data": {
+            "item_id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "output_index": 0,
+            "part": {
+              "text": "The user wants me to call probe_echo once with value \"probe_72bfacbec9\". Let me do that.",
+              "type": "summary_text"
+            },
+            "sequence_number": 48,
+            "summary_index": 0,
+            "type": "response.reasoning_summary_part.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "content": null,
+              "id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "summary": [
+                {
+                  "text": "The user wants me to call probe_echo once with value \"probe_72bfacbec9\". Let me do that.",
+                  "type": "summary_text"
+                }
+              ],
+              "type": "reasoning"
+            },
+            "output_index": 0,
+            "sequence_number": 49,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.function_call_arguments.done",
+          "data": {
+            "arguments": "{\"value\": \"probe_72bfacbec9\"}",
+            "item_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "name": "probe_echo",
+            "output_index": 1,
+            "sequence_number": 50,
+            "type": "response.function_call_arguments.done"
+          }
+        },
+        {
+          "event": "response.output_item.done",
+          "data": {
+            "item": {
+              "arguments": "{\"value\": \"probe_72bfacbec9\"}",
+              "call_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+              "content": null,
+              "id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+              "name": "probe_echo",
+              "quality": "",
+              "role": "",
+              "size": "",
+              "status": "completed",
+              "type": "function_call"
+            },
+            "output_index": 1,
+            "sequence_number": 51,
+            "type": "response.output_item.done"
+          }
+        },
+        {
+          "event": "response.completed",
+          "data": {
+            "response": {
+              "created_at": 1791685038,
+              "id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0",
+              "instructions": null,
+              "max_output_tokens": 0,
+              "metadata": null,
+              "model": "cn:deepseek-v4.1-flash",
+              "object": "response",
+              "output": [
+                {
+                  "content": null,
+                  "id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "summary": [
+                    {
+                      "text": "The user wants me to call probe_echo once with value \"probe_72bfacbec9\". Let me do that.",
+                      "type": "summary_text"
+                    }
+                  ],
+                  "type": "reasoning"
+                },
+                {
+                  "arguments": "{\"value\": \"probe_72bfacbec9\"}",
+                  "call_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+                  "content": null,
+                  "id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+                  "name": "probe_echo",
+                  "quality": "",
+                  "role": "",
+                  "size": "",
+                  "status": "completed",
+                  "type": "function_call"
+                }
+              ],
+              "parallel_tool_calls": false,
+              "previous_response_id": null,
+              "reasoning": null,
+              "status": "completed",
+              "store": false,
+              "temperature": 0,
+              "tool_choice": null,
+              "tools": null,
+              "top_p": 0,
+              "truncation": null,
+              "usage": {
+                "input_tokens": 329,
+                "output_tokens": 74,
+                "total_tokens": 403
+              },
+              "user": null
+            },
+            "sequence_number": 52,
+            "type": "response.completed"
+          }
+        }
+      ],
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "",
+        "reasoning_chars": 88,
+        "tools": [
+          {
+            "id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "name": "probe_echo",
+            "arguments": {
+              "value": "probe_72bfacbec9"
+            }
+          }
+        ],
+        "usage": {
+          "input_tokens": 329,
+          "output_tokens": 74,
+          "total_tokens": 403
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "The user wants me to call probe_echo once with value \"probe_72bfacbec9\". Let me do that.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "arguments": "{\"value\": \"probe_72bfacbec9\"}",
+            "call_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "content": null,
+            "id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "tool_result",
+      "status": "pass",
+      "request": {
+        "model": "cn:deepseek-v4.1-flash",
+        "max_output_tokens": 1536,
+        "input": [
+          {
+            "role": "user",
+            "content": "必须调用 probe_echo 工具一次，value 参数精确为 probe_72bfacbec9。不要自己假装执行。"
+          },
+          {
+            "content": null,
+            "id": "resp_99a3b84c5c8d4e0387ff65d28ce097d0_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "The user wants me to call probe_echo once with value \"probe_72bfacbec9\". Let me do that.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "arguments": "{\"value\": \"probe_72bfacbec9\"}",
+            "call_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "content": null,
+            "id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "name": "probe_echo",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "type": "function_call"
+          },
+          {
+            "type": "function_call_output",
+            "call_id": "call_00_vDf2ciM0ybMrMBsJdkfl6538",
+            "output": "result_0e0f39d78a"
+          },
+          {
+            "role": "user",
+            "content": "只输出刚才工具返回的结果，不要再调用工具。"
+          }
+        ],
+        "tools": [
+          {
+            "name": "probe_echo",
+            "description": "测试用回显函数；通过它提交给定 value。",
+            "type": "function",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "tool_choice": "none"
+      },
+      "http_status": 200,
+      "elapsed_ms": 2152,
+      "first_byte_ms": 2152,
+      "response": {
+        "created_at": 1791685040,
+        "id": "7e2ae78105fcc2161ad39b0dd0f31909",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "deepseek-v4.1-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "7e2ae78105fcc2161ad39b0dd0f31909_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "The user wants me to output only the result from the tool call. The tool returned \"result_0e0f39d78a\". I should output only that, no extra text.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_0e0f39d78a",
+                "type": "output_text"
+              }
+            ],
+            "id": "7e2ae78105fcc2161ad39b0dd0f31909_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 136,
+          "output_tokens": 50,
+          "total_tokens": 186
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "result_0e0f39d78a",
+        "reasoning_chars": 144,
+        "tools": [],
+        "usage": {
+          "input_tokens": 136,
+          "output_tokens": 50,
+          "total_tokens": 186
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "7e2ae78105fcc2161ad39b0dd0f31909_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "The user wants me to output only the result from the tool call. The tool returned \"result_0e0f39d78a\". I should output only that, no extra text.",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "result_0e0f39d78a",
+                "type": "output_text"
+              }
+            ],
+            "id": "7e2ae78105fcc2161ad39b0dd0f31909_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ]
+}

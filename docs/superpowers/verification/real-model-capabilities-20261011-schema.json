@@ -1,0 +1,452 @@
+{
+  "started_at": "2026-10-11T02:20:38.704151+00:00",
+  "base_url": "http://127.0.0.1:43709",
+  "models": [
+    {
+      "name": "DeepSeek",
+      "id": "cn:deepseek-v4.1-flash"
+    },
+    {
+      "name": "GLM",
+      "id": "cn:glm-5.3"
+    },
+    {
+      "name": "Kimi",
+      "id": "cn:kimi-k2.8-preview"
+    }
+  ],
+  "checks": [
+    "schema"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "cn:deepseek-v4.1-flash",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 2387,
+      "first_byte_ms": 2387,
+      "response": {
+        "created_at": 1791685238,
+        "id": "a238d4c1e959d1ec24891be4b26fd812",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "deepseek-v4.1-flash",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "a238d4c1e959d1ec24891be4b26fd812_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "我们需要回答用户中文请求：“请用普通中文写一句测试说明，不要输出 JSON。” 他们想要用普通中文写一句测试说明，不要 JSON。需要直接给一句测试说明。需要遵循。可以简单说：“这是一句测试说明，请忽略。” 但要求“测试说明”可能指说明测试什么？ 只需一句普通中文。不要输出 JSON。我们要确保不是 JSON。可以回复：这是一句用于测试的普通中文说明，请确认你能正常收到。 这满足。注意不要 JSON。最终只输出一句。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一句用于测试的普通中文说明，请确认你能正常收到。",
+                "type": "output_text"
+              }
+            ],
+            "id": "a238d4c1e959d1ec24891be4b26fd812_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 43,
+          "output_tokens": 130,
+          "total_tokens": 173
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "这是一句用于测试的普通中文说明，请确认你能正常收到。",
+        "reasoning_chars": 210,
+        "tools": [],
+        "usage": {
+          "input_tokens": 43,
+          "output_tokens": 130,
+          "total_tokens": 173
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "a238d4c1e959d1ec24891be4b26fd812_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "我们需要回答用户中文请求：“请用普通中文写一句测试说明，不要输出 JSON。” 他们想要用普通中文写一句测试说明，不要 JSON。需要直接给一句测试说明。需要遵循。可以简单说：“这是一句测试说明，请忽略。” 但要求“测试说明”可能指说明测试什么？ 只需一句普通中文。不要输出 JSON。我们要确保不是 JSON。可以回复：这是一句用于测试的普通中文说明，请确认你能正常收到。 这满足。注意不要 JSON。最终只输出一句。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一句用于测试的普通中文说明，请确认你能正常收到。",
+                "type": "output_text"
+              }
+            ],
+            "id": "a238d4c1e959d1ec24891be4b26fd812_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "GLM",
+      "model_id": "cn:glm-5.3",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "cn:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 3237,
+      "first_byte_ms": 3237,
+      "response": {
+        "created_at": 1791685241,
+        "id": "622cd4e5e725ba8474982814575cff68",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "glm-5.3",
+        "object": "response",
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "好的，这是一句测试说明：\n\n请确认系统时间显示正常，各功能按钮均可正常点击，页面加载无报错提示。",
+                "type": "output_text"
+              }
+            ],
+            "id": "622cd4e5e725ba8474982814575cff68_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 25,
+          "output_tokens": 30,
+          "total_tokens": 55
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "好的，这是一句测试说明：\n\n请确认系统时间显示正常，各功能按钮均可正常点击，页面加载无报错提示。",
+        "reasoning_chars": 0,
+        "tools": [],
+        "usage": {
+          "input_tokens": 25,
+          "output_tokens": 30,
+          "total_tokens": 55
+        },
+        "output": [
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "好的，这是一句测试说明：\n\n请确认系统时间显示正常，各功能按钮均可正常点击，页面加载无报错提示。",
+                "type": "output_text"
+              }
+            ],
+            "id": "622cd4e5e725ba8474982814575cff68_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "GLM",
+      "model_id": "cn:glm-5.3",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    },
+    {
+      "model_name": "Kimi",
+      "model_id": "cn:kimi-k2.8-preview",
+      "protocol": "responses",
+      "check": "strict_schema_conflict",
+      "status": "fail",
+      "request": {
+        "model": "cn:kimi-k2.8-preview",
+        "max_output_tokens": 1536,
+        "input": "请用普通中文写一句测试说明，不要输出 JSON。",
+        "text": {
+          "format": {
+            "type": "json_schema",
+            "name": "probe_schema",
+            "strict": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "marker": {
+                  "type": "string",
+                  "const": "schema_only_47"
+                },
+                "count": {
+                  "type": "integer",
+                  "const": 7
+                }
+              },
+              "required": [
+                "marker",
+                "count"
+              ],
+              "additionalProperties": false
+            }
+          }
+        }
+      },
+      "http_status": 200,
+      "elapsed_ms": 3083,
+      "first_byte_ms": 3083,
+      "response": {
+        "created_at": 1791685244,
+        "id": "da39f682e34e81e094c8b9a25f5fb0d0",
+        "instructions": null,
+        "max_output_tokens": 0,
+        "metadata": null,
+        "model": "kimi-k2.8-preview",
+        "object": "response",
+        "output": [
+          {
+            "content": null,
+            "id": "da39f682e34e81e094c8b9a25f5fb0d0_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求用普通中文写一句测试说明，不要输出 JSON。需要直接一句普通中文。思考：确保不是 JSON，不要代码块，不要额外解释。可以说：这是一次用于检查接口响应格式的普通中文测试说明。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一次用于确认输出内容为普通中文而非 JSON 的测试说明。",
+                "type": "output_text"
+              }
+            ],
+            "id": "da39f682e34e81e094c8b9a25f5fb0d0_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "parallel_tool_calls": false,
+        "previous_response_id": null,
+        "reasoning": null,
+        "status": "completed",
+        "store": false,
+        "temperature": 0,
+        "tool_choice": null,
+        "tools": null,
+        "top_p": 0,
+        "truncation": null,
+        "usage": {
+          "input_tokens": 99,
+          "output_tokens": 77,
+          "total_tokens": 176
+        },
+        "user": null
+      },
+      "summary": {
+        "complete": true,
+        "finish": "completed",
+        "text": "这是一次用于确认输出内容为普通中文而非 JSON 的测试说明。",
+        "reasoning_chars": 92,
+        "tools": [],
+        "usage": {
+          "input_tokens": 99,
+          "output_tokens": 77,
+          "total_tokens": 176
+        },
+        "output": [
+          {
+            "content": null,
+            "id": "da39f682e34e81e094c8b9a25f5fb0d0_reasoning_0",
+            "quality": "",
+            "role": "",
+            "size": "",
+            "status": "completed",
+            "summary": [
+              {
+                "text": "用户要求用普通中文写一句测试说明，不要输出 JSON。需要直接一句普通中文。思考：确保不是 JSON，不要代码块，不要额外解释。可以说：这是一次用于检查接口响应格式的普通中文测试说明。",
+                "type": "summary_text"
+              }
+            ],
+            "type": "reasoning"
+          },
+          {
+            "content": [
+              {
+                "annotations": [],
+                "text": "这是一次用于确认输出内容为普通中文而非 JSON 的测试说明。",
+                "type": "output_text"
+              }
+            ],
+            "id": "da39f682e34e81e094c8b9a25f5fb0d0_msg_0",
+            "quality": "",
+            "role": "assistant",
+            "size": "",
+            "status": "completed",
+            "type": "message"
+          }
+        ],
+        "errors": []
+      }
+    },
+    {
+      "model_name": "Kimi",
+      "model_id": "cn:kimi-k2.8-preview",
+      "protocol": "anthropic",
+      "check": "strict_schema_conflict",
+      "status": "skipped",
+      "reason": "This project's Messages route rejects output_format; not a model capability result"
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T02:20:47.448285+00:00"
+}

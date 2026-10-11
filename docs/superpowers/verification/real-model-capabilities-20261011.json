@@ -1,0 +1,191 @@
+{
+  "started_at": "2026-10-11T02:05:26.138284+00:00",
+  "base_url": "http://127.0.0.1:43709",
+  "models": [
+    {
+      "name": "DeepSeek",
+      "id": "cn:deepseek-v4.1-flash"
+    },
+    {
+      "name": "GLM",
+      "id": "cn:glm-5.3"
+    },
+    {
+      "name": "Kimi",
+      "id": "cn:kimi-k2.8-preview"
+    }
+  ],
+  "checks": [
+    "text",
+    "stream",
+    "history",
+    "tools",
+    "schema",
+    "image",
+    "inline_file"
+  ],
+  "max_output_tokens": 1536,
+  "request_retries": 0,
+  "records": [
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "text",
+      "status": "error",
+      "request": {
+        "model": "cn:deepseek-v4.1-flash",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_aec881f9e5"
+      },
+      "http_status": 502,
+      "elapsed_ms": 1316,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"}}\n"
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "responses",
+      "check": "remaining",
+      "status": "skipped",
+      "reason": "Text baseline did not complete; avoid further quota consumption"
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "error",
+      "request": {
+        "model": "cn:deepseek-v4.1-flash",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_aec881f9e5"
+          }
+        ]
+      },
+      "http_status": 502,
+      "elapsed_ms": 1539,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    },
+    {
+      "model_name": "DeepSeek",
+      "model_id": "cn:deepseek-v4.1-flash",
+      "protocol": "anthropic",
+      "check": "remaining",
+      "status": "skipped",
+      "reason": "Text baseline did not complete; avoid further quota consumption"
+    },
+    {
+      "model_name": "GLM",
+      "model_id": "cn:glm-5.3",
+      "protocol": "responses",
+      "check": "text",
+      "status": "error",
+      "request": {
+        "model": "cn:glm-5.3",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_45145b2625"
+      },
+      "http_status": 502,
+      "elapsed_ms": 2021,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"}}\n"
+    },
+    {
+      "model_name": "GLM",
+      "model_id": "cn:glm-5.3",
+      "protocol": "responses",
+      "check": "remaining",
+      "status": "skipped",
+      "reason": "Text baseline did not complete; avoid further quota consumption"
+    },
+    {
+      "model_name": "GLM",
+      "model_id": "cn:glm-5.3",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "error",
+      "request": {
+        "model": "cn:glm-5.3",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_45145b2625"
+          }
+        ]
+      },
+      "http_status": 502,
+      "elapsed_ms": 1862,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    },
+    {
+      "model_name": "GLM",
+      "model_id": "cn:glm-5.3",
+      "protocol": "anthropic",
+      "check": "remaining",
+      "status": "skipped",
+      "reason": "Text baseline did not complete; avoid further quota consumption"
+    },
+    {
+      "model_name": "Kimi",
+      "model_id": "cn:kimi-k2.8-preview",
+      "protocol": "responses",
+      "check": "text",
+      "status": "error",
+      "request": {
+        "model": "cn:kimi-k2.8-preview",
+        "max_output_tokens": 1536,
+        "input": "请只输出这个测试标记，不要解释：probe_64caef0834"
+      },
+      "http_status": 502,
+      "elapsed_ms": 1597,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"}}\n"
+    },
+    {
+      "model_name": "Kimi",
+      "model_id": "cn:kimi-k2.8-preview",
+      "protocol": "responses",
+      "check": "remaining",
+      "status": "skipped",
+      "reason": "Text baseline did not complete; avoid further quota consumption"
+    },
+    {
+      "model_name": "Kimi",
+      "model_id": "cn:kimi-k2.8-preview",
+      "protocol": "anthropic",
+      "check": "text",
+      "status": "error",
+      "request": {
+        "model": "cn:kimi-k2.8-preview",
+        "max_tokens": 1536,
+        "messages": [
+          {
+            "role": "user",
+            "content": "请只输出这个测试标记，不要解释：probe_64caef0834"
+          }
+        ]
+      },
+      "http_status": 502,
+      "elapsed_ms": 1632,
+      "error": "{\"error\":{\"message\":\"模型调用失败，请稍后重试\",\"type\":\"api_error\"},\"type\":\"error\"}\n"
+    },
+    {
+      "model_name": "Kimi",
+      "model_id": "cn:kimi-k2.8-preview",
+      "protocol": "anthropic",
+      "check": "remaining",
+      "status": "skipped",
+      "reason": "Text baseline did not complete; avoid further quota consumption"
+    }
+  ],
+  "limitations": [
+    "Real requests consume account quota.",
+    "No tools are executed; tool results are synthetic test data.",
+    "not_observed does not establish unsupported; schema success is a single observation.",
+    "reasoning_chars observes returned reasoning, not undisclosed model reasoning."
+  ],
+  "completed_at": "2026-10-11T02:05:36.190582+00:00"
+}

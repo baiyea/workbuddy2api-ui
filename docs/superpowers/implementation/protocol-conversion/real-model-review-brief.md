@@ -1,0 +1,11 @@
+# Real model follow-up review
+
+User requested a reusable per-feature capability probe accepting display name and exact model ID, and authorized real calls on three representative models. This is follow-up work after the previous mock/container SDK integration completed.
+
+Review changes since d14c82d: reusable Python standard-library probe/README/tests and narrow real WorkBuddy empty-wire-placeholder correction. Probe must distinguish HTTP/transport errors from capability observations, not execute tools, bound requests/output, persist per-feature evidence without keys, accept repeat model labels/IDs, and test both Responses and Messages. A single schema success cannot establish universal strictness. Unsupported Messages output_format must not be reported as model failure. Tests and baseline failure quota guard are required.
+
+Real wire observation: WorkBuddy emits nonterminal finish_reason empty string, extra_fields:null, refusal empty string and function_call:null on ordinary chunks, plus exactly empty name/arguments function_call on final. Existing Chat normalization accepts these. New raw protocol validation rejected them with 502 for all three models while legacy Chat worked. Narrow correction must accept only inert observed placeholders, retain nonempty/unknown rejection, reject missing/invalid terminal, preserve actual usage, tool IDs/arguments and round-trip history. Shared account pool and in-process Handler unchanged; frozen upstream/vendor unchanged.
+
+Evidence: real-wire-fix-report.md and real-wire-*.log in this directory. Probe six unittest cases passed on 313f36a (python -m unittest discover -s scripts -p test_probe_model_capabilities.py -v). Actual new-image matrix pending controller. No need repeat reported suites. Static inspection and targeted repro only if a concrete concern warrants it.
+
+Review read-only. Do not change files/index/HEAD, spawn agents, use real credentials/calls, restart services, build images, deploy or push. Read the supplied diff then related code as needed. Report Critical/Important/Minor with exact location and consequence, declined-to-judge items with reason, and clear approval verdict. Do not assume spec silence permits surprising broken behavior. User .gitignore, upstream-convert and older untracked probes are unrelated and remain untouched.

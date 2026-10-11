@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-11",
+  "core_source_commit": "5a6db9a0d6d406b5a2b325a67d3c382f2b8738a7",
+  "probe_commit": "36ce2953c856abc3675300d4bad5db909781880d",
+  "core_image": "sha256:16311106930b4cd81f5cf5b6fb8d41cde0b021567066a96779ca51fc0162a079",
+  "console_image": "sha256:a2919dceb8330b5cf3f66ae71a97d8724c0414878434aa7ab282fee9fa52800b",
+  "platform": "linux/amd64",
+  "matrix_requests": 45,
+  "passed_requests": 42,
+  "schema_assertion_failures": 3,
+  "observed_reasoning_usage_records": 12,
+  "anthropic_schema_skips": 3,
+  "temporary_services_stopped": true,
+  "original_credentials_unchanged": true,
+  "evidence_sha256": {
+    "real-model-capabilities-20261011-deepseek.json": "fd0a5922b96c4276b324fbf03884315a8759deb38f78761bb88a5ac38ffaf6a2",
+    "real-model-capabilities-20261011-glm-kimi.json": "f382921b04c0aeb04c73664d80320055bd3627ecb1820e304860612e1b255a13",
+    "real-model-capabilities-20261011-schema.json": "a36bc03f029bb09f25fb78968def3af74bf257ade95ef96844b47b3dce5912da"
+  }
+}
