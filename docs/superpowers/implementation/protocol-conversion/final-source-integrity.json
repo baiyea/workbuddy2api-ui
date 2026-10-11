@@ -1,0 +1,24 @@
+{
+  "checked_files": 162,
+  "provided_source_commit": "0f38a14a5e8e322ea741478b0e49878be3130e1d",
+  "manifest_sha256": "43383263acee42a6d6f71bba80b4c6f29a9519a6e09d6c0d9bd6ea6bf8af36e5",
+  "working_checkout_differences": [
+    {
+      "path": "LICENSE",
+      "only_crlf": true
+    },
+    {
+      "path": "NOTICE",
+      "only_crlf": true
+    },
+    {
+      "path": "relaykit/go.mod",
+      "only_crlf": true
+    },
+    {
+      "path": "relaykit/go.sum",
+      "only_crlf": true
+    }
+  ],
+  "failures": []
+}

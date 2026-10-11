@@ -115,10 +115,10 @@ format 仅为 RelayFormatOpenAIResponses 或 RelayFormatClaude。Serve 负责有
 
 **Interfaces:** SDK 仅用于临时测试环境，不进入生产依赖；复用隔离 console → core → mock 链路。Responses SDK 的验收版本在测试脚本依赖说明中锁定并记录实际版本。
 
-- [ ] **SDK 先补失败断言。** Anthropic 保留 null/晚到 usage、raw events、text_stream、最终聚合，增加工具。Responses 覆盖 create、stream 事件/最终对象、自定义工具 ID 和参数。传输测试不代替 SDK 验收。
-- [ ] **扩展隔离集成。** 实际 console/core 连 mock 检查两协议，保留 OpenAI 流式及管理 owner/CSRF/取消断言；验证 JSON Schema 到达 mock 上游，不验证或修复生成结果。将 protocol/responses 加入 check.sh 的关键包竞态检查；不使用真实账号。
-- [ ] **更新说明。** README 面向使用者写端点/curl/能力范围；AGENTS 记录目录与验证方式；页面修订“仅文本”提示，保留模型依赖和 beta 限制及第三方署名。无新增交互业务。
-- [ ] **执行检查并记录退出码。** 命令如下；SDK 的临时 Python 路径和锁定版本写入记录，未执行的单独标记。
+- [x] **SDK 先补失败断言。** Anthropic 保留 null/晚到 usage、raw events、text_stream、最终聚合，增加工具。Responses 覆盖 create、stream 事件/最终对象、自定义工具 ID 和参数。传输测试不代替 SDK 验收。
+- [x] **扩展隔离集成。** 实际 console/core 连 mock 检查两协议，保留 OpenAI 流式及管理 owner/CSRF/取消断言；验证 JSON Schema 到达 mock 上游，不验证或修复生成结果。将 protocol/responses 加入 check.sh 的关键包竞态检查；不使用真实账号。
+- [x] **更新说明。** README 面向使用者写端点/curl/能力范围；AGENTS 记录目录与验证方式；页面修订“仅文本”提示，保留模型依赖和 beta 限制及第三方署名。无新增交互业务。
+- [x] **执行检查并记录退出码。** 命令如下；SDK 的临时 Python 路径和锁定版本写入记录，未执行的单独标记。
 
 ```text
 python -m unittest discover -s scripts -p test_*.py -v
