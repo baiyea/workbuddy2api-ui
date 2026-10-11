@@ -1,8 +1,8 @@
 # Final correction wave report
 
-Status: implementation and native covering checks complete; **Linux full check, Python/Compose, fresh images and actual console/core/mock acceptance with both pinned SDKs remain OPEN** while the user starts Docker Desktop. This report is not integration approval. Root owns scoped re-review and completion audit.
+Status: **DONE — correction implementation and all required native/Linux/new-image/two-SDK isolated integration gates passed.** Root independently closed the scoped code-review gate on reviewed `3f4e6be`; root completion audit and final volume cleanup remain root-owned.
 
-Production implementation: `851130dcb2a8081b8b808b6aeca52c1722ba61fa`. A follow-up commit adds the explicit tool-input overflow/deferred-failure regression, fixes README table placement and selects the user message in gateway media assertions (global routing prepends a system message). No production behavior changed in that follow-up.
+Production implementation: `851130dcb2a8081b8b808b6aeca52c1722ba61fa`. Follow-up `3f4e6be3506dc9b9f283f148c9df8f210fd9cebf` adds the explicit tool-input overflow/deferred-failure regression, fixes README table placement and selects the user message in gateway media assertions (global routing prepends a system message). No production behavior changed in that follow-up.
 
 ## Seven findings and maintained coverage
 
@@ -40,11 +40,40 @@ All logs below are under this directory. Native toolchain is Go **1.27.2 windows
 
 Diagnostic-only false starts are retained: first native fixture incorrectly used the CN `/v2/chat/completions` path against a global-only mock (404), fixed by explicitly synthetic global account/local global URLs; first outbound diagnostic used acceptance's `legacy-api` instead of native `fixture-api` (401), fixed only in the diagnostic substitution. No product retry or weakened assertion was added. The media assertion now selects the actual user message rather than assuming index zero, retaining full content equality.
 
-## Integration environment / remaining gate
+## Integration environment and resolved prerequisite
 
-Read `task-5-environment-notes.md`, `task-5-report.md` and `linux-runner-context.json` before preparation. Prepared SDK Linux image/verification volume are reused once available. Docker preflight currently fails with missing `npipe:////./pipe/dockerDesktopLinuxEngine`; no Docker process was started or restarted by this agent. User elected to start Docker themselves.
+Read `task-5-environment-notes.md`, `task-5-report.md` and `linux-runner-context.json` before preparation. Initial Docker preflight failed with missing `npipe:////./pipe/dockerDesktopLinuxEngine`; no engine was started or restarted by this agent. The user elected to start Docker; root then verified daemon **29.1.3** availability and authorized continuing the already-approved isolated gate.
 
-Export authoritative committed LF source with `git -c core.autocrlf=false archive`; mount the existing task-owned volume at its identical daemon mountpoint, use its `tmp` directory for TMPDIR, host networking/socket, Bash `-c`. Run fresh required scripts/deploy/desktop Python, full `scripts/check.sh`, server race, Compose config, and `scripts/acceptance.sh` with both pinned interpreters and **newly built** images. Final source/patch/image identities and successful cleanup remain pending. Existing task-owned verification volume must remain for root.
+Used exact reviewed **3f4e6be3506dc9b9f283f148c9df8f210fd9cebf**, containing production fix 851130d, exported with `git -c core.autocrlf=false archive`. Source archive `task-5-source-final-fix-3f4e6be.tar` SHA-256: `82f14e9746e790ba4d59b27fece82637c4067e0b9d3f8f4ea69d6de875c5d316`. Windows checkout Docker packaging is not claimed.
+
+Runner `wb2a-protocol-final-3f4e6be` used prepared image `wb2a-protocol-sdk-checkenv:local`, host networking, Docker socket, existing labelled volume at its identical daemon mountpoint `/var/lib/docker/volumes/wb2a-protocol-verify-f2de220763d9/_data`, and `TMPDIR` at its `tmp` child. Non-login Bash invoked saved `final-fix-runner.sh`; source and logs were fresh children `final-fix-3f4e6be` and `final-fix-3f4e6be-logs`. Both SDK interpreters were `/usr/local/bin/python`. Per-build proxy only: `WB2A_BUILD_HTTP_PROXY`/`WB2A_BUILD_HTTPS_PROXY=http://host.docker.internal:7890`. No global proxy/config/environment was changed and `WB2A_ACCEPTANCE_SKIP_BUILD` was not set.
+
+### Actual final Linux and container results
+
+Environment verified: **Go1.26.9 linux/amd64**, **Python3.12.15**, anthropic **0.67.0**, openai **2.6.1**, httpx **0.28.1**. Authoritative exit table and full outputs are in [final-fix-linux-logs/](final-fix-linux-logs/); outer runner log is `final-fix-linux-runner.log`. Every listed gate exited **0**, and the runner itself exited **0**.
+
+| Final command / gate | Actual result |
+| --- | --- |
+| `python -m unittest discover -s scripts -p 'test_*.py' -v` | 44 PASS |
+| `python -m unittest discover -s deploy -p 'test_*.py' -v` | 15 PASS, including parallel/interleaved mock regression |
+| `python -m unittest discover -s desktop/scripts -p 'test_*.py' -v` | 11 PASS |
+| `bash scripts/check.sh` | Independent RelayKit/core test+vet; all 9 existing critical core race packages; console race; Node 33/33; task Python 15/15 PASS |
+| Additional fresh materialization then `go test -race ./internal/server` | PASS, including raw Handler regressions |
+| `docker compose --env-file /dev/null -f docker-compose.yml config --quiet` | PASS |
+| `python scripts/check_anthropic_sdk.py` | All pinned Linux in-memory text/tool/unknown/late/zero usage fixture contracts PASS |
+| Both pinned SDK interpreter variables + `bash scripts/acceptance.sh` | **Fresh builds/rebuilds and actual console/core/mock acceptance PASS**, no image reuse shortcut |
+| Final image inspection / source overlay identity | Both linux/amd64 IDs and expected patch identity captured |
+| `git diff --check` | PASS after evidence extraction |
+
+Actual acceptance finished at synthetic `http://127.0.0.1:59459/` and project `wb2api-task4-1791682724-14338` / `-legacy`. Both SDKs passed create/raw/high-level final aggregation/usage, function/custom or Claude tools, parallel call IDs and fragmented arguments, interleaved text/reasoning, and generated-history return. The subsequent actual mock observation asserted full Handler schema JSON/SSE, both SDK-generated paired reasoning/text/tool/result histories, inline text/PDF and image low/high/auto. Existing management auth/CSRF/origin/trusted conversation, separate owner logout and public Responses disconnect cancellation passed, as did all existing startup/key override/unoverride/permissions/timezone/persistence/OpenAI/task checks. This is actual built-container evidence, separate from native smoke and in-memory fixtures; no real upstream was used.
+
+### Source, runtime, final images and notices
+
+- Core tag: `wb2api-final-fix-3f4e6be-core`; final ID **`sha256:5fe4573e7a38fab434b3ec6628145aba6c9c20e1ff05b72614c246baa7b04d5e`**, linux/amd64.
+- Console tag: `wb2api-final-fix-3f4e6be-console`; final ID **`sha256:a2919dceb8330b5cf3f66ae71a97d8724c0414878434aa7ab282fee9fa52800b`**, linux/amd64.
+- Source/runtime patch identity: **`d5bf242ac043177907aa10aaa696f3b4ee941a139ca50cb147b7986ac7417675`**. Acceptance asserted `/internal/v1/info` equals the source upstream commit and patch identity. An additional offline final-image binary inspection confirmed the embedded identity; binary SHA-256 `4a2dc8200fe1214497d584aaa05e4c296ab02effb51d658ebd79de8857b7589f` (`final-fix-final-binary-identity.log`).
+- Actual final-image read with `docker run --rm --network none --entrypoint python3 CORE ...` verified LICENSE (34,523 bytes), NOTICE (2,026), THIRD-PARTY-LICENSES.md (33,787), SOURCE.json (37,493), all nonempty and SOURCE commit exactly `0f38a14a5e8e322ea741478b0e49878be3130e1d`. Exact SHA-256 values are retained in `final-fix-final-notices.log`. This reads packaged files, not Dockerfile text.
+- Acceptance's normal cleanup completed. Independent project-label and exact project-name filters found no remaining acceptance containers, networks or volumes; standalone smoke used the same fresh project. The exited runner was verified exit 0, logs copied, then that exact task-owned runner removed. `final-fix-cleanup.log` records the checks. Existing labelled verification volume `wb2a-protocol-verify-f2de220763d9` remains for root and is **safe for root to remove now**. Prepared images/toolchains and all workspace evidence were retained.
 
 ## Self-review, callers and limits
 
@@ -54,4 +83,4 @@ Export authoritative committed LF source with `git -c core.autocrlf=false archiv
 - Inline resolution is limited to bounded self-contained content (hard encoded source cap 32 MiB plus normal request/converted body cap). No remote file fetch, Files service or generated JSON repair. Best-effort log/cost parsing skips metric lines beyond 64 KiB, while public usage validation continues through the larger protocol bound.
 - Preserved user's `.gitignore`, untracked deferred/probe material and `upstream-convert/`, plus root audit/ledger. Staged only owned paths. No branch/worktree, real upstream call, Git push, image publication, deployment, actual-service restart or native installer work.
 
-**Not complete:** Linux integration and fresh image identities, scoped re-review and root completion audit remain separate open gates. Mock/native successes do not establish real model capability.
+**Implementer work complete.** All required covering and final integration gates passed with fresh images. Scoped re-review was independently closed by root; root owns the final completion audit and labelled verification-volume cleanup. No push, image publication, deployment, actual-service restart, real-model claim or native installer validation is implied.
