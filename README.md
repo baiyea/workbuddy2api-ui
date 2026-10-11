@@ -151,6 +151,22 @@ curl -N http://127.0.0.1:7863/v1/messages \
   -d '{"model":"global:模型ID","max_tokens":1024,"messages":[{"role":"user","content":"你好"}],"stream":true}'
 ```
 
+### 逐项测试模型能力
+
+`scripts/probe_model_capabilities.py` 使用 Python 标准库，按模型名称和 `/v1/models` 中的完整 ID 测试 Responses / Messages。它会发起真实请求并消耗额度；串行运行、不自动重试、不实际执行工具。先将 API Key 放入当前终端的 `WB2A_API_KEY` 环境变量，再执行：
+
+```bash
+python scripts/probe_model_capabilities.py \
+  --base-url http://127.0.0.1:7863/v1 \
+  --model "DeepSeek=cn:deepseek-v4.1-flash" \
+  --model "GLM=cn:glm-5.3" \
+  --output docs/superpowers/verification/my-model-probe.json
+```
+
+也可用 `--key-file 路径` 读取包含 `api_key` 的本地 JSON，密钥不会写进报告。结果同时保存 JSON 请求/响应证据与 Markdown 表格；已有报告默认不覆盖。`--checks text stream history tools schema image inline_file` 可选择测试项，`--timeout` 和 `--max-output-tokens` 控制单次请求预算。PowerShell 可将示例写在一行执行。
+
+文本基线失败时会跳过该协议的后续调用，并用原 Chat 接口做一次诊断，区分入口故障和模型可用性。`pass` / `fail` 是该用例的断言结果，`error` 表示 HTTP/传输/解析错误，`not_observed` 表示未观察到，不能直接推断“不支持”；`skipped` 会附原因。Schema 用例以冲突提示检查约束是否实际生效，一次通过也不保证严格遵守。Messages 的输出 Schema 当前由网关明确不支持，脚本标记跳过，不归因于模型。出现 `fail` 或 `error` 时脚本退出码为 1。
+
 ### 自动获取积分
 
 **让签到等日常任务按时执行，少一些每天手动操作的麻烦。**
