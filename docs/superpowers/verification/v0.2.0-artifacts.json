@@ -1,0 +1,43 @@
+{
+  "release_url": "https://github.com/baiyea/workbuddy2api-ui/releases/tag/v0.2.0",
+  "tag": "v0.2.0",
+  "published_at": "2026-10-11T06:31:12Z",
+  "hashes": {
+    "SHA256SUMS.txt": "8f6c3905d05fd23741fcc864bdcae5555a5d33b6016b58dccc1de6944b969aaf",
+    "wb2api-desktop-macos-arm64-0.2.0.dmg": "8ed6e45830ce1f21e9772dc4de6c7167921b78fea0487ef089ddff0e59fb7111",
+    "wb2api-desktop-macos-x64-0.2.0.dmg": "3d3fd2d214281a8a2895c9c62bed3640f77b28501c78e5ab409ad5dd4185025a",
+    "wb2api-desktop-windows-x64-0.2.0.exe": "97d063d557442fc010c1a9843bd38d6052195babd48db9b7132e2c0b63881944"
+  },
+  "all_checksums_match": true,
+  "source_commit": "51bc610050b06783592de3fdd30efb645cfe1e83",
+  "workflow_url": "https://github.com/baiyea/workbuddy2api-ui/actions/runs/38117485349",
+  "workflow_conclusion": "success",
+  "docker_images": [
+    {
+      "Id": "sha256:bccfef8c527af567ef6b54fa64ac81f15fdab5a52221c205f9550f0af251fc13",
+      "RepoTags": [
+        "registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-core-1791700011"
+      ],
+      "RepoDigests": [
+        "registry.cn-hangzhou.aliyuncs.com/cateyes/go@sha256:bccfef8c527af567ef6b54fa64ac81f15fdab5a52221c205f9550f0af251fc13"
+      ],
+      "Os": "linux",
+      "Architecture": "amd64"
+    },
+    {
+      "Id": "sha256:b3769bcedf7f63c9323980cce2ab55bc51be4f9930b30223ca93b4346e9e6016",
+      "RepoTags": [
+        "registry.cn-hangzhou.aliyuncs.com/cateyes/go:wb2api-webui-1791700011"
+      ],
+      "RepoDigests": [
+        "registry.cn-hangzhou.aliyuncs.com/cateyes/go@sha256:b3769bcedf7f63c9323980cce2ab55bc51be4f9930b30223ca93b4346e9e6016"
+      ],
+      "Os": "linux",
+      "Architecture": "amd64"
+    }
+  ],
+  "compose_sha256": "701767ec8d1feaf0af1167a3d80d62cb789995537253addb51b4fb3c9ad1f038",
+  "compose_download_url": "https://github.com/baiyea/workbuddy2api-ui/releases/download/v0.2.0/docker-compose.yml",
+  "windows_installer_version": "0.2.0",
+  "deployment_performed": false
+}
