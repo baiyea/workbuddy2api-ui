@@ -1,0 +1,691 @@
+{
+  "started_at": "2026-10-10T23:05:56.202074+08:00",
+  "base_url": "http://127.0.0.1:7863/v1",
+  "scope": "At most 8 generation requests; representative CN models only",
+  "records": [
+    {
+      "index": 1,
+      "model": "cn:deepseek-v4.1-flash",
+      "test": "function_call_stream",
+      "max_tokens_requested": 512,
+      "http_status": 200,
+      "elapsed_seconds": 1.69,
+      "first_chunk_seconds": 1.39,
+      "sse_chunks": 47,
+      "done_seen": true,
+      "finish_reason": "tool_calls",
+      "text_characters": 0,
+      "reasoning_characters": 95,
+      "tool_call_count": 1,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cached_tokens": 0,
+        "completion_thinking_tokens": 26,
+        "completion_tokens": 84,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 26,
+          "rejected_prediction_tokens": 0
+        },
+        "credit": 0.01,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 335,
+        "prompt_cache_write_tokens": 0,
+        "prompt_tokens": 335,
+        "prompt_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "total_tokens": 419
+      },
+      "logprobs_seen": false,
+      "expected_tool_and_arguments": true
+    },
+    {
+      "index": 2,
+      "model": "cn:deepseek-v4.1-flash",
+      "test": "tool_result_roundtrip",
+      "max_tokens_requested": 512,
+      "http_status": 200,
+      "elapsed_seconds": 1.67,
+      "first_chunk_seconds": 1.4,
+      "sse_chunks": 54,
+      "done_seen": true,
+      "finish_reason": "stop",
+      "text_characters": 4,
+      "reasoning_characters": 208,
+      "tool_call_count": 0,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cached_tokens": 0,
+        "completion_thinking_tokens": 48,
+        "completion_tokens": 53,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 48,
+          "rejected_prediction_tokens": 0
+        },
+        "credit": 0.01,
+        "prompt_cache_hit_tokens": 256,
+        "prompt_cache_miss_tokens": 170,
+        "prompt_cache_write_tokens": 0,
+        "prompt_tokens": 426,
+        "prompt_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 256,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "total_tokens": 479
+      },
+      "logprobs_seen": false,
+      "expected_receipt_match": true
+    },
+    {
+      "index": 3,
+      "model": "cn:deepseek-v4.1-flash",
+      "test": "strict_json_schema_conflicting_prompt",
+      "max_tokens_requested": 512,
+      "http_status": 200,
+      "elapsed_seconds": 2.03,
+      "first_chunk_seconds": 1.65,
+      "sse_chunks": 51,
+      "done_seen": true,
+      "finish_reason": "stop",
+      "text_characters": 8,
+      "reasoning_characters": 186,
+      "tool_call_count": 0,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cached_tokens": 0,
+        "completion_thinking_tokens": 46,
+        "completion_tokens": 50,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 46,
+          "rejected_prediction_tokens": 0
+        },
+        "credit": 0,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 45,
+        "prompt_cache_write_tokens": 0,
+        "prompt_tokens": 45,
+        "prompt_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "total_tokens": 95
+      },
+      "logprobs_seen": false,
+      "schema_match": false,
+      "returned_requested_plain_text": true
+    },
+    {
+      "index": 4,
+      "model": "cn:deepseek-v4.1-flash",
+      "test": "image_quadrants_stream",
+      "max_tokens_requested": 512,
+      "http_status": 200,
+      "elapsed_seconds": 2.42,
+      "first_chunk_seconds": 1.74,
+      "sse_chunks": 193,
+      "done_seen": true,
+      "finish_reason": "stop",
+      "text_characters": 24,
+      "reasoning_characters": 709,
+      "tool_call_count": 0,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cached_tokens": 0,
+        "completion_thinking_tokens": 184,
+        "completion_tokens": 192,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 184,
+          "rejected_prediction_tokens": 0
+        },
+        "credit": 0.01,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 254,
+        "prompt_cache_write_tokens": 0,
+        "prompt_tokens": 254,
+        "prompt_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "total_tokens": 446
+      },
+      "logprobs_seen": false,
+      "expected_colors_match": true,
+      "answer": "red,blue,yellow,green"
+    },
+    {
+      "index": 5,
+      "model": "cn:glm-5.3",
+      "test": "function_call_stream",
+      "max_tokens_requested": 512,
+      "http_status": 200,
+      "elapsed_seconds": 4.37,
+      "first_chunk_seconds": 4.2,
+      "sse_chunks": 15,
+      "done_seen": true,
+      "finish_reason": "tool_calls",
+      "text_characters": 0,
+      "reasoning_characters": 0,
+      "tool_call_count": 1,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cached_tokens": 0,
+        "completion_thinking_tokens": 0,
+        "completion_tokens": 21,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "credit": 0.04,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 199,
+        "prompt_cache_write_tokens": 0,
+        "prompt_tokens": 199,
+        "prompt_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "total_tokens": 220
+      },
+      "logprobs_seen": false,
+      "expected_tool_and_arguments": true
+    },
+    {
+      "index": 6,
+      "model": "cn:glm-5.3",
+      "test": "image_quadrants_stream",
+      "max_tokens_requested": 512,
+      "http_status": 200,
+      "elapsed_seconds": 1.83,
+      "first_chunk_seconds": 1.73,
+      "sse_chunks": 5,
+      "done_seen": true,
+      "finish_reason": "stop",
+      "text_characters": 24,
+      "reasoning_characters": 0,
+      "tool_call_count": 0,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cached_tokens": 0,
+        "completion_thinking_tokens": 0,
+        "completion_tokens": 9,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "credit": 0.02,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 79,
+        "prompt_cache_write_tokens": 0,
+        "prompt_tokens": 79,
+        "prompt_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "total_tokens": 88
+      },
+      "logprobs_seen": false,
+      "expected_colors_match": true,
+      "answer": "red,blue,yellow,green"
+    },
+    {
+      "index": 7,
+      "model": "cn:hy3",
+      "test": "function_call_stream",
+      "max_tokens_requested": 512,
+      "http_status": 200,
+      "elapsed_seconds": 2.44,
+      "first_chunk_seconds": 1.68,
+      "sse_chunks": 31,
+      "done_seen": true,
+      "finish_reason": "tool_calls",
+      "text_characters": 0,
+      "reasoning_characters": 196,
+      "tool_call_count": 1,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cached_tokens": 0,
+        "completion_thinking_tokens": 47,
+        "completion_tokens": 78,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 47,
+          "rejected_prediction_tokens": 0
+        },
+        "credit": 0,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 233,
+        "prompt_cache_write_tokens": 0,
+        "prompt_tokens": 233,
+        "prompt_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "total_tokens": 311
+      },
+      "logprobs_seen": false,
+      "expected_tool_and_arguments": true
+    },
+    {
+      "index": 8,
+      "model": "cn:hy3",
+      "test": "image_quadrants_stream",
+      "max_tokens_requested": 512,
+      "http_status": 200,
+      "elapsed_seconds": 2.32,
+      "first_chunk_seconds": 1.68,
+      "sse_chunks": 59,
+      "done_seen": true,
+      "finish_reason": "stop",
+      "text_characters": 24,
+      "reasoning_characters": 223,
+      "tool_call_count": 0,
+      "usage": {
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cached_tokens": 0,
+        "completion_thinking_tokens": 50,
+        "completion_tokens": 59,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 50,
+          "rejected_prediction_tokens": 0
+        },
+        "credit": 0,
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 76,
+        "prompt_cache_write_tokens": 0,
+        "prompt_tokens": 76,
+        "prompt_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "cached_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "total_tokens": 135
+      },
+      "logprobs_seen": false,
+      "expected_colors_match": true,
+      "answer": "red,blue,yellow,green"
+    }
+  ],
+  "catalog": [
+    {
+      "id": "cn:auto",
+      "supports_images": true
+    },
+    {
+      "id": "cn:hy4-preview",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "high"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "cn:hy3",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "low",
+        "high"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "cn:space-bunny",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_default_effort": "max"
+    },
+    {
+      "id": "cn:deepseek-v4.1-flash",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "low",
+        "high",
+        "max"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "cn:glm-5.3",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "low",
+        "high",
+        "max"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "cn:glm-5.3-flash",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "low",
+        "high",
+        "max"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "cn:glm-5.2",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "high",
+        "xhigh"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "cn:glm-5.1",
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "cn:glm-5v-turbo",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "cn:kimi-k3-1",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "cn:kimi-k2.8-preview",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "low",
+        "high",
+        "max"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "cn:kimi-k2.7",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "cn:kimi-k2.6",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "cn:minimax-m3",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "cn:deepseek-v4-pro",
+      "supports_images": true,
+      "reasoning_supported_efforts": [
+        "low",
+        "high",
+        "xhigh"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:default-model"
+    },
+    {
+      "id": "global:fast-model",
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "global:balanced-model",
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "global:primary-model",
+      "reasoning_supported_efforts": [
+        "high"
+      ]
+    },
+    {
+      "id": "global:hy4-preview"
+    },
+    {
+      "id": "global:gpt-5.6-sol",
+      "reasoning_supported_efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:gpt-5.6-terra",
+      "reasoning_supported_efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:deep-model"
+    },
+    {
+      "id": "global:deepseek-v4.1-flash",
+      "reasoning_supported_efforts": [
+        "high"
+      ]
+    },
+    {
+      "id": "global:gpt-6-astra",
+      "reasoning_supported_efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:hy4-preview-f",
+      "reasoning_supported_efforts": [
+        "high"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:hy3",
+      "reasoning_supported_efforts": [
+        "low",
+        "high"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:glm-5.2",
+      "reasoning_supported_efforts": [
+        "high",
+        "xhigh"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:gpt-5.6-luna",
+      "reasoning_supported_efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:gpt-5.5",
+      "reasoning_supported_efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:gpt-5.4",
+      "reasoning_supported_efforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:gpt-5.3-codex",
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "global:gemini-3.5-flash",
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "global:glm-5.3",
+      "reasoning_supported_efforts": [
+        "low",
+        "high",
+        "max"
+      ],
+      "reasoning_default_effort": "high"
+    },
+    {
+      "id": "global:kimi-k3",
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    },
+    {
+      "id": "global:kimi-k2.6",
+      "reasoning_supported_efforts": [
+        "medium"
+      ]
+    }
+  ],
+  "account_availability": {
+    "cn": 1,
+    "global": 0
+  },
+  "log_start_bytes": 211305,
+  "completed_at": "2026-10-10T23:06:15.053542+08:00",
+  "verified_summary": {
+    "generation_requests": 8,
+    "catalog_counts": {
+      "cn": 16,
+      "global": 21
+    },
+    "all_http_200_and_sse_terminated": true,
+    "sum_prompt_tokens": 1647,
+    "sum_completion_tokens": 546,
+    "sum_reported_credit": 0.09,
+    "log_added_lines": 8,
+    "log_request_counts_by_truncated_label": {
+      "deepseek": 4,
+      "glm-5.3": 2,
+      "hy3": 2
+    },
+    "log_label_note": "Current request logger truncates model labels to 11 bytes; full DeepSeek model name cannot be checked from this log."
+  },
+  "test_design": {
+    "tool": "Require record_probe(code=Q7M2,count=7), validate returned tool name, arguments and call id; tool has no external side effects.",
+    "roundtrip": "Return synthetic tool receipt V8R3 and require model to repeat it.",
+    "vision": "Inline 128x128 PNG with red/blue/yellow/green quadrants; color names are not supplied in the prompt.",
+    "schema": "Strict object schema requires answer=schema_ok,count=7; conflicting user prompt requests plain text NOT_JSON. Also requests logprobs=True,top_logprobs=2.",
+    "generation_limit": "512 max_tokens per request, low reasoning effort, at most 8 gateway generation requests."
+  },
+  "limitations": [
+    "Three requested CN models sampled; remaining CN models not tested and no global account available.",
+    "All generation requests used /v1/chat/completions with stream=true; this does not establish Responses or Anthropic adapter compatibility.",
+    "One simple vision and tool case per model is a smoke test, not comprehensive capability certification.",
+    "No reasoning was observed for GLM in these calls; lack of observation does not prove lack of support.",
+    "JSON Schema was not enforced in the tested gateway chain; this does not isolate the responsible layer.",
+    "No logprobs reached the client; current source normalizes SSE without preserving choice.logprobs, so upstream support remains unknown.",
+    "No Files API, image URL fetch, parallel tool calls, native apply_patch, or long-context validation performed."
+  ]
+}

@@ -40,3 +40,4 @@ backups/
 LOOP.md
 PLAN.md
 SPEC.md
+*.log
