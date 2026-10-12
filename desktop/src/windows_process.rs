@@ -296,12 +296,9 @@ fn environment_block(
     for (key, value) in changes {
         let mut key = wide_z(&key)?;
         key.pop();
-        let drive_key = key.len() == 3
-            && key[0] == b'=' as u16
-            && key[2] == b':' as u16
-            && (key[1] as u8).is_ascii_alphabetic()
-            && key[1] <= 127;
-        if key.is_empty() || key.len() > 32767 || (key.contains(&(b'=' as u16)) && !drive_key) {
+        // Windows also inherits hidden keys such as =:: and =ExitCode, not just =C:.
+        // Only the leading '=' belongs to the name; later ones are separators.
+        if key.is_empty() || key.len() > 32767 || key[1..].contains(&(b'=' as u16)) {
             return Err(invalid("invalid environment variable name"));
         }
         let value = value.map(|v| wide_z(&v)).transpose()?;
@@ -380,6 +377,29 @@ mod tests {
             environment_block(base, &command).unwrap(),
             wide("=C:=C:\\工作\0ärea=new\0\0")
         );
+    }
+
+    #[test]
+    fn environment_preserves_installer_and_shell_hidden_keys() {
+        let base = [("=::", "::\\"), ("=ExitCode", "00000000"), ("Path", "old")]
+            .into_iter()
+            .map(|(k, v)| (OsString::from(k), OsString::from(v)));
+        let mut command = Command::new("unused.exe");
+        command.env("PATH", "new");
+        assert_eq!(
+            environment_block(base, &command).unwrap(),
+            wide("=::=::\\\0=ExitCode=00000000\0PATH=new\0\0")
+        );
+    }
+
+    #[test]
+    fn environment_rejects_empty_names_and_embedded_separators() {
+        let command = Command::new("unused.exe");
+        for key in ["", "A=B", "=A=B", "==", "A\0B"] {
+            let result =
+                environment_block([(OsString::from(key), OsString::from("value"))], &command);
+            assert_eq!(result.unwrap_err().kind(), io::ErrorKind::InvalidInput);
+        }
     }
 
     #[test]
